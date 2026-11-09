@@ -79,6 +79,8 @@ public class BendingModClient {
         register(event, ModParticles.FIRE_SMOKE.get(), CelParticle.Kind.SMOKE);
         register(event, ModParticles.STEAM.get(), CelParticle.Kind.STEAM);
         register(event, ModParticles.LIGHTNING_ARC.get(), CelParticle.Kind.ARC);
+        register(event, ModParticles.FIRE_CLOUD.get(), CelParticle.Kind.CLOUD);
+        register(event, ModParticles.BLUE_FIRE_CLOUD.get(), CelParticle.Kind.CLOUD, true);
         // Blue Fire: same shapes, blue colour ramp.
         register(event, ModParticles.BLUE_FIRE_WISP.get(), CelParticle.Kind.WISP, true);
         register(event, ModParticles.BLUE_FIRE_CORE.get(), CelParticle.Kind.CORE, true);

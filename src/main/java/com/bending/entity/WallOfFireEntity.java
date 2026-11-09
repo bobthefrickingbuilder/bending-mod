@@ -10,7 +10,9 @@ import com.bending.ability.fire.FireTechniques;
 import com.bending.particle.ModParticles;
 import com.bending.sound.ModSounds;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,8 +34,8 @@ import net.minecraft.world.phys.Vec3;
  * The position is the middle of its base; it runs sideways along {@link #along()}.
  */
 public class WallOfFireEntity extends Entity {
-    public static final double HALF_WIDTH = 3.5;
-    public static final double HEIGHT = 3.5;
+    public static final double HALF_WIDTH = 7.0;
+    public static final double HEIGHT = 4.5;
     public static final int LIFE = 120;
     private static final int RISE_TICKS = 6;
     /** How close to the sheet a creature has to be to get burned. */
@@ -136,8 +138,27 @@ public class WallOfFireEntity extends Entity {
                 }
             }
         }
+        if (tickCount == RISE_TICKS) {
+            leaveFire(level, base, along);
+        }
         if (tickCount % 20 == 0) {
-            level.playSound(null, base.x, base.y + 1, base.z, ModSounds.WALL_OF_FIRE_LOOP.get(), SoundSource.PLAYERS, 0.7f, 0.9f);
+            level.playSound(null, base.x, base.y + 1, base.z, ModSounds.WALL_OF_FIRE_LOOP.get(), SoundSource.PLAYERS, 1.2f, 0.8f);
+        }
+    }
+
+    /** Sets the ground along the wall's base burning, so fire is left behind when the wall dies down. */
+    private static void leaveFire(ServerLevel level, Vec3 base, Vec3 along) {
+        for (double u = -HALF_WIDTH; u <= HALF_WIDTH; u += 1.0) {
+            BlockPos column = BlockPos.containing(base.add(along.scale(u)));
+            // Follow the ground a couple of blocks up or down, so slopes burn too.
+            for (int dy = 2; dy >= -2; dy--) {
+                BlockPos pos = column.offset(0, dy, 0);
+                if (BaseFireBlock.canBePlacedAt(level, pos, net.minecraft.core.Direction.UP)
+                        && !level.getBlockState(pos.below()).isAir()) {
+                    BendingUtil.scatterFire(level, pos, 1);
+                    break;
+                }
+            }
         }
     }
 
@@ -150,23 +171,51 @@ public class WallOfFireEntity extends Entity {
         Vec3 along = along();
         Vec3 normal = normal();
         boolean blue = isBlue();
-        int count = (int) (26 * s);
+        int count = (int) (70 * s);
         for (int i = 0; i < count; i++) {
             double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
             // More flame low down, licking upward; the top edge flickers.
             double v = HEIGHT * s * Math.pow(random.nextDouble(), 1.4);
-            double n = (random.nextDouble() - 0.5) * 0.4;
+            double n = (random.nextDouble() - 0.5) * 0.5;
             Vec3 p = base.add(along.scale(u)).add(normal.scale(n)).add(0, v, 0);
             level().addParticle(FireFx.wisp(blue), p.x, p.y, p.z, 0, 0.01 + random.nextDouble() * 0.02, 0);
         }
-        if (random.nextInt(3) == 0) {
+        // Billowing clouds of flame rolling up out of the wall.
+        int clouds = (int) (7 * s);
+        for (int i = 0; i < clouds; i++) {
+            double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
+            double v = HEIGHT * s * random.nextDouble() * 0.6;
+            Vec3 p = base.add(along.scale(u)).add(normal.scale((random.nextDouble() - 0.5) * 0.6)).add(0, v, 0);
+            level().addParticle(FireFx.cloud(blue), p.x, p.y, p.z,
+                    (random.nextDouble() - 0.5) * 0.03, 0.04 + random.nextDouble() * 0.06, (random.nextDouble() - 0.5) * 0.03);
+        }
+        // Jets of fire bursting up out of the ground along the wall, far above its top.
+        if (random.nextFloat() < 0.4f * s) {
+            double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
+            Vec3 p = base.add(along.scale(u)).add(0, 0.1, 0);
+            double force = 0.8 + random.nextDouble() * 0.5;
+            for (int i = 0; i < 12; i++) {
+                level().addParticle(FireFx.wisp(blue), p.x + (random.nextDouble() - 0.5) * 0.4, p.y, p.z + (random.nextDouble() - 0.5) * 0.4,
+                        (random.nextDouble() - 0.5) * 0.06, force * (0.7 + random.nextDouble() * 0.3), (random.nextDouble() - 0.5) * 0.06);
+            }
+            for (int i = 0; i < 3; i++) {
+                level().addParticle(FireFx.cloud(blue), p.x, p.y + 0.5, p.z,
+                        (random.nextDouble() - 0.5) * 0.05, force * 0.45 * (0.7 + random.nextDouble() * 0.3), (random.nextDouble() - 0.5) * 0.05);
+            }
+            for (int i = 0; i < 4; i++) {
+                level().addParticle(FireFx.spark(blue), p.x, p.y, p.z,
+                        (random.nextDouble() - 0.5) * 0.2, force * 1.1, (random.nextDouble() - 0.5) * 0.2);
+            }
+            level().addParticle(ModParticles.FIRE_SMOKE.get(), p.x, p.y + HEIGHT + 2, p.z, 0, 0.05, 0);
+        }
+        for (int e = 0; e < 2; e++) {
             double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
             Vec3 p = base.add(along.scale(u)).add(0, 0.2, 0);
             level().addParticle(FireFx.ember(blue), p.x, p.y, p.z, (random.nextDouble() - 0.5) * 0.1, 0.15, (random.nextDouble() - 0.5) * 0.1);
         }
-        if (random.nextInt(4) == 0) {
+        if (random.nextInt(2) == 0) {
             double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
-            Vec3 p = base.add(along.scale(u)).add(0, HEIGHT * s, 0);
+            Vec3 p = base.add(along.scale(u)).add(0, HEIGHT * s + 1, 0);
             level().addParticle(ModParticles.FIRE_SMOKE.get(), p.x, p.y, p.z, 0, 0.03, 0);
         }
     }

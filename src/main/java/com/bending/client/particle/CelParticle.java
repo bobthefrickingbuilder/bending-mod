@@ -19,7 +19,7 @@ import net.minecraft.util.Mth;
  * behind it like a comet. Each {@link Kind} sets size, lifetime and motion.
  */
 public class CelParticle extends TextureSheetParticle {
-    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC }
+    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD }
 
     /** Fire colour over a particle's life: age 0 = white-hot, age 1 = dying ember red. */
     private static final float[][] RAMP = {
@@ -115,6 +115,17 @@ public class CelParticle extends TextureSheetParticle {
                 gravity = stray ? 0.4f : 0f;
                 spinRoll = (random.nextFloat() - 0.5f) * 1.2f;
             }
+            case CLOUD -> {
+                // A rolling ball of flame: starts as a fist-sized puff and swells to 3+ blocks
+                // as it slows, drifting upward and burning down from yellow to deep red.
+                lifetime = 28 + random.nextInt(18);
+                startSize = 0.55f + random.nextFloat() * 0.35f;
+                endSize = 2.8f + random.nextFloat() * 1.0f;
+                rampSpan = 0.85f;
+                friction = 0.95f;
+                gravity = -0.06f;
+                spinRoll = (random.nextFloat() - 0.5f) * 0.12f;
+            }
             case SMOKE -> {
                 lifetime = 20 + random.nextInt(16);
                 startSize = 0.2f;
@@ -185,6 +196,10 @@ public class CelParticle extends TextureSheetParticle {
             // White-hot flash fading to electric blue.
             setColor(Mth.lerp(age, 1f, 0.55f), Mth.lerp(age, 1f, 0.78f), 1f);
             alpha = 1f - smoothstep(0.6f, 1f, age);
+        } else if (kind == Kind.CLOUD) {
+            float[] c = rampColor(blue ? BLUE_RAMP : RAMP, 0.12f + age * rampSpan);
+            setColor(c[0], c[1], c[2]);
+            alpha = 0.85f * (1f - smoothstep(0.5f, 1f, age));
         } else if (isFire()) {
             float[] c = rampColor(blue ? BLUE_RAMP : RAMP, age * rampSpan);
             float pulse = kind == Kind.EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;

@@ -30,6 +30,15 @@ public final class FireFx {
         return (blue ? ModParticles.BLUE_EMBER : ModParticles.EMBER).get();
     }
 
+    /** Big billowing fire puff (see {@link ModParticles#FIRE_CLOUD}). */
+    public static SimpleParticleType cloud(boolean blue) {
+        return (blue ? ModParticles.BLUE_FIRE_CLOUD : ModParticles.FIRE_CLOUD).get();
+    }
+
+    public static SimpleParticleType cloud(@Nullable Entity bender) {
+        return cloud(FireTechniques.blue(bender));
+    }
+
     public static SimpleParticleType wisp(@Nullable Entity bender) {
         return wisp(FireTechniques.blue(bender));
     }

@@ -17,8 +17,9 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Slot 2 (Defense): sweep your arm and a wall of flame roars up 3 blocks in front of you,
- * 7 wide and 3.5 tall, for 6 seconds. It burns up every projectile that tries to cross it
- * (arrows, fireballs, other benders' blasts) and scorches and shoves back anything that walks into it.
+ * 14 wide and 4.5 tall, for 6 seconds, with jets of fire bursting out of the ground along it.
+ * It burns up every projectile that tries to cross it (arrows, fireballs, other benders' blasts),
+ * scorches and shoves back anything that walks into it, and leaves the ground along it burning.
  */
 public class WallOfFire extends Ability {
     private static final double DISTANCE = 3.0;

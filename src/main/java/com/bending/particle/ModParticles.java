@@ -29,6 +29,9 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_SMOKE = register("fire_smoke");
     /** Crackling blue-white sparks: lightning bolts and their charge-up. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LIGHTNING_ARC = register("lightning_arc");
+    /** Big billowing fireball puffs that swell as they drift: breath streams, walls, eruptions. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_CLOUD = register("fire_cloud");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_FIRE_CLOUD = register("blue_fire_cloud");
     /** Blue Fire versions of the four fire particles (master technique). */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_FIRE_WISP = register("blue_fire_wisp");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_FIRE_CORE = register("blue_fire_core");
