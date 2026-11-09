@@ -67,6 +67,11 @@ public class FireJetDash extends Ability {
 
         // The explosion at the launch point hits anything standing next to you (it doesn't break blocks).
         BendingUtil.fireBurst(player, player.position(), LAUNCH_BLAST_RADIUS, 8f * power, 0.8, 2, null, 0f);
+        Vec3 kick = direction(player, data).scale(-1);
+        for (int i = 0; i < 8; i++) {
+            Vec3 d = kick.add(player.getRandom().nextGaussian() * 0.35, player.getRandom().nextGaussian() * 0.35, player.getRandom().nextGaussian() * 0.35);
+            player.serverLevel().sendParticles(FireFx.cloud(player), player.getX(), player.getY() + 0.5, player.getZ(), 0, d.x, d.y, d.z, 0.35);
+        }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_JET_DASH_LAUNCH.get(), SoundSource.PLAYERS, 0.8f, 1.2f);
 
@@ -78,6 +83,7 @@ public class FireJetDash extends Ability {
         player.hurtMarked = true; // sends the new velocity to the client
         keepAirborneSafe(player, data);
         data.dashTrailHits.clear();
+        com.bending.ability.BendingAnimations.playUntilLanded(player, data, com.bending.ability.BendingAnimations.FIRE_DASH);
     }
 
     @Override
@@ -92,10 +98,14 @@ public class FireJetDash extends Ability {
 
         // Jets of flame shooting out behind you.
         ServerLevel level = player.serverLevel();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 8; i++) {
+            double s = 0.15;
             level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.4, player.getZ(),
-                    0, -look.x, -look.y, -look.z, 0.35);
+                    0, -look.x + player.getRandom().nextGaussian() * s, -look.y + player.getRandom().nextGaussian() * s,
+                    -look.z + player.getRandom().nextGaussian() * s, 0.5 + player.getRandom().nextDouble() * 0.3);
         }
+        level.sendParticles(FireFx.cloud(player), player.getX(), player.getY() + 0.5, player.getZ(),
+                0, -look.x, -look.y, -look.z, 0.3);
         if (ticks % 6 == 0) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     ModSounds.FIRE_JET_DASH_THRUST.get(), SoundSource.PLAYERS, 0.3f, 0.6f);
@@ -130,11 +140,14 @@ public class FireJetDash extends Ability {
     public static void tickTrail(ServerPlayer player, BendingData data) {
         data.dashTrailTicks--;
         ServerLevel level = player.serverLevel();
-        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.3, player.getZ(), 6, 0.2, 0.2, 0.2, 0.01);
+        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.5, player.getZ(), 14, 0.35, 0.45, 0.35, 0.02);
+        if (data.dashTrailTicks % 2 == 0) {
+            level.sendParticles(FireFx.cloud(player), player.getX(), player.getY() + 0.6, player.getZ(), 1, 0.3, 0.3, 0.3, 0.02);
+        }
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() + 0.3, player.getZ(), 2, 0.2, 0.2, 0.2, 0.01);
         for (LivingEntity target : BendingUtil.livingAround(player, player.position().add(0, 0.9, 0), 1.6)) {
             if (data.dashTrailHits.add(target.getId())) {
-                BendingUtil.damage(player, target, 5f * FireConditions.power(player), 2);
+                BendingUtil.damage(player, target, 5f * com.bending.server.BendingRules.power(player, Element.FIRE), 2);
             }
         }
     }

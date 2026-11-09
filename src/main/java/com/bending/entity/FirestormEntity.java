@@ -30,7 +30,9 @@ import net.minecraft.world.phys.Vec3;
 public class FirestormEntity extends Entity {
     private static final int RING_TICKS = 7;
     private static final int VORTEX_TICKS = 80;
-    private static final double VORTEX_RADIUS = 3.0;
+    private static final double VORTEX_RADIUS = 4.5;
+    /** The ring of fire rolls out to this radius over {@link #RING_TICKS}. */
+    private static final double RING_RADIUS = 10.0;
     /** Terrain blast under the caster when Firestorm goes off (a creeper is 3, TNT is 4). */
     private static final float CENTER_TERRAIN_POWER = 4.0f;
     /** Circle of explosions halfway out (at 4 blocks). */
@@ -79,7 +81,7 @@ public class FirestormEntity extends Entity {
             BendingUtil.terrainBlast(level, owner, center, CENTER_TERRAIN_POWER);
         }
         if (tickCount <= RING_TICKS) {
-            double radius = tickCount;
+            double radius = tickCount * RING_RADIUS / RING_TICKS;
             // The ring scorches the ground as it passes...
             for (int i = 0; i < (int) radius; i++) {
                 double angle = level.getRandom().nextDouble() * Math.PI * 2;
@@ -93,8 +95,10 @@ public class FirestormEntity extends Entity {
             if (tickCount == RING_TICKS) {
                 blastCircle(level, center, radius, EDGE_BLASTS, EDGE_TERRAIN_POWER);
             }
-            BendingUtil.ring(level, FireFx.wisp(owner), center.add(0, 0.4, 0), radius, (int) (radius * 14));
-            BendingUtil.ring(level, FireFx.ember(owner), center.add(0, 0.4, 0), radius, (int) radius);
+            BendingUtil.ring(level, FireFx.wisp(owner), center.add(0, 0.4, 0), radius, (int) (radius * 22));
+            BendingUtil.ring(level, FireFx.wisp(owner), center.add(0, 1.4, 0), radius * 0.97, (int) (radius * 10));
+            BendingUtil.ring(level, FireFx.cloud(owner), center.add(0, 0.8, 0), radius, (int) (radius * 3));
+            BendingUtil.ring(level, FireFx.ember(owner), center.add(0, 0.4, 0), radius, (int) (radius * 2));
             for (LivingEntity target : BendingUtil.livingAround(owner, center, radius + 0.5)) {
                 if (ringHits.add(target.getId())) {
                     BendingUtil.damage(owner, target, 24f * power, 4); // ring: one-shots normal mobs
@@ -104,13 +108,20 @@ public class FirestormEntity extends Entity {
             return;
         }
 
-        // Vortex: three spiralling strands of flame.
-        for (int strand = 0; strand < 3; strand++) {
-            double angle = tickCount * 0.45 + strand * (Math.PI * 2 / 3);
-            double height = (tickCount % 20) / 8.0;
-            level.sendParticles(FireFx.wisp(owner),
-                    center.x + Math.cos(angle) * VORTEX_RADIUS * 0.8, center.y + height, center.z + Math.sin(angle) * VORTEX_RADIUS * 0.8,
-                    2, 0.1, 0.1, 0.1, 0.01);
+        // Vortex: five spiralling strands of flame climbing 6 blocks, with clouds of fire rolling up the middle.
+        for (int strand = 0; strand < 5; strand++) {
+            double angle = tickCount * 0.45 + strand * (Math.PI * 2 / 5);
+            for (int layer = 0; layer < 3; layer++) {
+                double height = ((tickCount + layer * 10) % 30) / 5.0;
+                double r = VORTEX_RADIUS * (0.6 + height / 15);
+                level.sendParticles(FireFx.wisp(owner),
+                        center.x + Math.cos(angle + layer) * r, center.y + height, center.z + Math.sin(angle + layer) * r,
+                        3, 0.15, 0.15, 0.15, 0.02);
+            }
+        }
+        level.sendParticles(FireFx.cloud(owner), center.x, center.y + 0.5, center.z, 3, VORTEX_RADIUS * 0.4, 0.3, VORTEX_RADIUS * 0.4, 0.05);
+        if (tickCount % 2 == 0) {
+            level.sendParticles(FireFx.ember(owner), center.x, center.y + 1, center.z, 3, VORTEX_RADIUS * 0.5, 1.0, VORTEX_RADIUS * 0.5, 0.1);
         }
         BendingUtil.destroyProjectiles(level, owner, center.add(0, 1, 0), VORTEX_RADIUS + 0.5);
         if (tickCount % 20 == 0) {

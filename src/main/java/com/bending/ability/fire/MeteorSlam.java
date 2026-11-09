@@ -93,6 +93,7 @@ public class MeteorSlam extends Ability {
         data.noFallUntil = level.getGameTime() + MAX_DIVE_TICKS;
 
         data.slamDir = diveDirection(player.getLookAngle());
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.METEOR_DIVE);
         player.setDeltaMovement(data.slamDir.scale(DIVE_SPEED));
         player.hurtMarked = true;
 
@@ -134,6 +135,7 @@ public class MeteorSlam extends Ability {
         }
         if (data.slamTicks > MAX_DIVE_TICKS || !player.isAlive()) {
             data.slamming = false;
+            com.bending.ability.BendingAnimations.stop(player);
             return;
         }
         Vec3 dir = data.slamDir;
@@ -164,6 +166,7 @@ public class MeteorSlam extends Ability {
     }
 
     private static void impact(ServerPlayer player, BendingData data) {
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.METEOR_LAND);
         ServerLevel level = player.serverLevel();
         data.slamming = false;
         data.noFallUntil = level.getGameTime() + 5;
@@ -236,6 +239,7 @@ public class MeteorSlam extends Ability {
     }
 
     private static void endInWater(ServerPlayer player, BendingData data) {
+        com.bending.ability.BendingAnimations.stop(player);
         ServerLevel level = player.serverLevel();
         data.slamming = false;
         data.noFallUntil = level.getGameTime() + 5;

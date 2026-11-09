@@ -94,7 +94,7 @@ public final class BendingServerEvents {
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, new com.bending.network.CombatStatePayload(inCombat));
         }
 
-        if (data.activeSlot == -1 && now - data.lastCastTime >= REGEN_DELAY && data.getChi() < data.getMaxChi()) {
+        if (data.activeSlot == -1 && now - data.lastCastTime >= com.bending.skill.SkillStats.regenDelay(data, REGEN_DELAY) && data.getChi() < data.getMaxChi()) {
             data.addChi(REGEN_PER_TICK * BendingRules.regen(player, element));
         }
 

@@ -54,6 +54,9 @@ public class Firestorm extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        if (ticks == 1) {
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.FIRESTORM_STANCE);
+        }
         ServerLevel level = player.serverLevel();
         float progress = ticks / (float) CHARGE_TICKS;
         Vec3 center = player.position();
@@ -81,6 +84,7 @@ public class Firestorm extends Ability {
 
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.FIRESTORM_STOMP);
         player.level().addFreshEntity(new FirestormEntity(player.level(), player, power));
         data.noFallUntil = player.level().getGameTime() + NO_FALL_TICKS; // you'll drop into your own crater
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),

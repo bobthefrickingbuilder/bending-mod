@@ -63,6 +63,9 @@ public class BlazingLeap extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        if (ticks == 1) {
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.LAUNCH_CROUCH);
+        }
         ServerLevel level = player.serverLevel();
         float progress = fraction(ticks);
         // Fire pools around your feet as you crouch into it.
@@ -92,6 +95,7 @@ public class BlazingLeap extends Ability {
         player.hurtMarked = true;
         player.fallDistance = 0;
         data.noFallUntil = level.getGameTime() + NO_FALL_TICKS;
+        com.bending.ability.BendingAnimations.playUntilLanded(player, data, com.bending.ability.BendingAnimations.LEAP_AIR);
 
         // Take-off: a burst of flame where you stood.
         BendingUtil.fireBurst(player, feet.add(0, 0.3, 0), BURST_RADIUS, (6f + 6f * f) * power, 0.8, 2, null, 0f);

@@ -28,9 +28,13 @@ import com.bending.data.Element;
  *   └ Fireball Charge (2)      └ Breath of Fire (3)*        └ Lightning (3)
  *  Combustion Beam:           Breath of Fire:              Lightning:
  *   ├ Dragon's Breath (3)      └ Dancing Dragon (4)*        └ Lightning Redirection (4)*
- *   └ Blue Fire (4)*
+ *   └ Blue Fire (4)*          Blazing Leap:                Wall of Fire:
+ *  Dragon's Breath:            └ Deep Lungs (2)+            └ Focus (2)+
+ *   └ Searing Heat (2)+       Deep Lungs:                  Focus:
+ *  Blue Fire:                  └ Steady Breath (2)+         └ Inner Calm (2)+
+ *   └ Wildfire (3)+
  * </pre>
- * (* = master technique.) The starting kit (Fire Shield, Firestorm and the innate abilities) is always known.
+ * (* = master technique, + = passive stat bonus.) The starting kit (Fire Shield, Firestorm and the innate abilities) is always known.
  */
 public final class SkillTree {
     private static final String M = BendingMod.MODID + ":";
@@ -46,16 +50,22 @@ public final class SkillTree {
             node(Abilities.FIREBALL_CHARGE, SkillBranch.AGGRESSION, 1, 2, Abilities.FIRE_ARC.id()),
             node(Abilities.DRAGONS_BREATH, SkillBranch.AGGRESSION, 2, 3, Abilities.COMBUSTION_BEAM.id()),
             technique(FireTechniques.BLUE_FIRE, SkillBranch.AGGRESSION, 2, 4, Abilities.COMBUSTION_BEAM.id()),
+            stat(SkillStats.SEARING_HEAT, SkillBranch.AGGRESSION, 3, 2, Abilities.DRAGONS_BREATH.id()),
+            stat(SkillStats.WILDFIRE, SkillBranch.AGGRESSION, 3, 3, FireTechniques.BLUE_FIRE),
             // Breath: endurance and movement.
             node(Abilities.JET_PROPULSION, SkillBranch.BREATH, 0, 1, null),
             node(Abilities.BLAZING_LEAP, SkillBranch.BREATH, 1, 2, Abilities.JET_PROPULSION.id()),
             technique(FireTechniques.BREATH_OF_FIRE, SkillBranch.BREATH, 1, 3, Abilities.JET_PROPULSION.id()),
+            stat(SkillStats.DEEP_LUNGS, SkillBranch.BREATH, 2, 2, Abilities.BLAZING_LEAP.id()),
             technique(FireTechniques.DANCING_DRAGON, SkillBranch.BREATH, 2, 4, FireTechniques.BREATH_OF_FIRE),
+            stat(SkillStats.STEADY_BREATH, SkillBranch.BREATH, 3, 2, SkillStats.DEEP_LUNGS),
             // Discipline: precision and control.
             node(Abilities.FLAME_PARRY, SkillBranch.DISCIPLINE, 0, 1, null),
             node(Abilities.WALL_OF_FIRE, SkillBranch.DISCIPLINE, 1, 2, Abilities.FLAME_PARRY.id()),
             node(Abilities.LIGHTNING, SkillBranch.DISCIPLINE, 1, 3, Abilities.FLAME_PARRY.id()),
-            technique(FireTechniques.LIGHTNING_REDIRECTION, SkillBranch.DISCIPLINE, 2, 4, Abilities.LIGHTNING.id()));
+            stat(SkillStats.FOCUS, SkillBranch.DISCIPLINE, 2, 2, Abilities.WALL_OF_FIRE.id()),
+            technique(FireTechniques.LIGHTNING_REDIRECTION, SkillBranch.DISCIPLINE, 2, 4, Abilities.LIGHTNING.id()),
+            stat(SkillStats.INNER_CALM, SkillBranch.DISCIPLINE, 3, 2, SkillStats.FOCUS));
 
     private static final Map<String, SkillNode> BY_ID = FIRE.stream()
             .collect(Collectors.toMap(SkillNode::id, Function.identity()));
@@ -68,6 +78,11 @@ public final class SkillTree {
 
     /** A master technique: changes how your bending works instead of taking a slot. */
     private static SkillNode technique(String id, SkillBranch branch, int tier, int cost, @Nullable String requires) {
+        return new SkillNode(id, branch, tier, cost, requires, null, true);
+    }
+
+    /** A passive stat bonus: always on once learned. */
+    private static SkillNode stat(String id, SkillBranch branch, int tier, int cost, @Nullable String requires) {
         return new SkillNode(id, branch, tier, cost, requires, null, true);
     }
 

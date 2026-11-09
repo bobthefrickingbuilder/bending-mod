@@ -2,6 +2,8 @@ package com.bending.client.particle;
 
 import org.joml.Vector3f;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,7 +21,7 @@ import net.minecraft.util.Mth;
  * behind it like a comet. Each {@link Kind} sets size, lifetime and motion.
  */
 public class CelParticle extends TextureSheetParticle {
-    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD }
+    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD, HAND_EMBER }
 
     /** Fire colour over a particle's life: age 0 = white-hot, age 1 = dying ember red. */
     private static final float[][] RAMP = {
@@ -103,6 +105,15 @@ public class CelParticle extends TextureSheetParticle {
                 friction = 0.98f;
                 gravity = 0.4f; // embers fall
                 hasPhysics = true;
+            }
+            case HAND_EMBER -> {
+                // A pinprick of light that floats up and winks out.
+                lifetime = 10 + random.nextInt(10);
+                startSize = 0.03f + random.nextFloat() * 0.015f;
+                endSize = 0.01f;
+                rampSpan = 0.8f;
+                friction = 0.9f;
+                gravity = -0.04f;
             }
             case ARC -> {
                 // Mostly quick flashes, with a dirty tail of stray sparks that linger and drop.
@@ -250,6 +261,32 @@ public class CelParticle extends TextureSheetParticle {
         float t = Mth.clamp((x - from) / (to - from), 0f, 1f);
         return t * t * (3 - 2 * t);
     }
+
+    /**
+     * Fades the particle out as it nears the camera, so your own dash and the smoke off your
+     * fireballs never fill your view. Big particles (clouds swell to 3+ blocks) fade from further out.
+     */
+    @Override
+    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+        double dx = Mth.lerp(partialTicks, xo, x) - camera.getPosition().x;
+        double dy = Mth.lerp(partialTicks, yo, y) - camera.getPosition().y;
+        double dz = Mth.lerp(partialTicks, zo, z) - camera.getPosition().z;
+        float dist = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        float clear = Math.max(NEAR_FADE_MIN, getQuadSize(partialTicks) * NEAR_FADE_PER_SIZE + 0.6f);
+        float fade = smoothstep(clear * 0.45f, clear, dist);
+        if (fade <= 0.01f) {
+            return;
+        }
+        float a = alpha;
+        alpha = a * fade;
+        super.render(buffer, camera, partialTicks);
+        alpha = a;
+    }
+
+    /** Every particle is fully faded within this many blocks... */
+    private static final float NEAR_FADE_MIN = 1.8f;
+    /** ...and big ones from further out: this many blocks of clearance per block of particle size. */
+    private static final float NEAR_FADE_PER_SIZE = 1.6f;
 
     @Override
     public float getQuadSize(float partialTicks) {

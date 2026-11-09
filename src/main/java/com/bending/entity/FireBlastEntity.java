@@ -37,6 +37,8 @@ public class FireBlastEntity extends Projectile {
      * doesn't flash in the viewer's face). Set by the client; always false on a server.
      */
     public static java.util.function.Predicate<Vec3> tooCloseToCamera = p -> false;
+    /** Chance per tick of a cloud puff rolling off the back (kept low so the flames show through). */
+    private static final float CLOUD_CHANCE = 0.3f;
     private static final EntityDataAccessor<Boolean> BLUE =
             SynchedEntityData.defineId(FireBlastEntity.class, EntityDataSerializers.BOOLEAN);
     /** Size of the ball (1 = a normal Fire Blast); charged fireballs are bigger. */
@@ -145,7 +147,7 @@ public class FireBlastEntity extends Projectile {
             }
             // Comet tail: it moves 3 blocks a tick, so fill in flame tongues along the whole step.
             // They drift backwards, so they point back along the flight path.
-            int steps = 6;
+            int steps = 10;
             for (int i = 0; i < steps; i++) {
                 double t = i / (double) steps;
                 double x = getX() - v.x * t;
@@ -154,15 +156,26 @@ public class FireBlastEntity extends Projectile {
                 if (tooCloseToCamera.test(new Vec3(x, y, z))) {
                     continue;
                 }
-                double spread = 0.25 * getBallScale();
-                level.addParticle(FireFx.wisp(isBlue()),
-                        x + (random.nextDouble() - 0.5) * spread,
-                        y + (random.nextDouble() - 0.5) * spread,
-                        z + (random.nextDouble() - 0.5) * spread,
-                        -v.x * 0.03, -v.y * 0.03, -v.z * 0.03);
+                double spread = 0.45 * getBallScale();
+                for (int k = 0; k < 2; k++) {
+                    level.addParticle(FireFx.wisp(isBlue()),
+                            x + (random.nextDouble() - 0.5) * spread,
+                            y + (random.nextDouble() - 0.5) * spread,
+                            z + (random.nextDouble() - 0.5) * spread,
+                            -v.x * 0.03, -v.y * 0.03, -v.z * 0.03);
+                }
+                // Bright hot flashes through the tail.
+                if (i % 3 == 0) {
+                    level.addParticle(FireFx.core(isBlue()), x, y, z, -v.x * 0.02, -v.y * 0.02, -v.z * 0.02);
+                }
             }
             if (tickCount % 3 == 0) {
                 level.addParticle(ModParticles.FIRE_SMOKE.get(), getX() - v.x, getY() - v.y, getZ() - v.z, 0, 0.02, 0);
+            }
+            // Billowing clouds rolling off the back of the ball.
+            Vec3 back = getPosition(0).subtract(v.scale(0.6 + random.nextDouble() * 0.4));
+            if (random.nextFloat() < CLOUD_CHANCE && !tooCloseToCamera.test(back)) {
+                level.addParticle(FireFx.cloud(isBlue()), back.x, back.y, back.z, -v.x * 0.04, 0.02, -v.z * 0.04);
             }
         }
     }

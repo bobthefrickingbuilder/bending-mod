@@ -34,7 +34,10 @@ public class BendingModClient {
         modEventBus.addListener(BendingModClient::registerHud);
         modEventBus.addListener(BendingModClient::registerRenderers);
         modEventBus.addListener(BendingModClient::registerParticles);
+        modEventBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) ->
+                event.enqueueWork(com.bending.client.MoveAnimations::init));
         NeoForge.EVENT_BUS.addListener(ClientInput::onClientTick);
+        NeoForge.EVENT_BUS.addListener(com.bending.client.HandEmbers::onClientTick);
         NeoForge.EVENT_BUS.addListener(ClientInput::onInteractionKey);
         BendingHands.register(NeoForge.EVENT_BUS);
         // Keep fireball trail fire out of the viewer's face (same distance the ball fades in from).
@@ -86,6 +89,8 @@ public class BendingModClient {
         register(event, ModParticles.BLUE_FIRE_CORE.get(), CelParticle.Kind.CORE, true);
         register(event, ModParticles.BLUE_FIRE_SPARK.get(), CelParticle.Kind.SPARK, true);
         register(event, ModParticles.BLUE_EMBER.get(), CelParticle.Kind.EMBER, true);
+        register(event, ModParticles.HAND_EMBER.get(), CelParticle.Kind.HAND_EMBER);
+        register(event, ModParticles.BLUE_HAND_EMBER.get(), CelParticle.Kind.HAND_EMBER, true);
     }
 
     private static void register(RegisterParticleProvidersEvent event, SimpleParticleType type, CelParticle.Kind kind) {

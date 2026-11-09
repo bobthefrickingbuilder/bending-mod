@@ -62,6 +62,13 @@ public final class BendingNetwork {
                     }
                 }));
 
+        registrar.playToServer(DashReadyPayload.TYPE, DashReadyPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        com.bending.ability.BendingAnimations.setDashReady(player, player.getData(ModAttachments.BENDING), payload.ready());
+                    }
+                }));
+
         registrar.playToServer(ToggleBendingModePayload.TYPE, ToggleBendingModePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
@@ -81,6 +88,9 @@ public final class BendingNetwork {
 
         registrar.playToClient(CombatStatePayload.TYPE, CombatStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> CombatStatePayload.clientInCombat = payload.inCombat()));
+
+        registrar.playToClient(PlayAnimationPayload.TYPE, PlayAnimationPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> PlayAnimationPayload.clientHandler.accept(payload)));
 
         registrar.playToClient(BendingModePayload.TYPE, BendingModePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {

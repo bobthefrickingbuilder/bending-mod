@@ -49,7 +49,9 @@ public class BendingData {
     public long noFallUntil;
     public int dashTrailTicks;
     public final Set<Integer> dashTrailHits = new HashSet<>();
-    public boolean altHand;
+    /** Fire Blast cycle: the next strike (0-3) and when the last one was thrown. */
+    public int fireBlastStep;
+    public long fireBlastLastShot = -1000;
     /** Mid-air hops used since last touching the ground (server-side count). */
     public int airJumpsUsed;
     /** The charge orb currently gathering in front of this bender, if any (server side). */
@@ -85,6 +87,11 @@ public class BendingData {
     public long lastRedirect = -1000;
     /** Bending stance: abilities only work while this is on, and both hands show empty. */
     public boolean bendingMode;
+    /** What the current move animation is bound to (see BendingAnimations), and when it started. Server only. */
+    public int animBinding;
+    /** Stored Lightning bolts, spent by Fire Blast (server only). */
+    public int lightningCharges;
+    public long animStart;
     /** True once the client has received data from the server. */
     public boolean synced;
     /** True when something changed that the client should hear about. */
@@ -152,8 +159,8 @@ public class BendingData {
     }
 
     public float getMaxChi() {
-        // Skill tree and gem bonuses will be added here.
-        return BASE_MAX_CHI;
+        // Skill tree bonuses (gems will add here too).
+        return BASE_MAX_CHI + com.bending.skill.SkillStats.maxChiBonus(this);
     }
 
     public void setChi(float value) {

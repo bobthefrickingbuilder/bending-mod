@@ -15,7 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Slot 1: a spinning kick that sends out a wide crescent of fire. It sweeps 12 blocks forward
+ * Slot 1: a spinning kick that sends out a wide crescent of fire. It sweeps 18 blocks forward
  * and passes through enemies, burning everything it crosses.
  */
 public class FireArc extends Ability {
@@ -39,6 +39,7 @@ public class FireArc extends Ability {
         Vec3 start = player.position().add(0, 1.0, 0).add(look.scale(1.0));
 
         player.level().addFreshEntity(new FireArcEntity(player.level(), player, start, look, side, DAMAGE * power));
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.FIRE_ARC_KICK);
         player.swing(InteractionHand.MAIN_HAND, true);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_ARC_CAST.get(), SoundSource.PLAYERS, 0.8f, 0.8f + player.getRandom().nextFloat() * 0.2f);

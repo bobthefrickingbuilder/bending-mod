@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 /** Fire Blast: a glowing ball of flame with tongues streaming back along its path. */
 public class FireBlastRenderer extends EntityRenderer<FireBlastEntity> {
     /** About 70% bigger than the old particle head. */
-    private static final float SCALE = 1.0f;
+    private static final float SCALE = 1.4f;
     /** Closer than this to the camera the ball isn't drawn; it reaches full size at FADE_END. */
     public static final double FADE_START = 1.8;
     public static final double FADE_END = 2.8;

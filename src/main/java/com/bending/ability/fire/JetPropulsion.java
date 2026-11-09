@@ -53,6 +53,7 @@ public class JetPropulsion extends Ability {
         level.sendParticles(FireFx.wisp(player), player.getX(), player.getY(), player.getZ(), 14, 0.3, 0.05, 0.3, 0.08);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_JET_DASH_LAUNCH.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
+        com.bending.ability.BendingAnimations.playUntilLanded(player, data, com.bending.ability.BendingAnimations.JET_GLIDE);
         if (player.onGround()) {
             player.setDeltaMovement(player.getDeltaMovement().add(0, 0.45, 0)); // lift off
             player.hurtMarked = true;

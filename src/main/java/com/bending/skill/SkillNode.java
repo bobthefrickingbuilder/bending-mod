@@ -34,6 +34,11 @@ public record SkillNode(String id, SkillBranch branch, int tier, int cost, @Null
                 : Component.translatable("skill." + BendingMod.MODID + "." + path() + ".desc");
     }
 
+    /** A passive stat bonus. */
+    public boolean stat() {
+        return SkillStats.ALL.contains(id);
+    }
+
     /** A master technique rather than an ability. */
     public boolean technique() {
         return SkillTree.TECHNIQUES.contains(id);

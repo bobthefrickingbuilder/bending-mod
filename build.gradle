@@ -27,6 +27,12 @@ sourceSets.main.resources {
 }
 
 repositories {
+    mavenCentral()
+    // Player Animation Library (keyframed player animations for bending moves).
+    maven {
+        name = "RedlanceMinecraft"
+        url = "https://repo.redlance.org/public"
+    }
     // Modrinth's Maven, used only for the dev-only quality-of-life mods below.
     exclusiveContent {
         forRepository {
@@ -127,6 +133,19 @@ configurations {
 }
 
 dependencies {
+    // Player Animation Library: bundled inside our jar (jar-in-jar), so players don't install it separately.
+    // Minecraft already ships gson, slf4j, fastutil and netty (pinned versions), so don't pull the library's copies.
+    jarJar(implementation("com.zigythebird.playeranim:PlayerAnimationLibNeo:${pal_version}")) {
+        version {
+            strictly "[${pal_version},1.2)"
+            prefer pal_version
+        }
+        exclude group: "com.google.code.gson"
+        exclude group: "org.slf4j"
+        exclude group: "it.unimi.dsi"
+        exclude group: "io.netty"
+    }
+
     // ---- Dev-only mods: loaded in runClient for performance and convenience. ----
     // localRuntime means they are NOT a dependency of the Bending mod and are not bundled with it.
     // Versions are pinned in gradle.properties.

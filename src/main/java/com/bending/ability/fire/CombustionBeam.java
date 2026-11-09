@@ -72,6 +72,9 @@ public class CombustionBeam extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        if (ticks == 1) {
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
+        }
         ServerLevel level = player.serverLevel();
         float progress = Math.min(1f, ticks / (float) FULL_CHARGE);
 
@@ -111,6 +114,7 @@ public class CombustionBeam extends Ability {
 
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.CHARGE_RELEASE);
         removeOrb(data);
         ServerLevel level = player.serverLevel();
         float charge = ticks / (float) FULL_CHARGE;

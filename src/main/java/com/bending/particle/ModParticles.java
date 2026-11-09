@@ -37,6 +37,9 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_FIRE_CORE = register("blue_fire_core");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_FIRE_SPARK = register("blue_fire_spark");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_EMBER = register("blue_ember");
+    /** Tiny glowing motes that drift up off a firebender's hands while in bending mode. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HAND_EMBER = register("hand_ember");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_HAND_EMBER = register("blue_hand_ember");
     /** Steam from melting snow and ice. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STEAM = register("steam");
 

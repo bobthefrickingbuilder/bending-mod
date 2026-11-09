@@ -36,8 +36,8 @@ public class SkillTreeScreen extends Screen {
     private static final int GAP = 10;
     private static final int BRANCH_TOP = 46;
     private static final int NODES_TOP = BRANCH_TOP + 28;
-    private static final int TIER_SPACING = 50;
-    private static final int NODE_HEIGHT = 32;
+    private static final int TIER_SPACING = 44;
+    private static final int NODE_HEIGHT = 30;
     private static final int XP_BAR_WIDTH = 90;
 
     private final Map<SkillNode, int[]> rects = new LinkedHashMap<>();
@@ -265,6 +265,7 @@ public class SkillTreeScreen extends Screen {
 
     private Component tooltip(SkillNode node, SkillTree.State state) {
         MutableComponent kind = node.technique() ? Component.translatable("screen.bending.skill_tree.technique")
+                : node.stat() ? Component.translatable("screen.bending.skill_tree.stat")
                 : node.ability() != null ? Component.translatable("screen.bending.skill_tree.ability",
                         Component.translatable("screen.bending.slot." + slotName(node)))
                 : Component.translatable("screen.bending.skill_tree.ability_soon");
@@ -282,7 +283,7 @@ public class SkillTreeScreen extends Screen {
         Component status = switch (state) {
             case LEARNED -> Component.translatable(node.ability() != null
                     ? "screen.bending.skill_tree.learned_ability"
-                    : node.technique() ? "screen.bending.skill_tree.learned_technique"
+                    : node.technique() || node.stat() ? "screen.bending.skill_tree.learned_technique"
                     : "screen.bending.skill_tree.learned").withStyle(ChatFormatting.GREEN);
             case AVAILABLE -> Component.translatable("screen.bending.skill_tree.click_learn").withStyle(ChatFormatting.YELLOW);
             case NEED_POINTS -> Component.translatable("screen.bending.skill_tree.need_points").withStyle(ChatFormatting.RED);

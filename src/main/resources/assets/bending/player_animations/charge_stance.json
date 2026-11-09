@@ -1,0 +1,313 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "charge_stance": {
+   "animation_length": 1.2,
+   "bones": {
+    "body": {
+     "position": {
+      "0.0": {
+       "vector": [
+        0,
+        -2.5,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.6": {
+       "vector": [
+        0,
+        -3,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.2": {
+       "vector": [
+        0,
+        -2.5,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     }
+    },
+    "right_leg": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        -12,
+        0,
+        14
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -12,
+        0,
+        14
+       ]
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        -25,
+        0,
+        0
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -25,
+        0,
+        0
+       ]
+      }
+     }
+    },
+    "left_leg": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        16,
+        0,
+        -14
+       ]
+      },
+      "1.2": {
+       "vector": [
+        16,
+        0,
+        -14
+       ]
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        -25,
+        0,
+        0
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -25,
+        0,
+        0
+       ]
+      }
+     }
+    },
+    "torso": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        0,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.6": {
+       "vector": [
+        0,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.2": {
+       "vector": [
+        0,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        12,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.6": {
+       "vector": [
+        14,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.2": {
+       "vector": [
+        12,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     }
+    },
+    "right_arm": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        -55,
+        -25,
+        -30
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.3": {
+       "vector": [
+        -75,
+        -15,
+        -15
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.6": {
+       "vector": [
+        -60,
+        -30,
+        -5
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.9": {
+       "vector": [
+        -40,
+        -20,
+        -25
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.2": {
+       "vector": [
+        -55,
+        -25,
+        -30
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        -70,
+        0,
+        0
+       ]
+      },
+      "0.6": {
+       "vector": [
+        -55,
+        0,
+        0
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -70,
+        0,
+        0
+       ]
+      }
+     }
+    },
+    "left_arm": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        -55,
+        25,
+        30
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.3": {
+       "vector": [
+        -40,
+        20,
+        25
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.6": {
+       "vector": [
+        -60,
+        30,
+        5
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.9": {
+       "vector": [
+        -75,
+        15,
+        15
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.2": {
+       "vector": [
+        -55,
+        25,
+        30
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        -70,
+        0,
+        0
+       ]
+      },
+      "0.6": {
+       "vector": [
+        -55,
+        0,
+        0
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -70,
+        0,
+        0
+       ]
+      }
+     }
+    },
+    "head": {
+     "rotation": {
+      "0.0": {
+       "vector": [
+        -8,
+        0,
+        0
+       ]
+      },
+      "1.2": {
+       "vector": [
+        -8,
+        0,
+        0
+       ]
+      }
+     }
+    }
+   },
+   "loop": true
+  }
+ }
+}

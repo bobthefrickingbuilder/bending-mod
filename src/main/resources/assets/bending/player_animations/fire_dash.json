@@ -1,0 +1,93 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "fire_dash": {
+   "animation_length": 1.0,
+   "bones": {
+    "body": {
+     "rotation": {
+      "vector": [
+       "math.clamp(12 + 58 * math.clamp(q.ground_speed / 1.2, 0, 1) - 40 * math.clamp(q.vertical_speed / 0.9, -1, 1), -5, 105)",
+       0,
+       0
+      ]
+     }
+    },
+    "head": {
+     "rotation": {
+      "vector": [
+       "-0.75 * math.clamp(12 + 58 * math.clamp(q.ground_speed / 1.2, 0, 1) - 40 * math.clamp(q.vertical_speed / 0.9, -1, 1), -5, 105)",
+       0,
+       0
+      ]
+     }
+    },
+    "right_arm": {
+     "rotation": {
+      "vector": [
+       "20 + 25 * math.clamp(q.ground_speed / 1.2, 0, 1) - 15 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
+       0,
+       "38 - 20 * math.clamp(q.ground_speed / 1.2, 0, 1)"
+      ]
+     },
+     "bend": {
+      "vector": [
+       "-30 + 22 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       0,
+       0
+      ]
+     }
+    },
+    "left_arm": {
+     "rotation": {
+      "vector": [
+       "20 + 25 * math.clamp(q.ground_speed / 1.2, 0, 1) - 15 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
+       0,
+       "-38 + 20 * math.clamp(q.ground_speed / 1.2, 0, 1)"
+      ]
+     },
+     "bend": {
+      "vector": [
+       "-30 + 22 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       0,
+       0
+      ]
+     }
+    },
+    "right_leg": {
+     "rotation": {
+      "vector": [
+       "-35 + 50 * math.clamp(q.ground_speed / 1.2, 0, 1) + 10 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
+       0,
+       "3"
+      ]
+     },
+     "bend": {
+      "vector": [
+       "-70 + 65 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       0,
+       0
+      ]
+     }
+    },
+    "left_leg": {
+     "rotation": {
+      "vector": [
+       "-5 + 35 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       0,
+       "-3"
+      ]
+     },
+     "bend": {
+      "vector": [
+       "-35 + 10 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       0,
+       0
+      ]
+     }
+    }
+   },
+   "loop": true
+  }
+ }
+}

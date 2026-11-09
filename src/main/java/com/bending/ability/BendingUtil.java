@@ -58,8 +58,10 @@ public final class BendingUtil {
             }
             amount *= 1f + COMBO_BONUS * data.comboStacks;
         }
-        if (fireSeconds > 0 && FireTechniques.has(data, FireTechniques.BLUE_FIRE)) {
-            fireSeconds = Math.round(fireSeconds * FireTechniques.BLUE_FIRE_BURN);
+        if (fireSeconds > 0) {
+            float burn = com.bending.skill.SkillStats.burnMultiplier(data)
+                    * (FireTechniques.has(data, FireTechniques.BLUE_FIRE) ? FireTechniques.BLUE_FIRE_BURN : 1f);
+            fireSeconds = Math.round(fireSeconds * burn);
         }
         // Skip vanilla's half-second damage immunity: without cooldowns, follow-up hits land inside
         // that window and would otherwise lose most of their damage.
@@ -142,9 +144,11 @@ public final class BendingUtil {
             level.playSound(null, center.x, center.y, center.z, ModSounds.FIRE_EXPLOSION.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
         }
         level.sendParticles(FireFx.core(bender), center.x, center.y, center.z, 3, 0.2, 0.2, 0.2, 0.0);
-        level.sendParticles(FireFx.wisp(bender), center.x, center.y, center.z, 30, radius * 0.2, radius * 0.2, radius * 0.2, 0.12);
-        level.sendParticles(FireFx.spark(bender), center.x, center.y, center.z, 10, 0.2, 0.2, 0.2, 0.3);
-        level.sendParticles(FireFx.ember(bender), center.x, center.y, center.z, 6, 0.3, 0.3, 0.3, 0.15);
+        level.sendParticles(FireFx.wisp(bender), center.x, center.y, center.z, (int) (30 + radius * 12), radius * 0.3, radius * 0.3, radius * 0.3, 0.18);
+        // A rolling fireball swelling out of the blast.
+        level.sendParticles(FireFx.cloud(bender), center.x, center.y, center.z, (int) (4 + radius * 3), radius * 0.25, radius * 0.2, radius * 0.25, 0.12);
+        level.sendParticles(FireFx.spark(bender), center.x, center.y, center.z, (int) (10 + radius * 4), 0.3, 0.3, 0.3, 0.4);
+        level.sendParticles(FireFx.ember(bender), center.x, center.y, center.z, (int) (6 + radius * 3), 0.4, 0.4, 0.4, 0.25);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), center.x, center.y, center.z, 4, 0.3, 0.3, 0.3, 0.02);
         for (LivingEntity target : livingAround(bender, center, radius)) {
             if (target != exclude) {

@@ -21,18 +21,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Fire Arc: a wide crescent of fire that sweeps forward, passing through everything it hits.
+ * Fire Arc: a wide crescent of fire (7 blocks across) that sweeps 18 blocks forward, passing through everything it hits.
  * Drawn entirely with particles (server side), so it has no model.
  */
 public class FireArcEntity extends Entity {
     public static final double SPEED = 1.2;
-    public static final double RANGE = 12.0;
-    /** Half the crescent's width (4 blocks across). */
-    private static final double HALF_WIDTH = 2.0;
+    public static final double RANGE = 18.0;
+    /** Half the crescent's width (7 blocks across). */
+    private static final double HALF_WIDTH = 3.5;
     /** How far the crescent's tips trail behind its middle. */
-    private static final double BEND = 0.9;
-    private static final int POINTS = 11;
-    private static final double HIT_RADIUS = 0.9;
+    private static final double BEND = 1.5;
+    private static final int POINTS = 17;
+    private static final double HIT_RADIUS = 1.2;
 
     @Nullable
     private ServerPlayer owner;
@@ -84,9 +84,14 @@ public class FireArcEntity extends Entity {
             double u = (i / (double) (POINTS - 1)) * 2 - 1;                 // -1 .. 1 across the crescent
             Vec3 p = position().add(side.scale(u * HALF_WIDTH)).subtract(dir.scale(BEND * u * u));
             // Flames drift back along the path, so their tips trail behind the sweep.
-            level.sendParticles(FireFx.wisp(owner), p.x, p.y, p.z, 0, -dir.x, -dir.y + 0.15, -dir.z, 0.15);
+            for (int k = 0; k < 2; k++) {
+                level.sendParticles(FireFx.wisp(owner), p.x, p.y + (k - 0.5) * 0.35, p.z, 0, -dir.x, -dir.y + 0.15, -dir.z, 0.15 + k * 0.1);
+            }
+            if (i % 2 == 0) {
+                level.sendParticles(FireFx.cloud(owner), p.x, p.y, p.z, 0, -dir.x, -dir.y + 0.2, -dir.z, 0.12);
+            }
             if (i % 3 == 0) {
-                level.sendParticles(FireFx.spark(owner), p.x, p.y, p.z, 1, 0.1, 0.1, 0.1, 0.05);
+                level.sendParticles(FireFx.spark(owner), p.x, p.y, p.z, 2, 0.15, 0.15, 0.15, 0.08);
             }
             for (LivingEntity target : BendingUtil.livingAround(owner, p, HIT_RADIUS)) {
                 if (hits.add(target.getId())) {

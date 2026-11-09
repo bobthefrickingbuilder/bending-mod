@@ -63,6 +63,9 @@ public class FireballCharge extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        if (ticks == 1) {
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
+        }
         ServerLevel level = player.serverLevel();
         float progress = fraction(ticks);
         ChargeOrbEntity orb = data.chargeOrb instanceof ChargeOrbEntity existing && !existing.isRemoved() ? existing : null;
@@ -97,6 +100,7 @@ public class FireballCharge extends Ability {
 
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.CHARGE_RELEASE);
         removeOrb(data);
         float f = fraction(ticks);
         Vec3 look = player.getLookAngle();

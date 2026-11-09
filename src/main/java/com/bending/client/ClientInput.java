@@ -45,6 +45,8 @@ public final class ClientInput {
     private static boolean sneakWasDown;
     /** True while the innate dash is being channelled (Ctrl held). */
     private static boolean dashing;
+    /** Last dash-ready (Ctrl held on the ground) state sent to the server. */
+    private static boolean sentDashReady;
     private static int dashTicks;
     private static int airJumpsUsed;
     private static byte sentForward;
@@ -103,6 +105,12 @@ public final class ClientInput {
      */
     private static boolean tickDash(Minecraft mc, BendingData data, boolean jumpPressed) {
         boolean ctrl = data.bendingMode && mc.screen == null && physicallyDown(mc, mc.options.keySprint);
+        // Holding Ctrl on the ground: crouch, ready to launch (everyone sees it).
+        boolean ready = ctrl && !dashing && mc.player.onGround();
+        if (ready != sentDashReady) {
+            sentDashReady = ready;
+            PacketDistributor.sendToServer(new com.bending.network.DashReadyPayload(ready));
+        }
         boolean started = false;
         if (!dashing && ctrl && jumpPressed) {
             sendMoveInput(mc, true); // before the press, so the launch already knows your keys

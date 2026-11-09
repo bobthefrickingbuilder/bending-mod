@@ -105,6 +105,11 @@ public abstract class Ability {
     public void onChargeCancelled(ServerPlayer player, BendingData data) {}
 
     /** If true, taking damage while this ability is active cancels it (Lightning's calm mind). */
+    /** Movement speed while this is being cast (1 = normal; 0.3 = crouch speed). */
+    public float castMoveSpeed() {
+        return 1f;
+    }
+
     public boolean cancelWhenHurt() {
         return false;
     }

@@ -4,6 +4,7 @@ import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
 import com.bending.ability.CastType;
 import com.bending.ability.fire.FireTechniques;
+import com.bending.skill.SkillStats;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
@@ -119,6 +120,10 @@ public final class CastHandler {
 
     /** Called every server tick for each player. */
     public static void tick(ServerPlayer player, BendingData data) {
+        com.bending.ability.BendingAnimations.tick(player, data);
+        com.bending.ability.fire.Lightning.tickStored(player, data);
+        Ability casting = data.activeSlot == -1 ? null : abilityIn(data, data.activeSlot);
+        updateCastSlow(player, casting == null ? 1f : casting.castMoveSpeed());
         if (data.activeSlot == -1) {
             return;
         }
@@ -202,12 +207,31 @@ public final class CastHandler {
         }
     }
 
+    private static final net.minecraft.resources.ResourceLocation CAST_SLOW =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(com.bending.BendingMod.MODID, "cast_slow");
+
+    /** Slows you while casting something heavy (Dragon's Breath), and lifts it when you stop. */
+    private static void updateCastSlow(ServerPlayer player, float speed) {
+        var attribute = player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+        if (attribute == null) {
+            return;
+        }
+        boolean has = attribute.hasModifier(CAST_SLOW);
+        if (speed < 1f && !has) {
+            attribute.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(CAST_SLOW, speed - 1f,
+                    net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        } else if (speed >= 1f && has) {
+            attribute.removeModifier(CAST_SLOW);
+        }
+    }
+
     public static void cancel(BendingData data) {
         data.activeSlot = -1;
         data.activeTicks = 0;
     }
 
     private static boolean spend(ServerPlayer player, BendingData data, float cost) {
+        cost *= SkillStats.chiCostMultiplier(data);
         if (cost <= 0f) {
             return true;
         }
@@ -232,7 +256,7 @@ public final class CastHandler {
     }
 
     private static boolean canAfford(ServerPlayer player, BendingData data, float amount) {
-        return data.hasInfiniteChi() || data.getChi() + hungerChi(player, data) >= amount;
+        return data.hasInfiniteChi() || data.getChi() + hungerChi(player, data) >= amount * SkillStats.chiCostMultiplier(data);
     }
 
     /** Pays what chi can't cover out of hunger. False (nothing spent) if that's not enough either. */

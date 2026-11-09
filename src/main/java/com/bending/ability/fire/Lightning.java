@@ -38,8 +38,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Slot 4 (single target): charge for 1.5 s, then release a lightning bolt along your line of sight.
- * It hits the first target for 32 and chains to up to 2 more within 5 blocks for 16 each.
+ * Slot 4: charge for 1.5 s to store 4 bolts of lightning, crackling around you. While they last,
+ * Fire Blast throws a bolt instead of a fireball: it hits the first target along your line of sight
+ * for 20 and chains to up to 2 more within 5 blocks for 10 each. (A redirected bolt hits for 32/16.)
  * In rain or water it chains to everything nearby, including you.
  *
  * Calm mind: you can't start charging within 3 s of being hurt, and getting hit while
@@ -100,6 +101,9 @@ public class Lightning extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        if (ticks == 1) {
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
+        }
         ServerLevel level = player.serverLevel();
         RandomSource random = level.getRandom();
         float progress = Math.min(1f, ticks / (float) FULL_CHARGE);
@@ -160,13 +164,76 @@ public class Lightning extends Ability {
         return true;
     }
 
+    /** A full charge holds this many bolts; each Fire Blast fires one instead of a fireball. */
+    public static final int STORED_BOLTS = 4;
+    private static final float STORED_DAMAGE = 20f;
+    private static final float STORED_CHAIN_DAMAGE = 10f;
+
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
-        fireBolt(player, data, power);
+        // The charge isn't thrown: it stays in you, crackling, until you spend it with Fire Blast.
+        data.lightningCharges = STORED_BOLTS;
+        ServerLevel level = player.serverLevel();
+        Vec3[] hands = hands(player);
+        for (Vec3 hand : hands) {
+            level.sendParticles(ModParticles.LIGHTNING_ARC.get(), hand.x, hand.y, hand.z, 30, 0.3, 0.3, 0.3, 0.2);
+        }
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                ModSounds.LIGHTNING_READY.get(), SoundSource.PLAYERS, 1.0f, 1.2f);
+        showStored(player, data);
     }
 
-    /** Fires a bolt along the bender's line of sight: from a full charge, or lightning they redirected. */
+    /** Fire Blast with lightning stored: one bolt instead of a fireball. */
+    public static void fireStored(ServerPlayer player, BendingData data, float power) {
+        data.lightningCharges--;
+        fireBolt(player, data, power, STORED_DAMAGE, STORED_CHAIN_DAMAGE);
+        showStored(player, data);
+    }
+
+    private static void showStored(ServerPlayer player, BendingData data) {
+        player.displayClientMessage(Component.translatable("message.bending.lightning_stored", data.lightningCharges)
+                .withStyle(ChatFormatting.AQUA), true);
+    }
+
+    /**
+     * Every tick: while lightning is stored, a cloud of electricity hangs around you. It thins out
+     * with each bolt you spend.
+     */
+    public static void tickStored(ServerPlayer player, BendingData data) {
+        if (data.lightningCharges <= 0) {
+            return;
+        }
+        ServerLevel level = player.serverLevel();
+        RandomSource random = level.getRandom();
+        float f = data.lightningCharges / (float) STORED_BOLTS;
+        Vec3[] hands = hands(player);
+        for (Vec3 hand : hands) {
+            level.sendParticles(ModParticles.LIGHTNING_ARC.get(), hand.x, hand.y, hand.z, 1 + (int) (f * 4), 0.2, 0.2, 0.2, 0.06);
+        }
+        level.sendParticles(ModParticles.LIGHTNING_ARC.get(), player.getX(), player.getY() + 1.0, player.getZ(),
+                (int) (f * 7), 0.4 + 0.35 * f, 0.6 + 0.3 * f, 0.4 + 0.35 * f, 0.04);
+        // Arcs snapping between your hands and out into the air.
+        if (random.nextFloat() < 0.35f * f) {
+            spawnArc(level, jitter(hands[0], random, 0.1), jitter(hands[1], random, 0.1), 0.2f + 0.15f * f, 2);
+        }
+        if (random.nextFloat() < 0.3f * f) {
+            Vec3 from = hands[random.nextInt(2)];
+            Vec3 dir = new Vec3(random.nextGaussian(), random.nextGaussian() * 0.7, random.nextGaussian()).normalize();
+            spawnArc(level, from, from.add(dir.scale(0.5 + random.nextDouble() * (0.5 + 1.2 * f))), 0.2f + 0.15f * f, 2);
+        }
+        if (level.getGameTime() % 10 == 0) {
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    ModSounds.LIGHTNING_CHARGE.get(), SoundSource.PLAYERS, 0.15f + 0.2f * f, 1.4f);
+        }
+    }
+
+    /** A redirected bolt: full strength. */
     private static void fireBolt(ServerPlayer player, BendingData data, float power) {
+        fireBolt(player, data, power, DAMAGE, CHAIN_DAMAGE);
+    }
+
+    /** Fires a bolt along the bender's line of sight: a stored bolt, or lightning they redirected. */
+    private static void fireBolt(ServerPlayer player, BendingData data, float power, float damage, float chainDamage) {
         ServerLevel level = player.serverLevel();
         Vec3 look = player.getLookAngle();
         Vec3 start = player.getEyePosition();
@@ -179,7 +246,6 @@ public class Lightning extends Ability {
 
         // From the leading hand, slightly in front so it doesn't fill your screen.
         Vec3 hand = start.add(look.scale(0.9)).add(0, -0.3, 0);
-        player.swing(InteractionHand.MAIN_HAND, true);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.LIGHTNING_STRIKE.get(), SoundSource.PLAYERS, 1.2f, 1.0f);
         // Recoil sparks off your hands.
@@ -196,7 +262,7 @@ public class Lightning extends Ability {
         }
         Vec3 firstAt = centre(first);
         spawnArc(level, hand, firstAt, 1.0f, 6);
-        strike(player, first, DAMAGE * power, hand);
+        strike(player, first, damage * power, hand);
 
         // Chain: normally to the 2 nearest others; in rain or water, to everything (you included).
         boolean wet = player.isInWaterOrRain() || first.isInWaterOrRain();
@@ -206,7 +272,7 @@ public class Lightning extends Ability {
         List<LivingEntity> chained = wet ? nearby : nearby.subList(0, Math.min(CHAIN_TARGETS, nearby.size()));
         for (LivingEntity target : chained) {
             spawnArc(level, firstAt, centre(target), 0.7f, 5);
-            strike(player, target, CHAIN_DAMAGE * power, firstAt);
+            strike(player, target, chainDamage * power, firstAt);
         }
         if (wet && player.distanceToSqr(firstAt) <= CHAIN_RANGE * CHAIN_RANGE * 4) {
             spawnArc(level, firstAt, centre(player), 0.7f, 5);

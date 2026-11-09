@@ -61,7 +61,13 @@ public class DragonsBreath extends Ability {
     }
 
     @Override
+    public float castMoveSpeed() {
+        return 0.3f; // planted, shuffling at crouch speed while you breathe
+    }
+
+    @Override
     public void onStart(ServerPlayer player, BendingData data, float power) {
+        com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.BREATH_STANCE);
         ServerLevel level = player.serverLevel();
         level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.DRAGONS_BREATH_START.get(), SoundSource.PLAYERS, 1.5f, 0.6f);
     }
