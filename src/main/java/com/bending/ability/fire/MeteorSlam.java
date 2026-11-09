@@ -29,7 +29,13 @@ import net.minecraft.world.phys.Vec3;
 public class MeteorSlam extends Ability {
     /** Minimum height above the ground to start a slam, so stepping off a block doesn't trigger it. */
     private static final double MIN_HEIGHT = 2.5;
+    /**
+     * The dive picks up speed the longer it lasts: it starts at 2 blocks per tick and gains 0.15 every
+     * tick, up to 6 (reached after about 1.3 s of diving).
+     */
     private static final double DIVE_SPEED = 2.0;
+    private static final double DIVE_ACCELERATION = 0.15;
+    private static final double MAX_DIVE_SPEED = 6.0;
     /** The dive always points at least this much downward (about 25 degrees below horizontal). */
     private static final double MIN_DOWN = 0.42;
     /**
@@ -96,6 +102,11 @@ public class MeteorSlam extends Ability {
         level.sendParticles(FireFx.spark(player), player.getX(), player.getY() + 0.8, player.getZ(), 10, 0.3, 0.3, 0.3, 0.2);
     }
 
+    /** Speed (blocks per tick) after diving for {@code ticks} ticks. */
+    private static double diveSpeed(int ticks) {
+        return Math.min(MAX_DIVE_SPEED, DIVE_SPEED + DIVE_ACCELERATION * ticks);
+    }
+
     /** Where you're looking, bent down if needed so the dive always heads toward the ground. */
     private static Vec3 diveDirection(Vec3 look) {
         if (look.y <= -MIN_DOWN) {
@@ -126,16 +137,27 @@ public class MeteorSlam extends Ability {
             return;
         }
         Vec3 dir = data.slamDir;
-        player.setDeltaMovement(dir.scale(DIVE_SPEED));
+        double speed = diveSpeed(data.slamTicks);
+        player.setDeltaMovement(dir.scale(speed));
         player.hurtMarked = true;
         player.fallDistance = 0;
 
-        // A comet tail: flames streaming back off you along the dive.
+        // A comet tail: flames streaming back off you along the dive, longer and fuller as you speed up.
         RandomSource random = level.getRandom();
-        for (int i = 0; i < 6; i++) {
+        double heat = (speed - DIVE_SPEED) / (MAX_DIVE_SPEED - DIVE_SPEED); // 0 at the start, 1 at top speed
+        int tongues = 6 + (int) (heat * 14);
+        for (int i = 0; i < tongues; i++) {
+            // Spread the tail over the whole distance covered this tick, so it stays solid at speed.
+            double back = random.nextDouble() * speed;
             level.sendParticles(FireFx.wisp(player),
-                    player.getX() + random.nextGaussian() * 0.25, player.getY() + 0.2 + random.nextDouble() * 1.4,
-                    player.getZ() + random.nextGaussian() * 0.25, 0, -dir.x, -dir.y, -dir.z, 0.35 + random.nextDouble() * 0.3);
+                    player.getX() - dir.x * back + random.nextGaussian() * 0.3, player.getY() + 0.2 + random.nextDouble() * 1.4 - dir.y * back,
+                    player.getZ() - dir.z * back + random.nextGaussian() * 0.3, 0, -dir.x, -dir.y, -dir.z, 0.35 + random.nextDouble() * 0.3);
+        }
+        int clouds = 1 + (int) (heat * 4);
+        for (int i = 0; i < clouds; i++) {
+            double back = 1 + random.nextDouble() * speed;
+            level.sendParticles(FireFx.cloud(player), player.getX() - dir.x * back, player.getY() + 0.9 - dir.y * back,
+                    player.getZ() - dir.z * back, 0, -dir.x, -dir.y, -dir.z, 0.2 + random.nextDouble() * 0.2);
         }
         level.sendParticles(FireFx.spark(player), player.getX(), player.getY() + 0.5, player.getZ(), 3, 0.3, 0.5, 0.3, 0.05);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() + 1.6, player.getZ(), 1, 0.2, 0.2, 0.2, 0.02);
