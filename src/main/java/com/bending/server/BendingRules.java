@@ -1,0 +1,42 @@
+package com.bending.server;
+
+import com.bending.ability.fire.FireConditions;
+import com.bending.data.Element;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+
+/** Element-specific world rules: where you can bend, and how strong you are right now. */
+public final class BendingRules {
+    private BendingRules() {}
+
+    public static boolean canBend(ServerPlayer player, Element element) {
+        return switch (element) {
+            case FIRE -> FireConditions.canBend(player);
+            default -> true;
+        };
+    }
+
+    public static Component cannotBendMessage(Element element) {
+        return switch (element) {
+            case FIRE -> Component.translatable("message.bending.fire_underwater");
+            default -> Component.empty();
+        };
+    }
+
+    /** Damage multiplier from the environment. */
+    public static float power(ServerPlayer player, Element element) {
+        return switch (element) {
+            case FIRE -> FireConditions.power(player);
+            default -> 1f;
+        };
+    }
+
+    /** Chi regeneration multiplier from the environment. */
+    public static float regen(ServerPlayer player, Element element) {
+        return switch (element) {
+            case FIRE -> FireConditions.regen(player);
+            default -> 1f;
+        };
+    }
+}

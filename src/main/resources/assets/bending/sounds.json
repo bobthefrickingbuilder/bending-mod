@@ -1,0 +1,164 @@
+{
+  "fire.explosion": {
+    "subtitle": "subtitles.bending.fire.explosion",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event"
+      }
+    ]
+  },
+  "fire.melt": {
+    "subtitle": "subtitles.bending.fire.melt",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event"
+      }
+    ]
+  },
+  "fire.fizzle": {
+    "subtitle": "subtitles.bending.fire.fizzle",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_hop": {
+    "subtitle": "subtitles.bending.fire_hop",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_blast.cast": {
+    "subtitle": "subtitles.bending.fire_blast.cast",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_shield.loop": {
+    "subtitle": "subtitles.bending.fire_shield.loop",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.ambient",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_shield.block": {
+    "subtitle": "subtitles.bending.fire_shield.block",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_shield.deflect": {
+    "subtitle": "subtitles.bending.fire_shield.deflect",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event"
+      }
+    ]
+  },
+  "flame_burst": {
+    "subtitle": "subtitles.bending.flame_burst",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_jet_dash.launch": {
+    "subtitle": "subtitles.bending.fire_jet_dash.launch",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "fire_jet_dash.thrust": {
+    "subtitle": "subtitles.bending.fire_jet_dash.thrust",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "firestorm.charge": {
+    "subtitle": "subtitles.bending.firestorm.charge",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.burn",
+        "type": "event"
+      }
+    ]
+  },
+  "firestorm.erupt": {
+    "subtitle": "subtitles.bending.firestorm.erupt",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "combustion_beam.charge": {
+    "subtitle": "subtitles.bending.combustion_beam.charge",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.burn",
+        "type": "event"
+      }
+    ]
+  },
+  "combustion_beam.ready": {
+    "subtitle": "subtitles.bending.combustion_beam.ready",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "combustion_beam.fire": {
+    "subtitle": "subtitles.bending.combustion_beam.fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "bending_mode.on": {
+    "subtitle": "subtitles.bending.bending_mode.on",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "bending_mode.off": {
+    "subtitle": "subtitles.bending.bending_mode.off",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event"
+      }
+    ]
+  }
+}
