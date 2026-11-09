@@ -59,7 +59,7 @@ public class FireShield extends Ability {
         }
         ServerLevel level = player.serverLevel();
         Vec3 center = player.getEyePosition().add(player.getLookAngle().scale(SHIELD_DISTANCE));
-        level.sendParticles(ModParticles.FIRE_WISP.get(), center.x, center.y, center.z, 15, 0.4, 0.4, 0.4, 0.1);
+        level.sendParticles(FireFx.wisp(player), center.x, center.y, center.z, 15, 0.4, 0.4, 0.4, 0.1);
         level.playSound(null, center.x, center.y, center.z, ModSounds.FIRE_SHIELD_BLOCK.get(), SoundSource.PLAYERS, 0.6f, 1.6f);
         return source.is(DamageTypeTags.IS_PROJECTILE) ? 0f : amount * (1f - MELEE_BLOCK);
     }
@@ -90,7 +90,7 @@ public class FireShield extends Ability {
             double angle = player.getRandom().nextDouble() * Math.PI * 2;
             double r = SHIELD_RADIUS * Math.sqrt(player.getRandom().nextDouble());
             Vec3 p = center.add(right.scale(Math.cos(angle) * r)).add(up.scale(Math.sin(angle) * r));
-            level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 1, 0, 0, 0, 0.01);
+            level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 1, 0, 0, 0, 0.01);
         }
 
         if (BendingUtil.destroyProjectiles(level, player, center, SHIELD_RADIUS + 1.0) > 0) {
@@ -111,7 +111,7 @@ public class FireShield extends Ability {
         Vec3 pos = player.position();
         BendingUtil.terrainBlast(level, player, pos.add(0, 0.5, 0), BURST_TERRAIN_POWER);
         for (double r = 1; r <= BURST_RADIUS; r += 1) {
-            BendingUtil.ring(level, ModParticles.FIRE_WISP.get(), pos.add(0, 0.6, 0), r, (int) (r * 12));
+            BendingUtil.ring(level, FireFx.wisp(player), pos.add(0, 0.6, 0), r, (int) (r * 12));
         }
         for (LivingEntity target : BendingUtil.livingAround(player, pos, BURST_RADIUS)) {
             BendingUtil.damage(player, target, 8f * power, 2); // Flame Burst

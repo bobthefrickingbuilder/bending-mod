@@ -9,6 +9,7 @@ import com.bending.ability.CastType;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
+import com.bending.network.CombatStatePayload;
 import com.bending.network.EquipAbilityPayload;
 import com.bending.server.BendingService;
 
@@ -54,7 +55,8 @@ public class LoadoutScreen extends Screen {
 
     /** Changes whenever the server sends a new loadout, so the buttons can be rebuilt. */
     private String signatureOf(BendingData data) {
-        StringBuilder s = new StringBuilder(String.valueOf(minecraft.player.isCreative())).append(data.getSkillPoints());
+        StringBuilder s = new StringBuilder(String.valueOf(minecraft.player.isCreative())).append(data.getSkillPoints())
+                .append(CombatStatePayload.clientInCombat);
         for (int slot = 0; slot < BendingData.SLOTS; slot++) {
             s.append('|').append(data.getLoadout(slot));
         }
@@ -74,6 +76,7 @@ public class LoadoutScreen extends Screen {
         columnWidth = (panel - GAP * 3) / 4;
         left = (width - panel) / 2;
         boolean creative = BendingService.canUseLocked(minecraft.player);
+        boolean combat = CombatStatePayload.clientInCombat;
 
         int tallest = 1;
         for (int slot = 0; slot < BendingData.SLOTS; slot++) {
@@ -96,9 +99,9 @@ public class LoadoutScreen extends Screen {
                 Button button = addRenderableWidget(Button.builder(label, b ->
                         PacketDistributor.sendToServer(new EquipAbilityPayload(s, equipped ? "" : ability.id())))
                         .bounds(x, y, columnWidth, ROW)
-                        .tooltip(Tooltip.create(tooltip(ability, equipped, unlocked, creative)))
+                        .tooltip(Tooltip.create(tooltip(ability, equipped, unlocked, creative, combat)))
                         .build());
-                button.active = unlocked || creative;
+                button.active = (unlocked || creative) && !combat;
                 y += ROW + ROW_GAP;
                 rows++;
             }
@@ -114,7 +117,7 @@ public class LoadoutScreen extends Screen {
         }
     }
 
-    private Component tooltip(Ability ability, boolean equipped, boolean unlocked, boolean creative) {
+    private Component tooltip(Ability ability, boolean equipped, boolean unlocked, boolean creative, boolean combat) {
         MutableComponent text = ability.displayName().copy().withStyle(ChatFormatting.BOLD)
                 .append(Component.literal("\n"))
                 .append(castHint(ability).copy().withStyle(ChatFormatting.GRAY))
@@ -122,12 +125,13 @@ public class LoadoutScreen extends Screen {
                 .append(chiText(ability).copy().withStyle(ChatFormatting.AQUA))
                 .append(Component.literal("\n"))
                 .append(ability.description().copy().withStyle(ChatFormatting.WHITE));
-        Component status = equipped ? Component.translatable("screen.bending.loadout.click_unequip")
+        Component status = combat ? Component.translatable("screen.bending.loadout.locked_combat")
+                : equipped ? Component.translatable("screen.bending.loadout.click_unequip")
                 : unlocked ? Component.translatable("screen.bending.loadout.click_equip")
                 : creative ? Component.translatable("screen.bending.loadout.locked_creative")
                 : Component.translatable("screen.bending.loadout.locked");
         return text.append(Component.literal("\n")).append(status.copy().withStyle(
-                unlocked ? ChatFormatting.YELLOW : ChatFormatting.RED));
+                unlocked && !combat ? ChatFormatting.YELLOW : ChatFormatting.RED));
     }
 
     private static Component castHint(Ability ability) {
@@ -219,6 +223,9 @@ public class LoadoutScreen extends Screen {
             }
         }
 
+        if (CombatStatePayload.clientInCombat) {
+            g.drawCenteredString(font, Component.translatable("screen.bending.loadout.combat"), width / 2, 22, 0xFF5555);
+        }
         Component hint = BendingService.canUseLocked(minecraft.player)
                 ? Component.translatable("screen.bending.loadout.hint_creative")
                 : Component.translatable("screen.bending.loadout.hint");

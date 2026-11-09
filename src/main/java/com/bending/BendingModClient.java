@@ -66,6 +66,7 @@ public class BendingModClient {
         // Drawn entirely with particles, so no model.
         event.registerEntityRenderer(ModEntities.FIRESTORM.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.FIRE_ARC.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.WALL_OF_FIRE.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.LIGHTNING_ARC.get(), com.bending.client.render.LightningArcRenderer::new);
     }
 
@@ -78,10 +79,19 @@ public class BendingModClient {
         register(event, ModParticles.FIRE_SMOKE.get(), CelParticle.Kind.SMOKE);
         register(event, ModParticles.STEAM.get(), CelParticle.Kind.STEAM);
         register(event, ModParticles.LIGHTNING_ARC.get(), CelParticle.Kind.ARC);
+        // Blue Fire: same shapes, blue colour ramp.
+        register(event, ModParticles.BLUE_FIRE_WISP.get(), CelParticle.Kind.WISP, true);
+        register(event, ModParticles.BLUE_FIRE_CORE.get(), CelParticle.Kind.CORE, true);
+        register(event, ModParticles.BLUE_FIRE_SPARK.get(), CelParticle.Kind.SPARK, true);
+        register(event, ModParticles.BLUE_EMBER.get(), CelParticle.Kind.EMBER, true);
     }
 
     private static void register(RegisterParticleProvidersEvent event, SimpleParticleType type, CelParticle.Kind kind) {
+        register(event, type, kind, false);
+    }
+
+    private static void register(RegisterParticleProvidersEvent event, SimpleParticleType type, CelParticle.Kind kind, boolean blue) {
         event.registerSpriteSet(type, sprites -> (t, level, x, y, z, xd, yd, zd) ->
-                new CelParticle(level, x, y, z, xd, yd, zd, sprites, kind));
+                new CelParticle(level, x, y, z, xd, yd, zd, sprites, kind, blue));
     }
 }

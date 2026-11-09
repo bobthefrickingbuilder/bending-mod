@@ -33,7 +33,7 @@ public class FireBlastRenderer extends EntityRenderer<FireBlastEntity> {
             pose.translate(0, entity.getBbHeight() / 2, 0);
             Vec3 v = entity.getDeltaMovement();
             Vec3 trail = v.lengthSqr() > 1e-4 ? v.normalize().scale(-1) : null;
-            FlameBall.render(pose, buffers, SCALE * fade, entity.tickCount + partialTicks, trail);
+            FlameBall.render(pose, buffers, SCALE * entity.getBallScale() * fade, entity.tickCount + partialTicks, trail, entity.isBlue());
             pose.popPose();
         }
         super.render(entity, yaw, partialTicks, pose, buffers, light);

@@ -281,7 +281,9 @@ public class SkillTreeScreen extends Screen {
         text.append(Component.literal("\n")).append(node.description().copy().withStyle(ChatFormatting.WHITE));
         Component status = switch (state) {
             case LEARNED -> Component.translatable(node.ability() != null
-                    ? "screen.bending.skill_tree.learned_ability" : "screen.bending.skill_tree.learned").withStyle(ChatFormatting.GREEN);
+                    ? "screen.bending.skill_tree.learned_ability"
+                    : node.technique() ? "screen.bending.skill_tree.learned_technique"
+                    : "screen.bending.skill_tree.learned").withStyle(ChatFormatting.GREEN);
             case AVAILABLE -> Component.translatable("screen.bending.skill_tree.click_learn").withStyle(ChatFormatting.YELLOW);
             case NEED_POINTS -> Component.translatable("screen.bending.skill_tree.need_points").withStyle(ChatFormatting.RED);
             case NEED_PREVIOUS -> Component.translatable("screen.bending.skill_tree.need_previous").withStyle(ChatFormatting.RED);

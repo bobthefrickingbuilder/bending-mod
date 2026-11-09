@@ -1,5 +1,6 @@
 package com.bending.entity;
 
+import com.bending.ability.fire.FireFx;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,7 +73,7 @@ public class FireArcEntity extends Entity {
         // The middle of the crescent stops at walls (with a small burst); it passes through creatures.
         BlockPos blockAt = BlockPos.containing(next);
         if (!level.getBlockState(blockAt).getCollisionShape(level, blockAt).isEmpty() || isInWater()) {
-            level.sendParticles(ModParticles.FIRE_WISP.get(), getX(), getY(), getZ(), 12, 0.6, 0.3, 0.6, 0.05);
+            level.sendParticles(FireFx.wisp(owner), getX(), getY(), getZ(), 12, 0.6, 0.3, 0.6, 0.05);
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), getX(), getY(), getZ(), 4, 0.5, 0.2, 0.5, 0.02);
             discard();
             return;
@@ -83,9 +84,9 @@ public class FireArcEntity extends Entity {
             double u = (i / (double) (POINTS - 1)) * 2 - 1;                 // -1 .. 1 across the crescent
             Vec3 p = position().add(side.scale(u * HALF_WIDTH)).subtract(dir.scale(BEND * u * u));
             // Flames drift back along the path, so their tips trail behind the sweep.
-            level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 0, -dir.x, -dir.y + 0.15, -dir.z, 0.15);
+            level.sendParticles(FireFx.wisp(owner), p.x, p.y, p.z, 0, -dir.x, -dir.y + 0.15, -dir.z, 0.15);
             if (i % 3 == 0) {
-                level.sendParticles(ModParticles.FIRE_SPARK.get(), p.x, p.y, p.z, 1, 0.1, 0.1, 0.1, 0.05);
+                level.sendParticles(FireFx.spark(owner), p.x, p.y, p.z, 1, 0.1, 0.1, 0.1, 0.05);
             }
             for (LivingEntity target : BendingUtil.livingAround(owner, p, HIT_RADIUS)) {
                 if (hits.add(target.getId())) {

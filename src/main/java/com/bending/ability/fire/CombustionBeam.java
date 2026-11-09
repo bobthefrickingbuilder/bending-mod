@@ -91,9 +91,9 @@ public class CombustionBeam extends Ability {
                     .normalize().scale(1.2);
             Vec3 p = focus.add(dir);
             Vec3 inward = dir.scale(-0.12);
-            level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 0, inward.x, inward.y, inward.z, 1.0);
+            level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 0, inward.x, inward.y, inward.z, 1.0);
         }
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), focus.x, focus.y, focus.z, 1 + (int) (progress * 4), 0.05, 0.05, 0.05, 0.005);
+        level.sendParticles(FireFx.spark(player), focus.x, focus.y, focus.z, 1 + (int) (progress * 4), 0.05, 0.05, 0.05, 0.005);
 
         if (ticks == FULL_CHARGE) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.COMBUSTION_BEAM_READY.get(), SoundSource.PLAYERS, 0.7f, 1.8f);
@@ -132,9 +132,9 @@ public class CombustionBeam extends Ability {
         double length = impact.distanceTo(from);
         for (double d = 0; d < length; d += 0.4) {
             Vec3 p = from.add(look.scale(d));
-            level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 2, 0.04 + 0.06 * charge, 0.04 + 0.06 * charge, 0.04 + 0.06 * charge, 0.0);
+            level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 2, 0.04 + 0.06 * charge, 0.04 + 0.06 * charge, 0.04 + 0.06 * charge, 0.0);
             if (d % 2.0 < 0.4) {
-                level.sendParticles(ModParticles.EMBER.get(), p.x, p.y, p.z, 1, 0, 0, 0, 0);
+                level.sendParticles(FireFx.ember(player), p.x, p.y, p.z, 1, 0, 0, 0, 0);
             }
         }
 

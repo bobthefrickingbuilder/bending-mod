@@ -3,6 +3,7 @@ package com.bending.server;
 import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
 import com.bending.ability.CastType;
+import com.bending.ability.fire.FireTechniques;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
@@ -101,7 +102,7 @@ public final class CastHandler {
             case TAP_OR_HOLD -> Math.min(ability.chiCost(0), ability.chiPerTick() * TAP_THRESHOLD);
             default -> ability.chiPerTick() * 5;
         };
-        if (data.getChi() < needed) {
+        if (!canAfford(player, data, needed)) {
             noChi(player);
             return;
         }
@@ -210,12 +211,46 @@ public final class CastHandler {
         if (cost <= 0f) {
             return true;
         }
-        if (!data.trySpend(cost)) {
+        if (!data.trySpend(cost) && !burnHunger(player, data, cost)) {
             noChi(player);
             return false;
         }
         player.causeFoodExhaustion(cost * EXHAUSTION_PER_CHI);
         data.lastCastTime = player.level().getGameTime();
+        return true;
+    }
+
+    /** Breath of Fire: chi you lack can be paid with hunger, down to the last hunger point. */
+    private static final float CHI_PER_HUNGER = 10f;
+    private static final int MIN_FOOD = 1;
+
+    private static float hungerChi(ServerPlayer player, BendingData data) {
+        if (!FireTechniques.has(data, FireTechniques.BREATH_OF_FIRE)) {
+            return 0f;
+        }
+        return Math.max(0f, (player.getFoodData().getFoodLevel() - MIN_FOOD) * CHI_PER_HUNGER - data.breathDebt);
+    }
+
+    private static boolean canAfford(ServerPlayer player, BendingData data, float amount) {
+        return data.hasInfiniteChi() || data.getChi() + hungerChi(player, data) >= amount;
+    }
+
+    /** Pays what chi can't cover out of hunger. False (nothing spent) if that's not enough either. */
+    private static boolean burnHunger(ServerPlayer player, BendingData data, float cost) {
+        float deficit = cost - data.getChi();
+        if (deficit > hungerChi(player, data)) {
+            return false;
+        }
+        data.setChi(0f);
+        data.breathDebt += deficit;
+        var food = player.getFoodData();
+        while (data.breathDebt >= CHI_PER_HUNGER) {
+            data.breathDebt -= CHI_PER_HUNGER;
+            food.setFoodLevel(Math.max(MIN_FOOD, food.getFoodLevel() - 1));
+            // A deep, smoky breath.
+            player.serverLevel().sendParticles(com.bending.particle.ModParticles.FIRE_SMOKE.get(),
+                    player.getX(), player.getEyeY() - 0.2, player.getZ(), 4, 0.2, 0.1, 0.2, 0.02);
+        }
         return true;
     }
 

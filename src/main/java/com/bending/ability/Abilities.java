@@ -7,7 +7,11 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.bending.ability.fire.BlazingLeap;
 import com.bending.ability.fire.CombustionBeam;
+import com.bending.ability.fire.DragonsBreath;
+import com.bending.ability.fire.FireballCharge;
+import com.bending.ability.fire.WallOfFire;
 import com.bending.ability.fire.FireArc;
 import com.bending.ability.fire.FlameParry;
 import com.bending.ability.fire.JetPropulsion;
@@ -34,6 +38,10 @@ public final class Abilities {
     public static final Ability JET_PROPULSION = register(new JetPropulsion());
     public static final Ability LIGHTNING = register(new Lightning());
     public static final Ability METEOR_SLAM = register(new MeteorSlam());
+    public static final Ability FIREBALL_CHARGE = register(new FireballCharge());
+    public static final Ability WALL_OF_FIRE = register(new WallOfFire());
+    public static final Ability BLAZING_LEAP = register(new BlazingLeap());
+    public static final Ability DRAGONS_BREATH = register(new DragonsBreath());
 
     private Abilities() {}
 

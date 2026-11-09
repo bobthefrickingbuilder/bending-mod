@@ -40,6 +40,12 @@ public final class FireConditions {
         return m;
     }
 
+    /** Sun up in a world with a day cycle (not the Nether or the End). */
+    public static boolean isDaytime(ServerPlayer player) {
+        Level level = player.level();
+        return !level.dimensionType().hasFixedTime() && level.isDay();
+    }
+
     private static boolean isInRain(ServerPlayer player) {
         return player.level().isRainingAt(player.blockPosition().above());
     }

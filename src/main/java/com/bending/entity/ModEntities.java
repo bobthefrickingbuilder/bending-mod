@@ -55,5 +55,14 @@ public final class ModEntities {
                     .fireImmune()
                     .build("lightning_arc"));
 
+    public static final Supplier<EntityType<WallOfFireEntity>> WALL_OF_FIRE = ENTITY_TYPES.register("wall_of_fire",
+            () -> EntityType.Builder.<WallOfFireEntity>of(WallOfFireEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .noSave()
+                    .fireImmune()
+                    .build("wall_of_fire"));
+
     private ModEntities() {}
 }

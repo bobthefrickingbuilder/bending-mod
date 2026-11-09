@@ -47,8 +47,8 @@ public class FlameParry extends Ability {
         // A quick flare of flame in front of your hands.
         Vec3 look = player.getLookAngle();
         Vec3 front = player.getEyePosition().add(look.scale(0.9)).add(0, -0.3, 0);
-        level.sendParticles(ModParticles.FIRE_WISP.get(), front.x, front.y, front.z, 8, 0.35, 0.35, 0.35, 0.02);
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), front.x, front.y, front.z, 4, 0.3, 0.3, 0.3, 0.05);
+        level.sendParticles(FireFx.wisp(player), front.x, front.y, front.z, 8, 0.35, 0.35, 0.35, 0.02);
+        level.sendParticles(FireFx.spark(player), front.x, front.y, front.z, 4, 0.3, 0.3, 0.3, 0.05);
         player.swing(InteractionHand.MAIN_HAND, true);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FLAME_PARRY_READY.get(), SoundSource.PLAYERS, 0.6f, 1.5f);
@@ -68,8 +68,8 @@ public class FlameParry extends Ability {
         }
         ServerLevel level = player.serverLevel();
         Vec3 front = player.getEyePosition().add(player.getLookAngle().scale(0.9));
-        level.sendParticles(ModParticles.FIRE_CORE.get(), front.x, front.y, front.z, 2, 0.1, 0.1, 0.1, 0);
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), front.x, front.y, front.z, 10, 0.2, 0.2, 0.2, 0.25);
+        level.sendParticles(FireFx.core(player), front.x, front.y, front.z, 2, 0.1, 0.1, 0.1, 0);
+        level.sendParticles(FireFx.spark(player), front.x, front.y, front.z, 10, 0.2, 0.2, 0.2, 0.25);
 
         if (!data.parryCountered) {
             data.parryCountered = true;
@@ -81,10 +81,10 @@ public class FlameParry extends Ability {
                 Vec3 step = to.subtract(front);
                 for (double d = 0; d < 1; d += 0.12) {
                     Vec3 p = front.add(step.scale(d));
-                    level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 0, step.x, step.y, step.z, 0.05);
+                    level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 0, step.x, step.y, step.z, 0.05);
                 }
-                level.sendParticles(ModParticles.FIRE_WISP.get(), to.x, to.y, to.z, 15, 0.3, 0.4, 0.3, 0.08);
-                BendingUtil.damage(player, attacker, COUNTER_DAMAGE * FireConditions.power(player), 4);
+                level.sendParticles(FireFx.wisp(player), to.x, to.y, to.z, 15, 0.3, 0.4, 0.3, 0.08);
+                BendingUtil.damage(player, attacker, COUNTER_DAMAGE * com.bending.server.BendingRules.power(player, Element.FIRE), 4);
                 BendingUtil.knockAway(attacker, player.position(), 1.0);
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(),

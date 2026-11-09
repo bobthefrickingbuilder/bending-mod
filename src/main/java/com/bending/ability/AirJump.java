@@ -1,5 +1,6 @@
 package com.bending.ability;
 
+import com.bending.ability.fire.FireFx;
 import com.bending.particle.ModParticles;
 import com.bending.sound.ModSounds;
 
@@ -46,7 +47,7 @@ public final class AirJump {
         player.fallDistance = 0;
 
         ServerLevel level = player.serverLevel();
-        level.sendParticles(ModParticles.FIRE_WISP.get(), player.getX(), player.getY(), player.getZ(), 12, 0.25, 0.05, 0.25, 0.04);
+        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY(), player.getZ(), 12, 0.25, 0.05, 0.25, 0.04);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY(), player.getZ(), 4, 0.2, 0.05, 0.2, 0.02);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_HOP.get(), SoundSource.PLAYERS, 0.4f, 1.8f);

@@ -1,5 +1,6 @@
 package com.bending.entity;
 
+import com.bending.ability.fire.FireFx;
 import com.bending.particle.ModParticles;
 
 import javax.annotation.Nullable;
@@ -11,7 +12,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +37,11 @@ public class FireBlastEntity extends Projectile {
      * doesn't flash in the viewer's face). Set by the client; always false on a server.
      */
     public static java.util.function.Predicate<Vec3> tooCloseToCamera = p -> false;
+    private static final EntityDataAccessor<Boolean> BLUE =
+            SynchedEntityData.defineId(FireBlastEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Size of the ball (1 = a normal Fire Blast); charged fireballs are bigger. */
+    private static final EntityDataAccessor<Float> BALL_SCALE =
+            SynchedEntityData.defineId(FireBlastEntity.class, EntityDataSerializers.FLOAT);
     private static final int MAX_LIFE = 14; // ~40 blocks at the default speed
     /** Snow and ice within this many blocks of the impact melt. */
     private static final int MELT_RADIUS = 2;
@@ -44,6 +54,10 @@ public class FireBlastEntity extends Projectile {
     private static final float TERRAIN_POWER = 1.6f;
 
     private float damage = 4f;
+    private double splashRadius = SPLASH_RADIUS;
+    private float terrainPower = TERRAIN_POWER;
+    private int lingeringFires = LINGERING_FIRES;
+    private int maxLife = MAX_LIFE;
 
     public FireBlastEntity(EntityType<? extends FireBlastEntity> type, Level level) {
         super(type, level);
@@ -53,10 +67,46 @@ public class FireBlastEntity extends Projectile {
         this(ModEntities.FIRE_BLAST.get(), level);
         setOwner(owner);
         this.damage = damage;
+        entityData.set(BLUE, com.bending.ability.fire.FireTechniques.blue(owner));
+    }
+
+    /** A bigger blast (Fireball Charge). */
+    public FireBlastEntity configure(float scale, double splashRadius, float terrainPower, int lingeringFires, int maxLife) {
+        entityData.set(BALL_SCALE, scale);
+        this.splashRadius = splashRadius;
+        this.terrainPower = terrainPower;
+        this.lingeringFires = lingeringFires;
+        this.maxLife = maxLife;
+        refreshDimensions();
+        return this;
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(BLUE, false);
+        builder.define(BALL_SCALE, 1f);
+    }
+
+    public boolean isBlue() {
+        return entityData.get(BLUE);
+    }
+
+    public float getBallScale() {
+        return entityData.get(BALL_SCALE);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (BALL_SCALE.equals(key)) {
+            refreshDimensions();
+        }
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return super.getDimensions(pose).scale(getBallScale());
+    }
 
     @Override
     public void tick() {
@@ -69,7 +119,7 @@ public class FireBlastEntity extends Projectile {
                 discard();
                 return;
             }
-            if (tickCount > MAX_LIFE) {
+            if (tickCount > maxLife) {
                 discard();
                 return;
             }
@@ -90,7 +140,7 @@ public class FireBlastEntity extends Projectile {
         if (level.isClientSide) {
             // The glowing ball itself is drawn by FireBlastRenderer; sparks flick off it.
             if (random.nextInt(2) == 0 && !tooCloseToCamera.test(position())) {
-                level.addParticle(ModParticles.FIRE_SPARK.get(), getX(), getY(), getZ(),
+                level.addParticle(FireFx.spark(isBlue()), getX(), getY(), getZ(),
                         (random.nextDouble() - 0.5) * 0.3, (random.nextDouble() - 0.5) * 0.3, (random.nextDouble() - 0.5) * 0.3);
             }
             // Comet tail: it moves 3 blocks a tick, so fill in flame tongues along the whole step.
@@ -104,10 +154,11 @@ public class FireBlastEntity extends Projectile {
                 if (tooCloseToCamera.test(new Vec3(x, y, z))) {
                     continue;
                 }
-                level.addParticle(ModParticles.FIRE_WISP.get(),
-                        x + (random.nextDouble() - 0.5) * 0.25,
-                        y + (random.nextDouble() - 0.5) * 0.25,
-                        z + (random.nextDouble() - 0.5) * 0.25,
+                double spread = 0.25 * getBallScale();
+                level.addParticle(FireFx.wisp(isBlue()),
+                        x + (random.nextDouble() - 0.5) * spread,
+                        y + (random.nextDouble() - 0.5) * spread,
+                        z + (random.nextDouble() - 0.5) * spread,
                         -v.x * 0.03, -v.y * 0.03, -v.z * 0.03);
             }
             if (tickCount % 3 == 0) {
@@ -145,24 +196,34 @@ public class FireBlastEntity extends Projectile {
             return;
         }
         if (getOwner() instanceof ServerPlayer bender) {
-            BendingUtil.fireBurst(bender, point, SPLASH_RADIUS, damage * SPLASH_FRACTION, 0.4, 2, directHit, TERRAIN_POWER);
+            BendingUtil.fireBurst(bender, point, splashRadius, damage * SPLASH_FRACTION, 0.4 * getBallScale(), 2, directHit, terrainPower);
         } else {
-            BendingUtil.terrainBlast(level, this, point, TERRAIN_POWER);
+            BendingUtil.terrainBlast(level, this, point, terrainPower);
         }
         // Melt first, so fire can land where the snow was.
-        BendingUtil.meltSnowAndIce(level, BlockPos.containing(point), MELT_RADIUS);
-        BendingUtil.scatterFire(level, firePos, LINGERING_FIRES);
+        BendingUtil.meltSnowAndIce(level, BlockPos.containing(point), Math.round(MELT_RADIUS * getBallScale()));
+        BendingUtil.scatterFire(level, firePos, lingeringFires);
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putFloat("damage", damage);
+        tag.putFloat("scale", getBallScale());
+        tag.putDouble("splash", splashRadius);
+        tag.putFloat("terrain", terrainPower);
+        tag.putInt("fires", lingeringFires);
+        tag.putInt("life", maxLife);
+        tag.putBoolean("blue", isBlue());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         damage = tag.getFloat("damage");
+        if (tag.contains("scale")) {
+            configure(tag.getFloat("scale"), tag.getDouble("splash"), tag.getFloat("terrain"), tag.getInt("fires"), tag.getInt("life"));
+        }
+        entityData.set(BLUE, tag.getBoolean("blue"));
     }
 }

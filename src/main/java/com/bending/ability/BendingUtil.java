@@ -1,5 +1,6 @@
 package com.bending.ability;
 
+import com.bending.ability.fire.FireFx;
 import com.bending.particle.ModParticles;
 import com.bending.sound.ModSounds;
 
@@ -9,6 +10,9 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.bending.server.BendingService;
+import com.bending.ability.fire.FireTechniques;
+import com.bending.data.BendingData;
+import com.bending.data.ModAttachments;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -45,6 +49,18 @@ public final class BendingUtil {
      * @return true if the damage was applied
      */
     public static boolean damage(ServerPlayer bender, LivingEntity target, float amount, int fireSeconds) {
+        BendingData data = bender.getData(ModAttachments.BENDING);
+        long now = bender.level().getGameTime();
+        boolean dancing = FireTechniques.has(data, FireTechniques.DANCING_DRAGON);
+        if (dancing) {
+            if (now - data.comboLastHit > COMBO_WINDOW) {
+                data.comboStacks = 0; // the rhythm broke
+            }
+            amount *= 1f + COMBO_BONUS * data.comboStacks;
+        }
+        if (fireSeconds > 0 && FireTechniques.has(data, FireTechniques.BLUE_FIRE)) {
+            fireSeconds = Math.round(fireSeconds * FireTechniques.BLUE_FIRE_BURN);
+        }
         // Skip vanilla's half-second damage immunity: without cooldowns, follow-up hits land inside
         // that window and would otherwise lose most of their damage.
         target.invulnerableTime = 0;
@@ -54,9 +70,23 @@ public final class BendingUtil {
                 target.igniteForSeconds(fireSeconds);
             }
             BendingService.addXp(bender, Math.max(1, Math.round(amount)));
+            if (dancing && data.comboLastHit != now) {
+                // One stack per tick at most, so a single blast hitting a crowd counts once.
+                data.comboStacks = Math.min(COMBO_MAX, data.comboStacks + 1);
+                data.comboLastHit = now;
+                if (data.comboStacks >= 2 && data.activeSlot == -1) {
+                    bender.displayClientMessage(Component.translatable("message.bending.combo", data.comboStacks,
+                            Math.round(COMBO_BONUS * 100 * data.comboStacks)).withColor(0xFFB43A), true);
+                }
+            }
         }
         return hurt;
     }
+
+    /** Dancing Dragon: +5% damage per back-to-back hit, up to 5 stacks; 3 s without a hit resets it. */
+    private static final float COMBO_BONUS = 0.05f;
+    private static final int COMBO_MAX = 5;
+    private static final int COMBO_WINDOW = 60;
 
     /** Living entities within {@code radius} of {@code center}, excluding the bender. */
     public static List<LivingEntity> livingAround(ServerPlayer bender, Vec3 center, double radius) {
@@ -111,10 +141,10 @@ public final class BendingUtil {
             level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 1, 0, 0, 0, 0);
             level.playSound(null, center.x, center.y, center.z, ModSounds.FIRE_EXPLOSION.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
         }
-        level.sendParticles(ModParticles.FIRE_CORE.get(), center.x, center.y, center.z, 3, 0.2, 0.2, 0.2, 0.0);
-        level.sendParticles(ModParticles.FIRE_WISP.get(), center.x, center.y, center.z, 30, radius * 0.2, radius * 0.2, radius * 0.2, 0.12);
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), center.x, center.y, center.z, 10, 0.2, 0.2, 0.2, 0.3);
-        level.sendParticles(ModParticles.EMBER.get(), center.x, center.y, center.z, 6, 0.3, 0.3, 0.3, 0.15);
+        level.sendParticles(FireFx.core(bender), center.x, center.y, center.z, 3, 0.2, 0.2, 0.2, 0.0);
+        level.sendParticles(FireFx.wisp(bender), center.x, center.y, center.z, 30, radius * 0.2, radius * 0.2, radius * 0.2, 0.12);
+        level.sendParticles(FireFx.spark(bender), center.x, center.y, center.z, 10, 0.2, 0.2, 0.2, 0.3);
+        level.sendParticles(FireFx.ember(bender), center.x, center.y, center.z, 6, 0.3, 0.3, 0.3, 0.15);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), center.x, center.y, center.z, 4, 0.3, 0.3, 0.3, 0.02);
         for (LivingEntity target : livingAround(bender, center, radius)) {
             if (target != exclude) {

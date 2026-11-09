@@ -1,6 +1,7 @@
 package com.bending.server;
 
 import com.bending.ability.fire.FireConditions;
+import com.bending.ability.fire.FireTechniques;
 import com.bending.data.Element;
 
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,8 @@ public final class BendingRules {
     /** Damage multiplier from the environment. */
     public static float power(ServerPlayer player, Element element) {
         return switch (element) {
-            case FIRE -> FireConditions.power(player);
+            case FIRE -> FireConditions.power(player)
+                    * (FireTechniques.blue(player) ? FireTechniques.BLUE_FIRE_POWER : 1f);
             default -> 1f;
         };
     }
@@ -35,7 +37,8 @@ public final class BendingRules {
     /** Chi regeneration multiplier from the environment. */
     public static float regen(ServerPlayer player, Element element) {
         return switch (element) {
-            case FIRE -> FireConditions.regen(player);
+            case FIRE -> FireConditions.regen(player)
+                    * (FireTechniques.has(player, FireTechniques.DANCING_DRAGON) && FireConditions.isDaytime(player) ? 1.5f : 1f);
             default -> 1f;
         };
     }

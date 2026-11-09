@@ -92,8 +92,8 @@ public class MeteorSlam extends Ability {
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.METEOR_SLAM_DIVE.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
-        level.sendParticles(ModParticles.FIRE_WISP.get(), player.getX(), player.getY() + 0.8, player.getZ(), 25, 0.4, 0.4, 0.4, 0.1);
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), player.getX(), player.getY() + 0.8, player.getZ(), 10, 0.3, 0.3, 0.3, 0.2);
+        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.8, player.getZ(), 25, 0.4, 0.4, 0.4, 0.1);
+        level.sendParticles(FireFx.spark(player), player.getX(), player.getY() + 0.8, player.getZ(), 10, 0.3, 0.3, 0.3, 0.2);
     }
 
     /** Where you're looking, bent down if needed so the dive always heads toward the ground. */
@@ -133,11 +133,11 @@ public class MeteorSlam extends Ability {
         // A comet tail: flames streaming back off you along the dive.
         RandomSource random = level.getRandom();
         for (int i = 0; i < 6; i++) {
-            level.sendParticles(ModParticles.FIRE_WISP.get(),
+            level.sendParticles(FireFx.wisp(player),
                     player.getX() + random.nextGaussian() * 0.25, player.getY() + 0.2 + random.nextDouble() * 1.4,
                     player.getZ() + random.nextGaussian() * 0.25, 0, -dir.x, -dir.y, -dir.z, 0.35 + random.nextDouble() * 0.3);
         }
-        level.sendParticles(ModParticles.FIRE_SPARK.get(), player.getX(), player.getY() + 0.5, player.getZ(), 3, 0.3, 0.5, 0.3, 0.05);
+        level.sendParticles(FireFx.spark(player), player.getX(), player.getY() + 0.5, player.getZ(), 3, 0.3, 0.5, 0.3, 0.05);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() + 1.6, player.getZ(), 1, 0.2, 0.2, 0.2, 0.02);
     }
 
@@ -171,7 +171,7 @@ public class MeteorSlam extends Ability {
         BendingUtil.fireBurst(player, centre, radius, damage, 1.3 + Math.min(1.0, over * 0.03), 3, null, explosionPower);
         if (explosionPower > 0f) {
             level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, at.x, at.y, at.z, 1, 0, 0, 0, 0);
-            level.sendParticles(ModParticles.FIRE_WISP.get(), at.x, at.y + 1, at.z, 60, radius * 0.3, 1.0, radius * 0.3, 0.25);
+            level.sendParticles(FireFx.wisp(player), at.x, at.y + 1, at.z, 60, radius * 0.3, 1.0, radius * 0.3, 0.25);
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), at.x, at.y + 1.5, at.z, 20, radius * 0.3, 1.0, radius * 0.3, 0.05);
         }
         for (LivingEntity target : BendingUtil.livingAround(player, centre, radius)) {
@@ -188,10 +188,10 @@ public class MeteorSlam extends Ability {
             double a = i * Math.PI * 2 / count;
             double dx = Math.cos(a), dz = Math.sin(a);
             double ahead = Math.max(0, dx * forward.x + dz * forward.z) * lean;
-            level.sendParticles(ModParticles.FIRE_WISP.get(), at.x + dx * 0.5, at.y, at.z + dz * 0.5,
+            level.sendParticles(FireFx.wisp(player), at.x + dx * 0.5, at.y, at.z + dz * 0.5,
                     0, dx, 0.04, dz, (0.45 + radius * 0.06) * (1 + 1.2 * ahead));
             if (i % 2 == 0) {
-                level.sendParticles(ModParticles.FIRE_SPARK.get(), at.x, at.y + 0.1, at.z, 0, dx, 0.15, dz, 0.9);
+                level.sendParticles(FireFx.spark(player), at.x, at.y + 0.1, at.z, 0, dx, 0.15, dz, 0.9);
                 level.sendParticles(ModParticles.FIRE_SMOKE.get(), at.x + dx * 0.8, at.y, at.z + dz * 0.8,
                         0, dx, 0.05, dz, 0.15);
             }
@@ -202,13 +202,13 @@ public class MeteorSlam extends Ability {
             for (int i = 0; i < 24; i++) {
                 double spread = (random.nextDouble() - 0.5) * 0.7;
                 Vec3 d = forward.add(-forward.z * spread, 0.05 + random.nextDouble() * 0.15, forward.x * spread);
-                level.sendParticles(ModParticles.FIRE_WISP.get(), at.x, at.y + 0.2, at.z, 0, d.x, d.y, d.z,
+                level.sendParticles(FireFx.wisp(player), at.x, at.y + 0.2, at.z, 0, d.x, d.y, d.z,
                         0.6 + random.nextDouble() * 0.6);
             }
         }
         // A pillar of flame and embers thrown up from the crater.
-        level.sendParticles(ModParticles.FIRE_WISP.get(), at.x, at.y + 0.5, at.z, 30, 0.5, 0.8, 0.5, 0.15);
-        level.sendParticles(ModParticles.EMBER.get(), at.x, at.y + 0.3, at.z, 24, 0.8, 0.3, 0.8, 0.25);
+        level.sendParticles(FireFx.wisp(player), at.x, at.y + 0.5, at.z, 30, 0.5, 0.8, 0.5, 0.15);
+        level.sendParticles(FireFx.ember(player), at.x, at.y + 0.3, at.z, 24, 0.8, 0.3, 0.8, 0.25);
         level.playSound(null, at.x, at.y, at.z, ModSounds.METEOR_SLAM_IMPACT.get(), SoundSource.PLAYERS,
                 1.0f + (float) Math.min(1.0, height / 20), 0.7f);
     }

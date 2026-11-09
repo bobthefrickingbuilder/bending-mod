@@ -38,6 +38,15 @@ public final class FlameBall {
      * @param trail  direction the flames should stream (opposite of travel), or null for none
      */
     public static void render(PoseStack pose, MultiBufferSource buffers, float scale, float time, @Nullable Vec3 trail) {
+        render(pose, buffers, scale, time, trail, false);
+    }
+
+    /** As above; {@code blue} = Blue Fire colours. */
+    public static void render(PoseStack pose, MultiBufferSource buffers, float scale, float time, @Nullable Vec3 trail, boolean blue) {
+        int[] tongue = blue ? new int[] {60, 125, 255} : new int[] {255, 110, 25};
+        int[] ring = blue ? new int[] {75, 155, 255} : new int[] {255, 140, 30};
+        int[] swirl = blue ? new int[] {125, 205, 255} : new int[] {255, 200, 70};
+        int[] heart = blue ? new int[] {228, 246, 255} : new int[] {255, 250, 215};
         VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
         Minecraft mc = Minecraft.getInstance();
         pose.pushPose();
@@ -60,7 +69,7 @@ public final class FlameBall {
                     pose.mulPose(Axis.ZP.rotation(angle + (i - 1) * 0.35f + 0.08f * (float) Math.sin(time * 2.3f + i)));
                     pose.translate(0, (0.55f + 0.25f * stretch) * scale, 0);
                     quad(vc, pose, 0.32f * scale, (0.45f + 0.35f * stretch) * scale, frame(time, i + 1),
-                            255, 110, 25, 230);
+                            tongue[0], tongue[1], tongue[2], 230);
                     pose.popPose();
                 }
             }
@@ -71,7 +80,7 @@ public final class FlameBall {
             pose.pushPose();
             pose.mulPose(Axis.ZP.rotation((float) (i * Math.PI * 2 / RING_TONGUES) + time * 0.12f));
             pose.translate(0, 0.42f * scale, 0.001f * i);
-            quad(vc, pose, 0.4f * scale * flicker, 0.4f * scale * flicker, frame(time, i), 255, 140, 30, 235);
+            quad(vc, pose, 0.4f * scale * flicker, 0.4f * scale * flicker, frame(time, i), ring[0], ring[1], ring[2], 235);
             pose.popPose();
         }
 
@@ -79,11 +88,11 @@ public final class FlameBall {
         pose.translate(0, 0, 0.02f);
         pose.pushPose();
         pose.mulPose(Axis.ZP.rotation(-time * 0.15f));
-        quad(vc, pose, 0.6f * scale * flicker, 0.6f * scale * flicker, 0, 255, 200, 70, 230);
+        quad(vc, pose, 0.6f * scale * flicker, 0.6f * scale * flicker, 0, swirl[0], swirl[1], swirl[2], 230);
         pose.popPose();
         pose.translate(0, 0, 0.01f);
         pose.mulPose(Axis.ZP.rotation(-time * 0.25f));
-        quad(vc, pose, 0.4f * scale, 0.4f * scale, 0, 255, 250, 215, 255);
+        quad(vc, pose, 0.4f * scale, 0.4f * scale, 0, heart[0], heart[1], heart[2], 255);
         pose.popPose();
     }
 

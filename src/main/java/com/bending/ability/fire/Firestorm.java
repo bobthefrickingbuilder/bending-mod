@@ -64,11 +64,11 @@ public class Firestorm extends Ability {
             double angle = player.getRandom().nextDouble() * Math.PI * 2;
             Vec3 p = center.add(Math.cos(angle) * radius, 0.2 + player.getRandom().nextDouble() * 1.6, Math.sin(angle) * radius);
             Vec3 toCenter = center.add(0, 1, 0).subtract(p).scale(0.08);
-            level.sendParticles(ModParticles.FIRE_WISP.get(), p.x, p.y, p.z, 0, toCenter.x, toCenter.y, toCenter.z, 1.0);
+            level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 0, toCenter.x, toCenter.y, toCenter.z, 1.0);
         }
         // Mark where the ring will reach.
         if (ticks % 4 == 0) {
-            BendingUtil.ring(level, ModParticles.FIRE_SPARK.get(), center.add(0, 0.1, 0), RING_RADIUS, 36);
+            BendingUtil.ring(level, FireFx.spark(player), center.add(0, 0.1, 0), RING_RADIUS, 36);
             level.playSound(null, center.x, center.y, center.z, ModSounds.FIRESTORM_CHARGE.get(), SoundSource.PLAYERS, 0.8f, 0.5f + progress);
         }
         BendingUtil.chargeBar(player, progress);

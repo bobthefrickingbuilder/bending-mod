@@ -39,6 +39,7 @@ public final class BendingServerEvents {
 
     public static void register(IEventBus bus) {
         bus.addListener(BendingServerEvents::onPlayerTick);
+        bus.addListener(BendingServerEvents::putOutFire);
         bus.addListener(BendingServerEvents::onLogin);
         bus.addListener(BendingServerEvents::onRespawn);
         bus.addListener(BendingServerEvents::onChangeDimension);
@@ -46,6 +47,18 @@ public final class BendingServerEvents {
         bus.addListener(BendingServerEvents::onIncomingDamage);
         bus.addListener(BendingServerEvents::onFall);
         bus.addListener(BendingServerEvents::onRegisterCommands);
+    }
+
+    /**
+     * Firebenders never burn: any flames on them go out at once, on both sides, so the burning
+     * overlay and the flames drawn on the body never show (other players see it through the
+     * synced on-fire flag, which the server clears).
+     */
+    private static void putOutFire(PlayerTickEvent.Post event) {
+        var player = event.getEntity();
+        if (player.getRemainingFireTicks() > 0 && player.getData(ModAttachments.BENDING).getElement() == Element.FIRE) {
+            player.clearFire();
+        }
     }
 
     private static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -75,6 +88,12 @@ public final class BendingServerEvents {
             MeteorSlam.tickSlam(player, data);
         }
 
+        boolean inCombat = now < data.combatUntil;
+        if (inCombat != data.combatSent) {
+            data.combatSent = inCombat;
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, new com.bending.network.CombatStatePayload(inCombat));
+        }
+
         if (data.activeSlot == -1 && now - data.lastCastTime >= REGEN_DELAY && data.getChi() < data.getMaxChi()) {
             data.addChi(REGEN_PER_TICK * BendingRules.regen(player, element));
         }
@@ -95,6 +114,7 @@ public final class BendingServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             CastHandler.cancel(player.getData(ModAttachments.BENDING));
             player.getData(ModAttachments.BENDING).slamming = false;
+            player.getData(ModAttachments.BENDING).combatUntil = 0;
             BendingNetwork.sync(player);
         }
     }
@@ -114,12 +134,24 @@ public final class BendingServerEvents {
         }
     }
 
-    /** Blocking from held abilities, then the firebender passive "Inner Fire" (half fire damage, no freezing). */
+    /** Blocking from held abilities, then the firebender passive "Inner Fire" (immune to fire and freezing, half lava damage). */
     private static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        // Hitting something puts you in combat (the loadout locks for a few seconds).
+        if (event.getSource().getEntity() instanceof ServerPlayer attacker && attacker != event.getEntity()) {
+            BendingService.markCombat(attacker);
+        }
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         BendingData data = player.getData(ModAttachments.BENDING);
+        if (event.getSource().getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker && attacker != player) {
+            BendingService.markCombat(player);
+        }
+        if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.LIGHTNING_BOLT)
+                && com.bending.ability.fire.Lightning.tryRedirect(player, data, null)) {
+            event.setCanceled(true);
+            return;
+        }
         if (FlameParry.tryParry(player, data, event.getSource())) {
             event.setCanceled(true);
             return;
@@ -145,8 +177,10 @@ public final class BendingServerEvents {
         }
         if (event.getSource().is(DamageTypeTags.IS_FREEZING)) {
             event.setCanceled(true);
+        } else if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.LAVA)) {
+            event.setAmount(event.getAmount() * 0.5f); // lava is molten rock, not just fire: it still hurts
         } else if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
-            event.setAmount(event.getAmount() * 0.5f);
+            event.setCanceled(true); // immune to fire, burning and fire blasts (including other benders')
         }
     }
 

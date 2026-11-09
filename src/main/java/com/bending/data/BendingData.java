@@ -72,6 +72,17 @@ public class BendingData {
     public net.minecraft.world.phys.Vec3 slamDir = net.minecraft.world.phys.Vec3.ZERO;
     public int slamTicks;
     public float slamPower = 1f;
+    /** In combat (dealt or took a hit) until this game time; the loadout is locked meanwhile. */
+    public long combatUntil;
+    /** What the client was last told about combat. */
+    public boolean combatSent;
+    /** Breath of Fire: chi borrowed from hunger that hasn't cost a hunger point yet. */
+    public float breathDebt;
+    /** Dancing Dragon combo: stacks, and when the last hit landed. */
+    public int comboStacks;
+    public long comboLastHit = -1000;
+    /** Lightning Redirection: when lightning was last caught (repeat hits right after are just absorbed). */
+    public long lastRedirect = -1000;
     /** Bending stance: abilities only work while this is on, and both hands show empty. */
     public boolean bendingMode;
     /** True once the client has received data from the server. */

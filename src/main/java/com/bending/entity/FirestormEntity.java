@@ -1,5 +1,6 @@
 package com.bending.entity;
 
+import com.bending.ability.fire.FireFx;
 import com.bending.particle.ModParticles;
 
 import java.util.HashSet;
@@ -92,8 +93,8 @@ public class FirestormEntity extends Entity {
             if (tickCount == RING_TICKS) {
                 blastCircle(level, center, radius, EDGE_BLASTS, EDGE_TERRAIN_POWER);
             }
-            BendingUtil.ring(level, ModParticles.FIRE_WISP.get(), center.add(0, 0.4, 0), radius, (int) (radius * 14));
-            BendingUtil.ring(level, ModParticles.EMBER.get(), center.add(0, 0.4, 0), radius, (int) radius);
+            BendingUtil.ring(level, FireFx.wisp(owner), center.add(0, 0.4, 0), radius, (int) (radius * 14));
+            BendingUtil.ring(level, FireFx.ember(owner), center.add(0, 0.4, 0), radius, (int) radius);
             for (LivingEntity target : BendingUtil.livingAround(owner, center, radius + 0.5)) {
                 if (ringHits.add(target.getId())) {
                     BendingUtil.damage(owner, target, 24f * power, 4); // ring: one-shots normal mobs
@@ -107,7 +108,7 @@ public class FirestormEntity extends Entity {
         for (int strand = 0; strand < 3; strand++) {
             double angle = tickCount * 0.45 + strand * (Math.PI * 2 / 3);
             double height = (tickCount % 20) / 8.0;
-            level.sendParticles(ModParticles.FIRE_WISP.get(),
+            level.sendParticles(FireFx.wisp(owner),
                     center.x + Math.cos(angle) * VORTEX_RADIUS * 0.8, center.y + height, center.z + Math.sin(angle) * VORTEX_RADIUS * 0.8,
                     2, 0.1, 0.1, 0.1, 0.01);
         }

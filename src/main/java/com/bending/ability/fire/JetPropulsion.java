@@ -50,7 +50,7 @@ public class JetPropulsion extends Ability {
     @Override
     public void onStart(ServerPlayer player, BendingData data, float power) {
         ServerLevel level = player.serverLevel();
-        level.sendParticles(ModParticles.FIRE_WISP.get(), player.getX(), player.getY(), player.getZ(), 14, 0.3, 0.05, 0.3, 0.08);
+        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY(), player.getZ(), 14, 0.3, 0.05, 0.3, 0.08);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_JET_DASH_LAUNCH.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
         if (player.onGround()) {
@@ -76,7 +76,7 @@ public class JetPropulsion extends Ability {
         float yaw = player.getYRot() * Mth.DEG_TO_RAD;
         Vec3 side = new Vec3(-Mth.cos(yaw), 0, -Mth.sin(yaw)).scale(0.2);
         for (Vec3 foot : new Vec3[] {player.position().add(side), player.position().subtract(side)}) {
-            level.sendParticles(ModParticles.FIRE_WISP.get(), foot.x, foot.y + 0.1, foot.z, 0, thrust.x, thrust.y, thrust.z, 0.3);
+            level.sendParticles(FireFx.wisp(player), foot.x, foot.y + 0.1, foot.z, 0, thrust.x, thrust.y, thrust.z, 0.3);
         }
         if (ticks % 3 == 0) {
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() - 0.3, player.getZ(), 1, 0.1, 0.1, 0.1, 0.01);

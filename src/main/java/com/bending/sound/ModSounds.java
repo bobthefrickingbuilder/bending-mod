@@ -51,6 +51,15 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> METEOR_SLAM_DIVE = register("meteor_slam.dive");
     public static final DeferredHolder<SoundEvent, SoundEvent> METEOR_SLAM_IMPACT = register("meteor_slam.impact");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIREBALL_CHARGE_CHARGE = register("fireball_charge.charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIREBALL_CHARGE_READY = register("fireball_charge.ready");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIREBALL_CHARGE_THROW = register("fireball_charge.throw");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DRAGONS_BREATH_START = register("dragons_breath.start");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DRAGONS_BREATH_LOOP = register("dragons_breath.loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WALL_OF_FIRE_RISE = register("wall_of_fire.rise");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WALL_OF_FIRE_LOOP = register("wall_of_fire.loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLAZING_LEAP_LAUNCH = register("blazing_leap.launch");
+
     // ---- Bending mode ----
     public static final DeferredHolder<SoundEvent, SoundEvent> BENDING_MODE_ON = register("bending_mode.on");
     public static final DeferredHolder<SoundEvent, SoundEvent> BENDING_MODE_OFF = register("bending_mode.off");

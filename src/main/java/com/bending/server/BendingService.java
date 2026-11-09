@@ -77,6 +77,20 @@ public final class BendingService {
         return true;
     }
 
+    /** How long a hit (dealt or taken) keeps you in combat: 5 s. */
+    public static final int COMBAT_TICKS = 100;
+
+    public static void markCombat(ServerPlayer player) {
+        BendingData data = player.getData(ModAttachments.BENDING);
+        if (data.getElement() != null) {
+            data.combatUntil = player.level().getGameTime() + COMBAT_TICKS;
+        }
+    }
+
+    public static boolean inCombat(ServerPlayer player) {
+        return player.level().getGameTime() < player.getData(ModAttachments.BENDING).combatUntil;
+    }
+
     /** Abilities you can equip without unlocking them first: everything, in creative mode (for testing). */
     public static boolean canUseLocked(net.minecraft.world.entity.player.Player player) {
         return player.isCreative();
@@ -89,6 +103,10 @@ public final class BendingService {
     public static void setSlot(ServerPlayer player, int slot, String abilityId) {
         BendingData data = player.getData(ModAttachments.BENDING);
         if (slot < 0 || slot >= BendingData.SLOTS || data.getElement() == null) {
+            return;
+        }
+        if (inCombat(player)) {
+            player.displayClientMessage(Component.translatable("message.bending.loadout_combat").withStyle(ChatFormatting.RED), true);
             return;
         }
         if (!abilityId.isEmpty()) {
@@ -125,7 +143,7 @@ public final class BendingService {
         }
         data.unlock(node.id());
         Ability ability = node.ability();
-        if (ability != null && ability.slot() != AbilitySlot.INNATE) {
+        if (ability != null && ability.slot() != AbilitySlot.INNATE && !inCombat(player)) {
             int slot = ability.slot().ordinal();
             if (data.getLoadout(slot).isEmpty()) {
                 data.setLoadout(slot, ability.id());

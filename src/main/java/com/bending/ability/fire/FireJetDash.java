@@ -36,8 +36,6 @@ public class FireJetDash extends Ability {
     private static final int TRAIL_TICKS = 8;
     private static final int NO_FALL_TICKS = 40;
     private static final double LAUNCH_BLAST_RADIUS = 2.5;
-    /** Explosion strength against terrain at the launch point (a creeper is 3). */
-    private static final float LAUNCH_TERRAIN_POWER = 1.5f;
 
     public FireJetDash() {
         super("fire_jet_dash", Element.FIRE, AbilitySlot.INNATE, CastType.HOLD);
@@ -67,9 +65,8 @@ public class FireJetDash extends Ability {
     public void onStart(ServerPlayer player, BendingData data, float power) {
         ServerLevel level = player.serverLevel();
 
-        // The explosion at the launch point hits anything standing next to you.
-        // ...and leaves a small crater behind you.
-        BendingUtil.fireBurst(player, player.position(), LAUNCH_BLAST_RADIUS, 8f * power, 0.8, 2, null, LAUNCH_TERRAIN_POWER);
+        // The explosion at the launch point hits anything standing next to you (it doesn't break blocks).
+        BendingUtil.fireBurst(player, player.position(), LAUNCH_BLAST_RADIUS, 8f * power, 0.8, 2, null, 0f);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_JET_DASH_LAUNCH.get(), SoundSource.PLAYERS, 0.8f, 1.2f);
 
@@ -96,7 +93,7 @@ public class FireJetDash extends Ability {
         // Jets of flame shooting out behind you.
         ServerLevel level = player.serverLevel();
         for (int i = 0; i < 3; i++) {
-            level.sendParticles(ModParticles.FIRE_WISP.get(), player.getX(), player.getY() + 0.4, player.getZ(),
+            level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.4, player.getZ(),
                     0, -look.x, -look.y, -look.z, 0.35);
         }
         if (ticks % 6 == 0) {
@@ -133,7 +130,7 @@ public class FireJetDash extends Ability {
     public static void tickTrail(ServerPlayer player, BendingData data) {
         data.dashTrailTicks--;
         ServerLevel level = player.serverLevel();
-        level.sendParticles(ModParticles.FIRE_WISP.get(), player.getX(), player.getY() + 0.3, player.getZ(), 6, 0.2, 0.2, 0.2, 0.01);
+        level.sendParticles(FireFx.wisp(player), player.getX(), player.getY() + 0.3, player.getZ(), 6, 0.2, 0.2, 0.2, 0.01);
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() + 0.3, player.getZ(), 2, 0.2, 0.2, 0.2, 0.01);
         for (LivingEntity target : BendingUtil.livingAround(player, player.position().add(0, 0.9, 0), 1.6)) {
             if (data.dashTrailHits.add(target.getId())) {

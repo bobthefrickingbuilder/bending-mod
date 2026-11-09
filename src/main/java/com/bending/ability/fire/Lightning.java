@@ -6,7 +6,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
+import com.bending.data.ModAttachments;
+import com.bending.server.BendingRules;
+import com.bending.server.CastHandler;
 import com.bending.ability.AbilitySlot;
 import com.bending.ability.BendingUtil;
 import com.bending.ability.CastType;
@@ -158,6 +162,11 @@ public class Lightning extends Ability {
 
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
+        fireBolt(player, data, power);
+    }
+
+    /** Fires a bolt along the bender's line of sight: from a full charge, or lightning they redirected. */
+    private static void fireBolt(ServerPlayer player, BendingData data, float power) {
         ServerLevel level = player.serverLevel();
         Vec3 look = player.getLookAngle();
         Vec3 start = player.getEyePosition();
@@ -187,7 +196,7 @@ public class Lightning extends Ability {
         }
         Vec3 firstAt = centre(first);
         spawnArc(level, hand, firstAt, 1.0f, 6);
-        BendingUtil.damage(player, first, DAMAGE * power, 0);
+        strike(player, first, DAMAGE * power, hand);
 
         // Chain: normally to the 2 nearest others; in rain or water, to everything (you included).
         boolean wet = player.isInWaterOrRain() || first.isInWaterOrRain();
@@ -197,12 +206,59 @@ public class Lightning extends Ability {
         List<LivingEntity> chained = wet ? nearby : nearby.subList(0, Math.min(CHAIN_TARGETS, nearby.size()));
         for (LivingEntity target : chained) {
             spawnArc(level, firstAt, centre(target), 0.7f, 5);
-            BendingUtil.damage(player, target, CHAIN_DAMAGE * power, 0);
+            strike(player, target, CHAIN_DAMAGE * power, firstAt);
         }
         if (wet && player.distanceToSqr(firstAt) <= CHAIN_RANGE * CHAIN_RANGE * 4) {
             spawnArc(level, firstAt, centre(player), 0.7f, 5);
             data.pendingBacklash = SELF_SHOCK;
         }
+    }
+
+    /** Lightning hitting someone: a firebender redirecting it catches it instead of taking the hit. */
+    private static void strike(ServerPlayer caster, LivingEntity target, float damage, Vec3 from) {
+        if (target instanceof ServerPlayer catcher && catcher != caster
+                && tryRedirect(catcher, catcher.getData(ModAttachments.BENDING), from)) {
+            return;
+        }
+        BendingUtil.damage(caster, target, damage, 0);
+    }
+
+    /** Refund for catching lightning. */
+    private static final float REDIRECT_REFUND = 30f;
+    /** After a catch, further lightning in this window is just absorbed (vanilla bolts hit several ticks). */
+    private static final int REDIRECT_GRACE = 10;
+
+    /**
+     * Lightning Redirection: if the player knows it and is holding Fire Shield facing the lightning
+     * ({@code from}, or any direction for a bolt from the sky when null), the lightning runs through
+     * their body and fires back out along where they look. Refunds chi. True if it was caught.
+     */
+    public static boolean tryRedirect(ServerPlayer player, BendingData data, @Nullable Vec3 from) {
+        if (!FireTechniques.has(data, FireTechniques.LIGHTNING_REDIRECTION)
+                || data.activeSlot < 0 || data.activeSlot >= BendingData.SLOTS
+                || CastHandler.abilityIn(data, data.activeSlot) != Abilities.FIRE_SHIELD
+                || data.activeTicks < CastHandler.TAP_THRESHOLD) {
+            return false;
+        }
+        if (from != null && from.subtract(player.getEyePosition()).normalize().dot(player.getLookAngle()) < 0.2) {
+            return false; // it has to come at you from the front
+        }
+        long now = player.level().getGameTime();
+        if (now - data.lastRedirect < REDIRECT_GRACE) {
+            return true;
+        }
+        data.lastRedirect = now;
+        data.addChi(REDIRECT_REFUND);
+        ServerLevel level = player.serverLevel();
+        // The current runs in through one arm, down through the stomach and out the other.
+        Vec3[] hands = hands(player);
+        Vec3 stomach = player.position().add(0, player.getBbHeight() * 0.45, 0);
+        spawnArc(level, hands[1], stomach, 0.5f, 4);
+        spawnArc(level, stomach, hands[0], 0.5f, 4);
+        level.sendParticles(ModParticles.LIGHTNING_ARC.get(), stomach.x, stomach.y, stomach.z, 40, 0.3, 0.5, 0.3, 0.12);
+        player.displayClientMessage(Component.translatable("message.bending.redirected").withStyle(ChatFormatting.AQUA), true);
+        fireBolt(player, data, BendingRules.power(player, Element.FIRE));
+        return true;
     }
 
     private static Vec3 centre(Entity e) {

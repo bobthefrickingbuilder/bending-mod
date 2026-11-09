@@ -30,7 +30,17 @@ public class CelParticle extends TextureSheetParticle {
             {1.00f, 0.27f, 0.07f, 0.05f},
     };
 
+    /** Blue Fire: white-hot through cyan and deep blue. */
+    private static final float[][] BLUE_RAMP = {
+            {0.00f, 0.93f, 0.98f, 1.00f},
+            {0.20f, 0.55f, 0.86f, 1.00f},
+            {0.45f, 0.24f, 0.55f, 1.00f},
+            {0.72f, 0.13f, 0.24f, 0.86f},
+            {1.00f, 0.06f, 0.06f, 0.30f},
+    };
+
     private final SpriteSet sprites;
+    private final boolean blue;
     private final Kind kind;
     private final float startSize;
     private final float endSize;
@@ -43,8 +53,14 @@ public class CelParticle extends TextureSheetParticle {
 
     public CelParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd,
                        SpriteSet sprites, Kind kind) {
+        this(level, x, y, z, xd, yd, zd, sprites, kind, false);
+    }
+
+    public CelParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd,
+                       SpriteSet sprites, Kind kind, boolean blue) {
         super(level, x, y, z);
         this.sprites = sprites;
+        this.blue = blue;
         this.kind = kind;
         this.xd = xd + (random.nextFloat() - 0.5f) * 0.01f;
         this.yd = yd + (random.nextFloat() - 0.5f) * 0.01f;
@@ -170,7 +186,7 @@ public class CelParticle extends TextureSheetParticle {
             setColor(Mth.lerp(age, 1f, 0.55f), Mth.lerp(age, 1f, 0.78f), 1f);
             alpha = 1f - smoothstep(0.6f, 1f, age);
         } else if (isFire()) {
-            float[] c = rampColor(age * rampSpan);
+            float[] c = rampColor(blue ? BLUE_RAMP : RAMP, age * rampSpan);
             float pulse = kind == Kind.EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;
             setColor(c[0] * pulse, c[1] * pulse, c[2] * pulse);
             alpha = 1f - smoothstep(0.7f, 1f, age);
@@ -202,16 +218,16 @@ public class CelParticle extends TextureSheetParticle {
         roll += snap ? diff : diff * 0.6f;
     }
 
-    private static float[] rampColor(float age) {
-        for (int i = 1; i < RAMP.length; i++) {
-            if (age <= RAMP[i][0]) {
-                float[] a = RAMP[i - 1];
-                float[] b = RAMP[i];
+    private static float[] rampColor(float[][] ramp, float age) {
+        for (int i = 1; i < ramp.length; i++) {
+            if (age <= ramp[i][0]) {
+                float[] a = ramp[i - 1];
+                float[] b = ramp[i];
                 float t = (age - a[0]) / (b[0] - a[0]);
                 return new float[] {Mth.lerp(t, a[1], b[1]), Mth.lerp(t, a[2], b[2]), Mth.lerp(t, a[3], b[3])};
             }
         }
-        float[] last = RAMP[RAMP.length - 1];
+        float[] last = ramp[ramp.length - 1];
         return new float[] {last[1], last[2], last[3]};
     }
 

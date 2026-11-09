@@ -22,7 +22,7 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
 - Fire Blast (explodes on impact and leaves fire) · Fire Shield / Flame Burst (blocks hits from the front) · Fire Jet Dash (explosive launch, hold to steer) · Firestorm.
 - Slot 2 is the **Defense** slot: every slot-2 ability must block.
 - Fire world rules: stronger by day and in the Nether, weaker at night and in rain, no bending underwater.
-- Passive "Inner Fire": half damage from fire, immune to freezing.
+- Passive "Inner Fire": immune to fire and burning (no burning effect shown), half lava damage, immune to freezing.
 - Bending XP from landing hits.
 
 ---
@@ -30,18 +30,18 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
 ## ⏭️ Phase 3 — Skill tree + full firebending pool (next)
 - ✅ **Skill tree screen** (B, Skill Tree tab): spend skill points to learn nodes; learned abilities auto-equip into an empty slot. Free in creative. Unbuilt abilities and master techniques show as "coming soon". Still to do: make it look prettier, and build the stat nodes.
 - 3 firebending branches:
-  - **Aggression:** damage, burn time, explosion size. Capstone: **Blue Fire**.
-  - **Breath:** max chi, chi regen, lower costs. Capstones: **Breath of Fire**, then **Dancing Dragon**.
-  - **Discipline:** unlocks the alternative abilities, Lightning chaining. Capstone: **Lightning Redirection**.
-- ✅ **Loadout screen** (B): pick one unlocked ability per slot, with tooltips (cast type, chi, description) and the innate abilities listed. Locked abilities can be equipped in creative for testing. Still to do: block changes during combat.
+  - **Aggression:** damage, burn time, explosion size. Capstone: ✅ **Blue Fire** (+25% damage, longer burns, blue flames).
+  - **Breath:** max chi, chi regen, lower costs. Capstones: ✅ **Breath of Fire** (burn hunger when out of chi), then ✅ **Dancing Dragon** (day regen, hit combo).
+  - **Discipline:** unlocks the alternative abilities, Lightning chaining. Capstone: ✅ **Lightning Redirection** (hold Fire Shield to catch lightning and fire it back).
+- ✅ **Loadout screen** (B): pick one unlocked ability per slot, with tooltips (cast type, chi, description) and the innate abilities listed. Locked abilities can be equipped in creative for testing. ✅ Locked for 5 s after dealing or taking a hit.
 - ✅ **Over-the-shoulder camera**: the third-person back view sits off to one side (O swaps shoulders), with a crosshair.
 - ✅ **Meteor Slam** (innate, Shift in mid-air): directional dive; explodes from above dash height.
-- **Remaining abilities** (✅ = built; equip from the loadout screen, or `/bending equip <name>`):
-  - Slot 1: ✅ Fire Arc, Fireball Charge.
-  - Slot 2 (Defense, every option blocks): Wall of Fire, ✅ Flame Parry.
-  - Slot 3: ✅ Jet Propulsion, Blazing Leap.
-  - Slot 4: ✅ **Lightning** (with the calm-mind and rain rules), Dragon's Breath, ✅ Combustion Beam, ✅ Firestorm.
-- Stat bonuses from the tree feed max chi, regen and power. Gems will plug into the same hooks later.
+- ✅ **All firebending abilities built** (✅ = built; equip from the loadout screen, or `/bending equip <name>`):
+  - Slot 1: ✅ Fire Arc, ✅ Fireball Charge.
+  - Slot 2 (Defense, every option blocks): ✅ Wall of Fire, ✅ Flame Parry.
+  - Slot 3: ✅ Jet Propulsion, ✅ Blazing Leap.
+  - Slot 4: ✅ **Lightning** (with the calm-mind and rain rules), ✅ Dragon's Breath, ✅ Combustion Beam, ✅ Firestorm.
+- Still to do: stat bonuses from the tree feed max chi, regen and power. Gems will plug into the same hooks later.
 
 ## Phase 4 — Polish pass: look, sound, feel
 - **Custom sounds:** fill the existing hooks with OGG files (several random variants each): fire whooshes, crackles, the lightning charge.

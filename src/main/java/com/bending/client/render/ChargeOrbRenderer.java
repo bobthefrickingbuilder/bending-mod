@@ -39,7 +39,7 @@ public class ChargeOrbRenderer extends EntityRenderer<ChargeOrbEntity> {
         if (charge >= 1f) {
             scale *= 1f + 0.08f * Mth.sin(time * 1.2f);
         }
-        FlameBall.render(pose, buffers, scale, time * (1f + charge), null);
+        FlameBall.render(pose, buffers, scale, time * (1f + charge), null, orb.isBlue());
         pose.popPose();
         super.render(orb, yaw, partialTicks, pose, buffers, light);
     }

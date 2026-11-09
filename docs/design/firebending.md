@@ -58,7 +58,7 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 | Bending hits land in full | All bending damage skips vanilla's half-second damage immunity, so rapid follow-up hits do their full damage |
 | Fire propels you | **Passive "Fire Hop":** press jump in mid-air for a small fire-powered hop, up to **3 times** before you land. Each hop barely climbs (less than half a normal jump) but resets your fall, so it breaks your fall rather than flying you upward. Free to use |
 | Terrain feels your power | Fire Blast, the dash launch, Flame Burst and Firestorm **break blocks** with real explosions. The explosions never hurt or launch you; the abilities do their own damage. Terrain damage, fire placement and melting all follow the `mobGriefing` game rule (a mod config option later) |
-| Firebenders master heat | **Passive "Inner Fire":** 50% less damage from fire and burning, immune to freezing in powder snow, and you can't catch fire from your own abilities |
+| Firebenders master heat | **Passive "Inner Fire":** immune to fire and burning (you never catch fire, and no burning effect shows), half damage from lava, immune to freezing in powder snow |
 
 ---
 
@@ -115,7 +115,7 @@ Starts empty. Fire Blast is innate, so this slot is for a second, different proj
 Not a loadout slot: every firebender always has it, so slot 3 is free for another mobility ability.
 
 **💨 Fire Jet Dash** *(innate)*: **Ctrl+Space**, then **hold Ctrl** to channel
-- **Press:** an explosive burst at your feet launches you where you're looking (Zuko and Azula style). The launch explosion does 8 damage, knocks back anything within 2.5 blocks, and blasts a small crater behind you (power 1.5).
+- **Press:** an explosive burst at your feet launches you where you're looking (Zuko and Azula style). The launch explosion does 8 damage and knocks back anything within 2.5 blocks, but it doesn't break any blocks.
 - **Keep holding Ctrl:** ride the fire jets and steer by looking, for up to 2 s. It's a dash, not flight; that's what Jet Propulsion is for.
 - Leaves a fire trail that does 5 damage to anything you pass through. No fall damage until 2 s after the jets stop.
 - Cost 15 chi to launch, then 12 chi per second while held.

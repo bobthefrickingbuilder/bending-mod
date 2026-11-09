@@ -23,6 +23,8 @@ public class ChargeOrbEntity extends Entity {
             SynchedEntityData.defineId(ChargeOrbEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> CHARGE =
             SynchedEntityData.defineId(ChargeOrbEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> BLUE =
+            SynchedEntityData.defineId(ChargeOrbEntity.class, EntityDataSerializers.BOOLEAN);
     /** How far in front of the eyes, and how far below them, the orb sits. */
     public static final double FORWARD = 1.0;
     public static final double DROP = 0.45;
@@ -38,6 +40,7 @@ public class ChargeOrbEntity extends Entity {
     public ChargeOrbEntity(Level level, ServerPlayer owner) {
         this(ModEntities.CHARGE_ORB.get(), level);
         entityData.set(OWNER, owner.getId());
+        entityData.set(BLUE, com.bending.ability.fire.FireTechniques.blue(owner));
         follow(owner);
     }
 
@@ -45,6 +48,7 @@ public class ChargeOrbEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(OWNER, -1);
         builder.define(CHARGE, 0f);
+        builder.define(BLUE, false);
     }
 
     /** Server: called every tick while charging. */
@@ -62,6 +66,10 @@ public class ChargeOrbEntity extends Entity {
     /** Where the orb sits for a bender with these eyes and look direction. */
     public static Vec3 focus(Vec3 eyes, Vec3 look) {
         return eyes.add(look.scale(FORWARD)).add(0, -DROP, 0);
+    }
+
+    public boolean isBlue() {
+        return entityData.get(BLUE);
     }
 
     public float getCharge() {

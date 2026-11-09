@@ -79,6 +79,9 @@ public final class BendingNetwork {
                     context.player().setData(ModAttachments.BENDING, data);
                 }));
 
+        registrar.playToClient(CombatStatePayload.TYPE, CombatStatePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> CombatStatePayload.clientInCombat = payload.inCombat()));
+
         registrar.playToClient(BendingModePayload.TYPE, BendingModePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player().level().getEntity(payload.entityId()) instanceof Player target) {

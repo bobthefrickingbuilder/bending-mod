@@ -241,5 +241,79 @@
         "type": "event"
       }
     ]
+  },
+  "fireball_charge.charge": {
+    "subtitle": "subtitles.bending.fireball_charge.charge",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.burn",
+        "type": "event"
+      }
+    ]
+  },
+  "fireball_charge.ready": {
+    "subtitle": "subtitles.bending.fireball_charge.ready",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "fireball_charge.throw": {
+    "subtitle": "subtitles.bending.fireball_charge.throw",
+    "sounds": [
+      {
+        "name": "minecraft:entity.ghast.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "dragons_breath.start": {
+    "subtitle": "subtitles.bending.dragons_breath.start",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "dragons_breath.loop": {
+    "subtitle": "subtitles.bending.dragons_breath.loop",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event",
+        "volume": 0.7
+      }
+    ]
+  },
+  "wall_of_fire.rise": {
+    "subtitle": "subtitles.bending.wall_of_fire.rise",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "wall_of_fire.loop": {
+    "subtitle": "subtitles.bending.wall_of_fire.loop",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.ambient",
+        "type": "event"
+      }
+    ]
+  },
+  "blazing_leap.launch": {
+    "subtitle": "subtitles.bending.blazing_leap.launch",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "volume": 0.6
+      }
+    ]
   }
 }
