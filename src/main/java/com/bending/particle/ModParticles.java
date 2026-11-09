@@ -19,6 +19,8 @@ public final class ModParticles {
 
     /** The main body of fire: blasts, jets, rings. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_WISP = register("fire_wisp");
+    /** The hot, round head of a fireball or beam: short-lived and nearly white. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_CORE = register("fire_core");
     /** Small flickers: charge-ups, focus points. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_SPARK = register("fire_spark");
     /** Popping molten embers. */

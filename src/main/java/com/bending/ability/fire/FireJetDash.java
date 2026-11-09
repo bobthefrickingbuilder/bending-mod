@@ -19,8 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Slot 3: press for an explosive burst that launches you where you're looking.
- * Keep holding to ride the fire jets and steer, for up to 2 seconds.
+ * Innate (Ctrl+Space in bending mode): an explosive burst that launches you where you're looking.
+ * Keep holding Ctrl to ride the fire jets and steer, for up to 2 seconds.
  */
 public class FireJetDash extends Ability {
     /** Speed of the initial burst (blocks per tick). */
@@ -39,7 +39,7 @@ public class FireJetDash extends Ability {
     private static final float LAUNCH_TERRAIN_POWER = 1.5f;
 
     public FireJetDash() {
-        super("fire_jet_dash", Element.FIRE, AbilitySlot.MOBILITY, CastType.HOLD);
+        super("fire_jet_dash", Element.FIRE, AbilitySlot.INNATE, CastType.HOLD);
     }
 
     @Override

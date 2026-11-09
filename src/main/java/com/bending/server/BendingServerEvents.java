@@ -76,6 +76,7 @@ public final class BendingServerEvents {
 
     private static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            BendingService.sanitizeLoadout(player);
             BendingNetwork.sync(player);
         }
     }
@@ -109,7 +110,7 @@ public final class BendingServerEvents {
         }
         BendingData data = player.getData(ModAttachments.BENDING);
         if (data.activeSlot != -1) {
-            Ability active = Abilities.get(data.getLoadout(data.activeSlot));
+            Ability active = CastHandler.abilityIn(data, data.activeSlot);
             if (active != null) {
                 float amount = active.modifyIncomingDamage(player, data, event.getSource(), event.getAmount());
                 if (amount <= 0f) {

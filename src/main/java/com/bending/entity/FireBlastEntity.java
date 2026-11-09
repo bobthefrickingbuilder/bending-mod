@@ -27,6 +27,11 @@ import net.minecraft.world.phys.Vec3;
 
 /** A small, fast fireball. Flies straight (no gravity), burns what it hits, fizzles in water. */
 public class FireBlastEntity extends Projectile {
+    /**
+     * Client hook: true if a point is too close to the camera to draw trail fire there (so it
+     * doesn't flash in the viewer's face). Set by the client; always false on a server.
+     */
+    public static java.util.function.Predicate<Vec3> tooCloseToCamera = p -> false;
     private static final int MAX_LIFE = 14; // ~40 blocks at the default speed
     /** Snow and ice within this many blocks of the impact melt. */
     private static final int MELT_RADIUS = 2;
@@ -83,20 +88,31 @@ public class FireBlastEntity extends Projectile {
         setPos(getX() + v.x, getY() + v.y, getZ() + v.z);
 
         if (level.isClientSide) {
-            // It moves 3 blocks a tick, so fill in the trail along the whole step.
+            // The glowing ball itself is drawn by FireBlastRenderer; sparks flick off it.
+            if (random.nextInt(2) == 0 && !tooCloseToCamera.test(position())) {
+                level.addParticle(ModParticles.FIRE_SPARK.get(), getX(), getY(), getZ(),
+                        (random.nextDouble() - 0.5) * 0.3, (random.nextDouble() - 0.5) * 0.3, (random.nextDouble() - 0.5) * 0.3);
+            }
+            // Comet tail: it moves 3 blocks a tick, so fill in flame tongues along the whole step.
+            // They drift backwards, so they point back along the flight path.
             int steps = 6;
             for (int i = 0; i < steps; i++) {
                 double t = i / (double) steps;
                 double x = getX() - v.x * t;
                 double y = getY() - v.y * t;
                 double z = getZ() - v.z * t;
+                if (tooCloseToCamera.test(new Vec3(x, y, z))) {
+                    continue;
+                }
                 level.addParticle(ModParticles.FIRE_WISP.get(),
                         x + (random.nextDouble() - 0.5) * 0.25,
                         y + (random.nextDouble() - 0.5) * 0.25,
                         z + (random.nextDouble() - 0.5) * 0.25,
-                        -v.x * 0.02, -v.y * 0.02, -v.z * 0.02);
+                        -v.x * 0.03, -v.y * 0.03, -v.z * 0.03);
             }
-            level.addParticle(ModParticles.FIRE_SMOKE.get(), getX(), getY(), getZ(), 0, 0, 0);
+            if (tickCount % 3 == 0) {
+                level.addParticle(ModParticles.FIRE_SMOKE.get(), getX() - v.x, getY() - v.y, getZ() - v.z, 0, 0.02, 0);
+            }
         }
     }
 

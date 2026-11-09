@@ -12,7 +12,7 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
 - Per-player bending data: element, 4-slot loadout, chi, XP / level / skill points, unlocks. Saved, kept on death, synced to the client.
 - Casting engine: tap, hold, charge and tap-or-hold abilities; chi costs (no cooldowns: chi is the only limit), hunger cost ("fire comes from the breath").
 - Keybinds Z / X / C / V (ability slots), B (menu) and R (bending mode), all rebindable.
-- **Bending mode:** R toggles the bending stance. Abilities only work in it; both hands show empty (both arms visible in first person, items hidden in third person for all players); HUD only shows in it; clicks don't attack or use items.
+- **Bending mode:** R toggles the bending stance. Abilities only work in it; both hands show empty (both arms visible in first person, items hidden in third person for all players); HUD only shows in it; left click throws Fire Blast and Ctrl+Space launches Fire Jet Dash (both innate), freeing slots 1 and 3; right click doesn't use items.
 - **Asset hooks:** 18 named sounds (`sounds.json`) and 5 named particles (`particles/*.json`) used by every ability, pointing at vanilla assets for now. Custom audio and art drop in without code changes.
 - HUD: chi bar + 4 ability slots. Shows ∞ in infinite-chi mode.
 - Element selection screen on first join.

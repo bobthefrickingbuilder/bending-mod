@@ -46,12 +46,28 @@ public final class Abilities {
         return defaultLoadout(element) != null;
     }
 
-    /** Starting abilities, one per slot, in slot order. Null if the element isn't built yet. */
+    /**
+     * Starting abilities, one per slot, in slot order (a null entry = slot starts empty).
+     * Null if the element isn't built yet.
+     */
     @Nullable
     public static Ability[] defaultLoadout(Element element) {
         return switch (element) {
-            case FIRE -> new Ability[] { FIRE_BLAST, FIRE_SHIELD, FIRE_JET_DASH, FIRESTORM };
+            // Slots 1 and 3 start empty: Fire Blast (left click) and Fire Jet Dash (Ctrl+Space) are innate.
+            case FIRE -> new Ability[] { null, FIRE_SHIELD, null, FIRESTORM };
             default -> null;
         };
+    }
+
+    /** The element's basic attack, cast with left click in bending mode. */
+    @Nullable
+    public static Ability innateAttack(@Nullable Element element) {
+        return element == Element.FIRE ? FIRE_BLAST : null;
+    }
+
+    /** The element's basic movement, cast with Ctrl+Space in bending mode (hold Ctrl to channel). */
+    @Nullable
+    public static Ability innateMobility(@Nullable Element element) {
+        return element == Element.FIRE ? FIRE_JET_DASH : null;
     }
 }

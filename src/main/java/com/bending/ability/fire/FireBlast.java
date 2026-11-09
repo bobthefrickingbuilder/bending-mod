@@ -15,14 +15,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
-/** Slot 1: a quick fire punch, alternating hands. */
+/** Innate firebending attack (left click in bending mode): a quick fire punch, alternating hands. */
 public class FireBlast extends Ability {
     /** Two direct hits kill a normal 20-health mob (zombie, skeleton, creeper), day or night. */
     public static final float DAMAGE = 12f;
     public static final float SPEED = 3.0f;
 
     public FireBlast() {
-        super("fire_blast", Element.FIRE, AbilitySlot.PROJECTILE, CastType.TAP);
+        super("fire_blast", Element.FIRE, AbilitySlot.INNATE, CastType.TAP);
     }
 
     @Override

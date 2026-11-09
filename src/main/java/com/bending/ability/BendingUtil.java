@@ -111,8 +111,11 @@ public final class BendingUtil {
             level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 1, 0, 0, 0, 0);
             level.playSound(null, center.x, center.y, center.z, ModSounds.FIRE_EXPLOSION.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
         }
-        level.sendParticles(ModParticles.FIRE_WISP.get(), center.x, center.y, center.z, 25, radius * 0.25, radius * 0.25, radius * 0.25, 0.08);
-        level.sendParticles(ModParticles.FIRE_SMOKE.get(), center.x, center.y, center.z, 5, 0.3, 0.3, 0.3, 0.02);
+        level.sendParticles(ModParticles.FIRE_CORE.get(), center.x, center.y, center.z, 3, 0.2, 0.2, 0.2, 0.0);
+        level.sendParticles(ModParticles.FIRE_WISP.get(), center.x, center.y, center.z, 30, radius * 0.2, radius * 0.2, radius * 0.2, 0.12);
+        level.sendParticles(ModParticles.FIRE_SPARK.get(), center.x, center.y, center.z, 10, 0.2, 0.2, 0.2, 0.3);
+        level.sendParticles(ModParticles.EMBER.get(), center.x, center.y, center.z, 6, 0.3, 0.3, 0.3, 0.15);
+        level.sendParticles(ModParticles.FIRE_SMOKE.get(), center.x, center.y, center.z, 4, 0.3, 0.3, 0.3, 0.02);
         for (LivingEntity target : livingAround(bender, center, radius)) {
             if (target != exclude) {
                 damage(bender, target, damage, fireSeconds);

@@ -3,6 +3,7 @@ package com.bending.client;
 import org.lwjgl.glfw.GLFW;
 
 import com.bending.ability.AirJump;
+import com.bending.server.CastHandler;
 import com.bending.data.BendingData;
 import com.bending.data.ModAttachments;
 import com.bending.network.AirJumpPayload;
@@ -37,6 +38,10 @@ public final class ClientInput {
     private static final boolean[] wasDown = new boolean[BendingData.SLOTS];
     private static boolean prompted;
     private static boolean jumpWasDown;
+    private static boolean attackWasDown;
+    /** True while the innate dash is being channelled (Ctrl held). */
+    private static boolean dashing;
+    private static int dashTicks;
     private static int airJumpsUsed;
 
     private ClientInput() {}
@@ -52,8 +57,8 @@ public final class ClientInput {
     }
 
     /**
-     * In bending mode your hands are busy bending: left and right click don't swing,
-     * mine or use items. Press the mode key again to go back to normal.
+     * In bending mode your hands are busy bending: left click casts your innate attack instead
+     * of swinging or mining, and right click doesn't use items. Press the mode key to go back to normal.
      */
     public static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
         if (inBendingMode() && (event.isAttack() || event.isUseItem())) {
@@ -62,12 +67,47 @@ public final class ClientInput {
         }
     }
 
+    /**
+     * True if the key bound to {@code key} is physically held. Used for the sprint key (Ctrl),
+     * because with "toggle sprint" on, isDown() reports the toggle, not the key.
+     */
+    private static boolean physicallyDown(Minecraft mc, KeyMapping key) {
+        InputConstants.Key bound = key.getKey();
+        long window = mc.getWindow().getWindow();
+        return switch (bound.getType()) {
+            case KEYSYM -> InputConstants.isKeyDown(window, bound.getValue());
+            case MOUSE -> GLFW.glfwGetMouseButton(window, bound.getValue()) == GLFW.GLFW_PRESS;
+            default -> false;
+        };
+    }
+
+    /**
+     * Innate dash: Sprint + Jump (Ctrl+Space) launches it; keep holding Ctrl to channel it
+     * through the air. Letting go of Ctrl, or landing, ends it.
+     * @return true if this jump press started a dash (so it isn't also a fire hop)
+     */
+    private static boolean tickDash(Minecraft mc, BendingData data, boolean jumpPressed) {
+        boolean ctrl = data.bendingMode && mc.screen == null && physicallyDown(mc, mc.options.keySprint);
+        boolean started = false;
+        if (!dashing && ctrl && jumpPressed) {
+            PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_MOBILITY_SLOT, true));
+            dashing = true;
+            dashTicks = 0;
+            started = true;
+        } else if (dashing) {
+            dashTicks++;
+            boolean landed = dashTicks > 5 && (mc.player.onGround() || mc.player.isInWater());
+            if (!ctrl || landed) {
+                PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_MOBILITY_SLOT, false));
+                dashing = false;
+            }
+        }
+        return started;
+    }
+
     /** Press jump in mid-air for a small hop; limited uses until you land. */
-    private static void tickAirJump(Minecraft mc, BendingData data) {
+    private static void tickAirJump(Minecraft mc, BendingData data, boolean pressed) {
         LocalPlayer player = mc.player;
-        boolean jumpDown = mc.options.keyJump.isDown();
-        boolean pressed = jumpDown && !jumpWasDown;
-        jumpWasDown = jumpDown;
 
         if (player.onGround() || player.isInWater() || player.onClimbable()) {
             airJumpsUsed = 0;
@@ -119,11 +159,21 @@ public final class ClientInput {
             }
         }
 
+        boolean jumpDown = mc.options.keyJump.isDown();
+        boolean jumpPressed = jumpDown && !jumpWasDown;
+        jumpWasDown = jumpDown;
+        boolean dashStarted = tickDash(mc, data, jumpPressed);
         if (data.bendingMode) {
-            tickAirJump(mc, data);
-        } else {
-            jumpWasDown = mc.options.keyJump.isDown();
+            tickAirJump(mc, data, jumpPressed && !dashStarted && !dashing);
         }
+
+        // Left click in bending mode: the element's innate attack (Fire Blast), once per click.
+        boolean attackDown = mc.options.keyAttack.isDown() && mc.screen == null;
+        if (attackDown && !attackWasDown && data.bendingMode) {
+            PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_ATTACK_SLOT, true));
+            PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_ATTACK_SLOT, false));
+        }
+        attackWasDown = attackDown;
 
         for (int slot = 0; slot < SLOT_KEYS.length; slot++) {
             KeyMapping key = SLOT_KEYS[slot];

@@ -29,5 +29,14 @@ public final class ModEntities {
                     .fireImmune()
                     .build("firestorm"));
 
+    public static final Supplier<EntityType<ChargeOrbEntity>> CHARGE_ORB = ENTITY_TYPES.register("charge_orb",
+            () -> EntityType.Builder.<ChargeOrbEntity>of(ChargeOrbEntity::new, MobCategory.MISC)
+                    .sized(0.3f, 0.3f)
+                    .clientTrackingRange(4)
+                    .updateInterval(1)
+                    .noSave()
+                    .fireImmune()
+                    .build("charge_orb"));
+
     private ModEntities() {}
 }

@@ -18,6 +18,21 @@ import net.minecraft.server.level.ServerPlayer;
 public final class CastHandler {
     /** Releasing a TAP_OR_HOLD key before this many ticks counts as a tap. */
     public static final int TAP_THRESHOLD = 5;
+    /** Input slots after the 4 loadout slots: the innate attack (left click) and movement (Ctrl+Space). */
+    public static final int INNATE_ATTACK_SLOT = BendingData.SLOTS;
+    public static final int INNATE_MOBILITY_SLOT = BendingData.SLOTS + 1;
+
+    /** The ability an input slot casts: a loadout slot, or one of the innate abilities. */
+    @javax.annotation.Nullable
+    public static Ability abilityIn(BendingData data, int slot) {
+        if (slot == INNATE_ATTACK_SLOT) {
+            return Abilities.innateAttack(data.getElement());
+        }
+        if (slot == INNATE_MOBILITY_SLOT) {
+            return Abilities.innateMobility(data.getElement());
+        }
+        return slot >= 0 && slot < BendingData.SLOTS ? Abilities.get(data.getLoadout(slot)) : null;
+    }
     /** Safety limit so a lost "release" packet can't leave a charge active forever. */
     private static final int MAX_ACTIVE_TICKS = 20 * 30;
     /** Hunger exhaustion per point of chi spent: fire comes from the breath. */
@@ -26,7 +41,7 @@ public final class CastHandler {
     private CastHandler() {}
 
     public static void onInput(ServerPlayer player, int slot, boolean pressed) {
-        if (slot < 0 || slot >= BendingData.SLOTS || player.isSpectator()) {
+        if (slot < 0 || slot > INNATE_MOBILITY_SLOT || player.isSpectator()) {
             return;
         }
         BendingData data = player.getData(ModAttachments.BENDING);
@@ -47,9 +62,10 @@ public final class CastHandler {
         if (data.activeSlot != -1) {
             return;
         }
-        Ability ability = Abilities.get(data.getLoadout(slot));
         Element element = data.getElement();
-        if (ability == null || ability.element() != element || !data.isUnlocked(ability.id())) {
+        boolean innate = slot >= INNATE_ATTACK_SLOT;
+        Ability ability = abilityIn(data, slot);
+        if (ability == null || ability.element() != element || (!innate && !data.isUnlocked(ability.id()))) {
             return;
         }
         if (!BendingRules.canBend(player, element)) {
@@ -97,7 +113,7 @@ public final class CastHandler {
         if (data.activeSlot == -1) {
             return;
         }
-        Ability ability = Abilities.get(data.getLoadout(data.activeSlot));
+        Ability ability = abilityIn(data, data.activeSlot);
         Element element = data.getElement();
         if (ability == null || element == null || !BendingRules.canBend(player, element) || !player.isAlive()) {
             cancel(data);
@@ -138,7 +154,7 @@ public final class CastHandler {
 
     /** Ends the active cast: fires a charge, ends a hold, or resolves a tap. */
     private static void finish(ServerPlayer player, BendingData data) {
-        Ability ability = Abilities.get(data.getLoadout(data.activeSlot));
+        Ability ability = abilityIn(data, data.activeSlot);
         int ticks = data.activeTicks;
         cancel(data);
         if (ability == null || data.getElement() == null) {

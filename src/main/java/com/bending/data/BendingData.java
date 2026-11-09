@@ -52,6 +52,9 @@ public class BendingData {
     public boolean altHand;
     /** Mid-air hops used since last touching the ground (server-side count). */
     public int airJumpsUsed;
+    /** The charge orb currently gathering in front of this bender, if any (server side). */
+    @javax.annotation.Nullable
+    public net.minecraft.world.entity.Entity chargeOrb;
     /** Bending stance: abilities only work while this is on, and both hands show empty. */
     public boolean bendingMode;
     /** True once the client has received data from the server. */

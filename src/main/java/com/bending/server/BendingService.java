@@ -3,6 +3,7 @@ package com.bending.server;
 import com.bending.BendingMod;
 import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
+import com.bending.ability.AbilitySlot;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
@@ -31,8 +32,10 @@ public final class BendingService {
         }
         data.setElement(element);
         for (int slot = 0; slot < loadout.length; slot++) {
-            data.unlock(loadout[slot].id());
-            data.setLoadout(slot, loadout[slot].id());
+            if (loadout[slot] != null) {
+                data.unlock(loadout[slot].id());
+                data.setLoadout(slot, loadout[slot].id());
+            }
         }
         data.setChi(data.getMaxChi());
         BendingNetwork.sync(player);
@@ -56,6 +59,10 @@ public final class BendingService {
             player.sendSystemMessage(Component.translatable("message.bending.wrong_element", ability.displayName()));
             return false;
         }
+        if (ability.slot() == AbilitySlot.INNATE) {
+            player.sendSystemMessage(Component.translatable("message.bending.innate", ability.displayName()));
+            return false;
+        }
         int slot = ability.slot().ordinal();
         if (data.activeSlot == slot) {
             CastHandler.cancel(data);
@@ -65,6 +72,24 @@ public final class BendingService {
         BendingNetwork.sync(player);
         player.sendSystemMessage(Component.translatable("message.bending.equipped", ability.displayName(), slot + 1));
         return true;
+    }
+
+    /**
+     * Clears loadout entries that no longer fit their slot (an ability that moved, like
+     * Fire Blast becoming the innate attack, or one that was removed).
+     */
+    public static void sanitizeLoadout(ServerPlayer player) {
+        BendingData data = player.getData(ModAttachments.BENDING);
+        for (int slot = 0; slot < BendingData.SLOTS; slot++) {
+            String id = data.getLoadout(slot);
+            if (id.isEmpty()) {
+                continue;
+            }
+            Ability ability = Abilities.get(id);
+            if (ability == null || ability.slot().ordinal() != slot) {
+                data.setLoadout(slot, "");
+            }
+        }
     }
 
     public static void toggleBendingMode(ServerPlayer player) {

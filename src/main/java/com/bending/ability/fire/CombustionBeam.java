@@ -11,6 +11,7 @@ import com.bending.ability.BendingUtil;
 import com.bending.ability.CastType;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
+import com.bending.entity.ChargeOrbEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -72,11 +73,20 @@ public class CombustionBeam extends Ability {
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
         ServerLevel level = player.serverLevel();
-        float progress = ticks / (float) FULL_CHARGE;
-        Vec3 focus = player.getEyePosition().add(player.getLookAngle().scale(0.7));
+        float progress = Math.min(1f, ticks / (float) FULL_CHARGE);
 
-        // Fire is drawn into a single point in front of your face.
-        for (int i = 0; i < 6; i++) {
+        // A ball of fire gathers between your hands and grows with the charge.
+        ChargeOrbEntity orb = data.chargeOrb instanceof ChargeOrbEntity existing && !existing.isRemoved() ? existing : null;
+        if (orb == null) {
+            orb = new ChargeOrbEntity(level, player);
+            level.addFreshEntity(orb);
+            data.chargeOrb = orb;
+        }
+        orb.update(player, progress);
+        Vec3 focus = orb.position();
+
+        // Fire is drawn into it from all around.
+        for (int i = 0; i < 4; i++) {
             Vec3 dir = new Vec3(player.getRandom().nextGaussian(), player.getRandom().nextGaussian(), player.getRandom().nextGaussian())
                     .normalize().scale(1.2);
             Vec3 p = focus.add(dir);
@@ -95,11 +105,13 @@ public class CombustionBeam extends Ability {
 
     @Override
     public void onChargeCancelled(ServerPlayer player, BendingData data) {
+        removeOrb(data);
         BendingUtil.fizzle(player);
     }
 
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
+        removeOrb(data);
         ServerLevel level = player.serverLevel();
         float charge = ticks / (float) FULL_CHARGE;
         Vec3 look = player.getLookAngle();
@@ -141,5 +153,12 @@ public class CombustionBeam extends Ability {
         player.hurtMarked = true;
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.COMBUSTION_BEAM_FIRE.get(), SoundSource.PLAYERS, 1.5f, 0.5f);
+    }
+
+    private static void removeOrb(BendingData data) {
+        if (data.chargeOrb != null) {
+            data.chargeOrb.discard();
+            data.chargeOrb = null;
+        }
     }
 }

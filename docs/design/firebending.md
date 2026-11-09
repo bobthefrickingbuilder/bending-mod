@@ -29,10 +29,12 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 - Every bender has a **Chi** bar: base 100, regenerates 5 per second after 1.5 seconds without casting.
 - Abilities cost chi. **There are no cooldowns:** chi cost and chi regen are the only limits. Gems or the skill tree raise max chi, regen and power.
 - **Testing:** `/bending infinitechi` (op) toggles a mode where abilities cost no chi.
-- **Balance baseline:** Fire Blast (the cheap slot-1 attack) kills a normal 20-health mob in **2 hits**, day or night. Defensive and mobility damage is a bonus (roughly 4–8 per hit). Ultimates **one-shot normal mobs**: Firestorm across an area, Combustion Beam on a single target at full charge.
+- **Balance baseline:** Fire Blast (the innate left-click attack) kills a normal 20-health mob in **2 hits**, day or night. Defensive and mobility damage is a bonus (roughly 4–8 per hit). Ultimates **one-shot normal mobs**: Firestorm across an area, Combustion Beam on a single target at full charge.
 
 **Controls (rebindable)**
 - `R` = toggle **bending mode** (the bending stance). Abilities and Fire Hop only work in it. While it's on, both hands show empty (both bare arms in first person, no held items in third person, for everyone watching), the HUD appears, and left/right click don't attack, mine or use items. Leaving the stance drops anything you were channeling.
+- **Left click** (in bending mode) = **Fire Blast**, the innate attack every firebender always has.
+- **Ctrl+Space** (in bending mode) = **Fire Jet Dash**, the innate movement. Keep holding **Ctrl** in the air to channel it; let go of Ctrl (or land) to stop. In bending mode this replaces the vanilla sprint-jump.
 - `Z` `X` `C` `V` = cast slot 1–4. Each ability defines whether it uses a **tap**, a **hold** (channel), or a **hold-and-release** (charge).
 - `B` = open the loadout and skill screen.
 
@@ -61,14 +63,21 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 
 ## 3. Ability pool
 
-### Slot 1 — Projectile
+### Innate — Fire Blast (left click)
 
-**🔥 Fire Blast** *(starting ability)*: **tap**
+Not a loadout slot: every firebender always has it, so slot 1 is free for a second projectile.
+
+**🔥 Fire Blast** *(innate)*: **left click** in bending mode
+- Looks like a glowing ball of cel-shaded flame (about 1.6 blocks across) with flame tongues streaming behind it.
 - Fast punch that throws a small fireball in a straight line. Alternates left and right hand for a jab rhythm.
 - Very fast (3 blocks per tick). 12 damage on a direct hit, so most normal mobs (20 health) go down in **two hits**, day or night. Sets the target on fire for 3 s. Range 40 blocks.
 - **Explodes on impact:** 6 splash damage and light knockback within 1.8 blocks, a small crater in the terrain (explosion power 1.6), and **a few fire blocks left burning**.
 - **Melts snow and ice** within 2 blocks of the impact. Ice turns to water, or evaporates in the Nether. Packed and blue ice are too dense to melt.
 - Cost 6 chi.
+
+### Slot 1 — Projectile
+
+Starts empty. Fire Blast is innate, so this slot is for a second, different projectile.
 
 **🌙 Fire Arc** *(unlock)*: **tap**
 - A spinning kick that sends out a wide horizontal crescent of fire. It passes through enemies.
@@ -100,13 +109,19 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 
 > *Heat Control* (putting out fires, melting ice, smelting) doesn't block, so it left slot 2. It could come back later as a passive or a master technique.
 
-### Slot 3 — Mobility
+### Innate — Fire Jet Dash (Ctrl+Space)
 
-**💨 Fire Jet Dash** *(starting ability)*: **hold** (burst on press)
+Not a loadout slot: every firebender always has it, so slot 3 is free for another mobility ability.
+
+**💨 Fire Jet Dash** *(innate)*: **Ctrl+Space**, then **hold Ctrl** to channel
 - **Press:** an explosive burst at your feet launches you where you're looking (Zuko and Azula style). The launch explosion does 8 damage, knocks back anything within 2.5 blocks, and blasts a small crater behind you (power 1.5).
-- **Keep holding:** ride the fire jets and steer by looking, for up to 2 s. It's a dash, not flight; that's what Jet Propulsion is for.
+- **Keep holding Ctrl:** ride the fire jets and steer by looking, for up to 2 s. It's a dash, not flight; that's what Jet Propulsion is for.
 - Leaves a fire trail that does 5 damage to anything you pass through. No fall damage until 2 s after the jets stop.
 - Cost 15 chi to launch, then 12 chi per second while held.
+
+### Slot 3 — Mobility
+
+Starts empty. Fire Jet Dash is innate, so this slot is for a second, different way to move.
 
 **🚀 Jet Propulsion** *(unlock)*: **hold**
 - Sustained flight on fire jets. Slower than elytra, but you can hover and steer freely.
@@ -135,7 +150,7 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 - Cost 60 chi.
 
 **🔆 Combustion Beam** *(single target; unlock)*: **hold-and-release** (Combustion Man style)
-- **Charge:** fire gathers into one point in front of your face, with a charge meter above the hotbar. 1.5 s to full charge. Releasing before 0.5 s fizzles out, for free.
+- **Charge:** a ball of fire gathers between your hands and grows as it charges (other players see it too), throbbing once it's full. There's also a charge meter above the hotbar. 1.5 s to full charge. Releasing before 0.5 s fizzles out, for free.
 - **Release:** an instant beam that strikes the first creature or block in its path, up to 40 blocks away.
 - **Damage:** 16 at minimum charge, up to 40 at full charge (kills an enderman), and sets the target on fire for 5 s.
 - **Impact:** an explosion that breaks terrain. Its power grows faster near full charge: about 2.5 at minimum, about 3.3 at half, and **7 at full charge** (bigger than a charged creeper). It splashes 30% damage within 2.5 blocks. It also melts snow and ice and leaves fire.
@@ -196,7 +211,8 @@ These come from the very end of the skill tree (or from rare gems). They change 
 ## 6. Starting kit
 
 A new firebender starts with:
-- **Fire Blast** / **Fire Shield** / **Fire Jet Dash** / **Firestorm**
+- Innate: **Fire Blast** (left click) and **Fire Jet Dash** (Ctrl+Space)
+- Loadout: **(empty slot 1)** / **Fire Shield** / **(empty slot 3)** / **Firestorm**
 - Lightning is the first big unlock on the Discipline branch. It's the iconic firebender skill, so it's worth earning.
 
 ---
