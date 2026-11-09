@@ -46,6 +46,13 @@ public final class BendingNetwork {
                     }
                 }));
 
+        registrar.playToServer(UnlockSkillPayload.TYPE, UnlockSkillPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        BendingService.learnSkill(player, payload.nodeId());
+                    }
+                }));
+
         registrar.playToServer(MoveInputPayload.TYPE, MoveInputPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {

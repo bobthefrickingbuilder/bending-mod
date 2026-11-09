@@ -54,7 +54,7 @@ public class LoadoutScreen extends Screen {
 
     /** Changes whenever the server sends a new loadout, so the buttons can be rebuilt. */
     private String signatureOf(BendingData data) {
-        StringBuilder s = new StringBuilder(String.valueOf(minecraft.player.isCreative()));
+        StringBuilder s = new StringBuilder(String.valueOf(minecraft.player.isCreative())).append(data.getSkillPoints());
         for (int slot = 0; slot < BendingData.SLOTS; slot++) {
             s.append('|').append(data.getLoadout(slot));
         }
@@ -69,6 +69,7 @@ public class LoadoutScreen extends Screen {
         BendingData data = data();
         Element element = data.getElement();
         signature = signatureOf(data);
+        BendingTabs.add(this, this::addRenderableWidget, BendingTabs.Tab.LOADOUT, data);
         int panel = Math.min(width - 20, MAX_COLUMN_WIDTH * 4 + GAP * 3);
         columnWidth = (panel - GAP * 3) / 4;
         left = (width - panel) / 2;

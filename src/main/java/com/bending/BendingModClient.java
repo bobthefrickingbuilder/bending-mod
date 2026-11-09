@@ -3,6 +3,7 @@ package com.bending;
 import com.bending.client.BendingHud;
 import com.bending.client.BendingHands;
 import com.bending.client.ClientInput;
+import com.bending.client.ShoulderCamera;
 import com.bending.client.particle.CelParticle;
 import com.bending.client.render.ChargeOrbRenderer;
 import com.bending.client.render.FireBlastRenderer;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 
 // Client-only entry point: never loaded on a dedicated server, so client classes
@@ -49,10 +51,13 @@ public class BendingModClient {
         }
         event.register(ClientInput.MENU_KEY);
         event.register(ClientInput.TOGGLE_KEY);
+        event.register(ClientInput.SHOULDER_KEY);
     }
 
     private static void registerHud(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "bending_hud"), BendingHud::render);
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR, ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "shoulder_crosshair"),
+                ShoulderCamera::renderCrosshair);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

@@ -35,6 +35,8 @@ public final class ClientInput {
             new KeyMapping("key.bending.menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, CATEGORY);
     public static final KeyMapping TOGGLE_KEY =
             new KeyMapping("key.bending.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, CATEGORY);
+    public static final KeyMapping SHOULDER_KEY =
+            new KeyMapping("key.bending.swap_shoulder", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, CATEGORY);
 
     private static final boolean[] wasDown = new boolean[BendingData.SLOTS];
     private static boolean prompted;
@@ -175,6 +177,10 @@ public final class ClientInput {
             } else if (mc.screen == null) {
                 mc.setScreen(new LoadoutScreen());
             }
+        }
+
+        while (SHOULDER_KEY.consumeClick()) {
+            ShoulderCamera.swapShoulder();
         }
 
         while (TOGGLE_KEY.consumeClick()) {

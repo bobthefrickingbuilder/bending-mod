@@ -28,11 +28,13 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
 ---
 
 ## ⏭️ Phase 3 — Skill tree + full firebending pool (next)
-- **Skill tree screen** (B key), 3 firebending branches:
+- ✅ **Skill tree screen** (B, Skill Tree tab): spend skill points to learn nodes; learned abilities auto-equip into an empty slot. Free in creative. Unbuilt abilities and master techniques show as "coming soon". Still to do: make it look prettier, and build the stat nodes.
+- 3 firebending branches:
   - **Aggression:** damage, burn time, explosion size. Capstone: **Blue Fire**.
   - **Breath:** max chi, chi regen, lower costs. Capstones: **Breath of Fire**, then **Dancing Dragon**.
   - **Discipline:** unlocks the alternative abilities, Lightning chaining. Capstone: **Lightning Redirection**.
 - ✅ **Loadout screen** (B): pick one unlocked ability per slot, with tooltips (cast type, chi, description) and the innate abilities listed. Locked abilities can be equipped in creative for testing. Still to do: block changes during combat.
+- ✅ **Over-the-shoulder camera**: the third-person back view sits off to one side (O swaps shoulders), with a crosshair.
 - ✅ **Meteor Slam** (innate, Shift in mid-air): directional dive; explodes from above dash height.
 - **Remaining abilities** (✅ = built; equip from the loadout screen, or `/bending equip <name>`):
   - Slot 1: ✅ Fire Arc, Fireball Charge.

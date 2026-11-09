@@ -195,6 +195,16 @@ public class BendingData {
         return skillPoints;
     }
 
+    /** Spends skill points if there are enough. */
+    public boolean trySpendSkillPoints(int amount) {
+        if (skillPoints < amount) {
+            return false;
+        }
+        skillPoints -= amount;
+        dirty = true;
+        return true;
+    }
+
     public static int xpForNextLevel(int level) {
         return 50 + 25 * level;
     }

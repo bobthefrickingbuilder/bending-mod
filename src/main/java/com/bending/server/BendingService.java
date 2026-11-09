@@ -8,11 +8,14 @@ import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
 import com.bending.network.BendingNetwork;
+import com.bending.skill.SkillNode;
+import com.bending.skill.SkillTree;
 import com.bending.sound.ModSounds;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 
 /** Server-side actions on a player's bending: choosing an element, resetting, gaining XP. */
@@ -101,6 +104,38 @@ public final class BendingService {
         }
         data.setLoadout(slot, abilityId);
         BendingNetwork.sync(player);
+    }
+
+    /**
+     * From the skill tree screen: learn a node of your element's tree, if its requirement is learned and
+     * you have the points (creative: free). A learned ability goes straight into its slot if that slot is empty.
+     */
+    public static void learnSkill(ServerPlayer player, String nodeId) {
+        BendingData data = player.getData(ModAttachments.BENDING);
+        SkillNode node = SkillTree.get(nodeId);
+        if (node == null || !SkillTree.of(data.getElement()).contains(node)) {
+            return;
+        }
+        boolean free = canUseLocked(player);
+        if (SkillTree.state(node, data, free) != SkillTree.State.AVAILABLE) {
+            return;
+        }
+        if (!free && !data.trySpendSkillPoints(node.cost())) {
+            return;
+        }
+        data.unlock(node.id());
+        Ability ability = node.ability();
+        if (ability != null && ability.slot() != AbilitySlot.INNATE) {
+            int slot = ability.slot().ordinal();
+            if (data.getLoadout(slot).isEmpty()) {
+                data.setLoadout(slot, ability.id());
+            }
+        }
+        BendingNetwork.sync(player);
+        player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.7f, 1.4f);
+        player.displayClientMessage(Component.translatable("message.bending.learned", node.name())
+                .withColor(node.branch().color()), true);
     }
 
     /**
