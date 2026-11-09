@@ -63,14 +63,32 @@ public class SkillTreeScreen extends Screen {
     @Override
     protected void init() {
         BendingTabs.add(this, this::addRenderableWidget, BendingTabs.Tab.SKILLS, data());
+        // Reset Skills: click once to arm, again within 3 s to confirm.
+        respecButton = addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
+                Component.translatable("screen.bending.skill_tree.respec"), b -> {
+                    if (respecArmed > 0) {
+                        PacketDistributor.sendToServer(new UnlockSkillPayload(BendingService.RESPEC));
+                        respecArmed = 0;
+                        b.setMessage(Component.translatable("screen.bending.skill_tree.respec"));
+                    } else {
+                        respecArmed = 60;
+                        b.setMessage(Component.translatable("screen.bending.skill_tree.respec_confirm").withStyle(ChatFormatting.RED));
+                    }
+                }).bounds(width - 112, height - 26, 104, 20).build());
         if (zoom < 0) {
             double fit = Math.min(width, height - TOP - 16) / 2.0 / (8.4 * RING_PX);
             zoom = Mth.clamp(fit, 0.55, 1.2);
         }
     }
 
+    private net.minecraft.client.gui.components.Button respecButton;
+    private int respecArmed;
+
     @Override
     public void tick() {
+        if (respecArmed > 0 && --respecArmed == 0 && respecButton != null) {
+            respecButton.setMessage(Component.translatable("screen.bending.skill_tree.respec"));
+        }
         if (minecraft.player == null || data().getElement() == null) {
             onClose();
         }

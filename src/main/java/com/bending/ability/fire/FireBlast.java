@@ -44,6 +44,31 @@ public class FireBlast extends Ability {
             new Strike(BendingAnimations.FIRE_BLAST_FRONT_KICK, 0.15, 0.85, false, InteractionHand.MAIN_HAND),
             new Strike(BendingAnimations.FIRE_BLAST_ROUNDHOUSE, -0.45, 0.6, false, InteractionHand.OFF_HAND),
     };
+    private static final float AIR_KICK_EXTRA_CHI = 6f;
+    private static final float AIR_KICK_DAMAGE = 11f;
+
+    private static void airKick(ServerPlayer player, BendingData data, float power) {
+        Vec3 look = player.getLookAngle();
+        // Aimed where you look, but always angled at least 35 degrees down.
+        Vec3 flat = new Vec3(look.x, 0, look.z);
+        flat = flat.lengthSqr() > 1e-4 ? flat.normalize() : Vec3.directionFromRotation(0, player.getYRot());
+        double down = Math.min(look.y, -0.7);
+        Vec3 dir = new Vec3(flat.x, down, flat.z).normalize();
+        float yaw = player.getYRot() * net.minecraft.util.Mth.DEG_TO_RAD;
+        Vec3 side = new Vec3(-net.minecraft.util.Mth.cos(yaw), 0, -net.minecraft.util.Mth.sin(yaw));
+        Vec3 start = player.position().add(0, 0.4, 0).add(flat.scale(0.6));
+        player.level().addFreshEntity(new com.bending.entity.FireArcEntity(player.level(), player, start, dir, side,
+                AIR_KICK_DAMAGE * power).withRange(14).withGroundBurst());
+        // The kick's recoil checks your fall and pops you up a little.
+        Vec3 v = player.getDeltaMovement();
+        player.setDeltaMovement(v.x * 0.6, Math.max(v.y, 0.28), v.z * 0.6);
+        player.hurtMarked = true;
+        player.fallDistance = 0;
+        BendingAnimations.play(player, BendingAnimations.AIR_KICK);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                ModSounds.FIRE_ARC_CAST.get(), SoundSource.PLAYERS, 0.9f, 0.8f + player.getRandom().nextFloat() * 0.15f);
+    }
+
     /** Pause this long between shots and the cycle starts over from the jab. */
     private static final int COMBO_RESET_TICKS = 25;
 
@@ -60,6 +85,13 @@ public class FireBlast extends Ability {
             data.fireBlastStep = 0;
             return;
         }
+        // Ctrl held in mid-air: a stamping kick that drives a crescent of fire down at the ground ahead.
+        if (data.ctrlHeld && !player.onGround() && !player.isInWater() && data.lightningCharges <= 0
+                && data.trySpend(AIR_KICK_EXTRA_CHI)) {
+            airKick(player, data, power);
+            data.fireBlastStep = 0;
+            return;
+        }
         long now = player.level().getGameTime();
         if (now - data.fireBlastLastShot > COMBO_RESET_TICKS) {
             data.fireBlastStep = 0;
@@ -70,10 +102,8 @@ public class FireBlast extends Ability {
 
         if (data.lightningCharges > 0) {
             Lightning.fireStored(player, data);
-            if (strike.punch()) {
-                player.swing(strike.hand(), true);
-            }
-            BendingAnimations.play(player, strike.animation());
+            BendingAnimations.play(player, strike.hand() == InteractionHand.MAIN_HAND
+                    ? BendingAnimations.LIGHTNING_RELEASE : BendingAnimations.LIGHTNING_RELEASE_LEFT);
             return;
         }
 

@@ -42,6 +42,8 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_HAND_EMBER = register("blue_hand_ember");
     /** Steam from melting snow and ice. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STEAM = register("steam");
+    /** Faint heat shimmer rising off strong flames. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HEAT_HAZE = register("heat_haze");
 
     private ModParticles() {}
 

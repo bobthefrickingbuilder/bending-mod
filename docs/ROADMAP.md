@@ -41,9 +41,15 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
   - Slot 2 (Defense, every option blocks): ✅ Wall of Fire, ✅ Flame Parry.
   - Slot 3: ✅ Jet Propulsion, ✅ Blazing Leap.
   - Slot 4: ✅ **Lightning** (with the calm-mind and rain rules), ✅ Dragon's Breath, ✅ Combustion Beam, ✅ Firestorm.
+- ✅ **Fire Blast variants:** Ctrl on the ground = Fire Sweep (spinning leg sweep, ring of fire); Ctrl in mid-air = Air Kick (fire crescent stamped into the ground). Fire Blast no longer breaks blocks; Fireball Charge does.
+- ✅ **Respec:** Reset Skills button on the skill tree (or `/bending respec`) refunds every point.
 - ✅ Radial skill tree: grows out from the Inner Fire centre. 62 nodes: abilities, master techniques, ranked upgrades per ability (damage, range, size, speed, charge time, chi cost, duration), body passives between the branches (health, resistance, max chi, regen, regen delay, move speed), and 4 exclusive style choices (Heavy/Rapid Shot, Wide Maw/Long Breath, Afterburner/Long Burn, Forked/Overcharge). Drag to pan, scroll to zoom. Gems will plug into the same stat sums later.
 
 ## Phase 4 — Polish pass: look, sound, feel
+- ✅ **New particles:** jagged lightning-bolt sprites for the arcs, and a heat-haze shimmer over Wall of Fire, Dragon's Breath and Fire Shield.
+- ✅ **Firebending damage types:** death messages read "burned to a crisp by Steve's firebending" / "struck down by Steve's lightning".
+- ✅ **Config** (`config/bending-common.toml`): damage and chi-cost multipliers, PvP, explosions breaking blocks, fire placement, melting. Client (`bending-client.toml`): screen shake strength, impact flashes.
+- ✅ **Impact feedback:** camera shake and a brief tinted screen flash near big bursts, slam craters, the fire sweep and lightning.
 - **Custom sounds:** fill the existing hooks with OGG files (several random variants each): fire whooshes, crackles, the lightning charge.
 - **Custom particles:** new textures (and providers where the motion should change) for the existing hooks, plus new ones: blue fire, lightning arcs, heat shimmer.
 - Optional: let mouse buttons cast abilities while in bending mode.
@@ -74,6 +80,8 @@ Suggested order, simplest first:
 3. **Earthbending:** has to be standing on earth; moves real blocks, which is the hardest technically. Sub-skills: metalbending, sandbending, seismic sense, lavabending.
 
 ## Phase 8 — Animations
+- ✅ Player Animation Library, synced to everyone. Real knees and elbows (each limb drawn as two hinged halves).
+- ✅ Poses for every firebending move: strike combo, fire sweep, air kick, dash/glide/leap, Lightning circle and two-finger release, shield guard and burst, Flame Parry, Wall of Fire rise, Combustion focus and release, Fire Arc kick/whip, charge, Firestorm, Meteor Slam, Dragon's Breath.
 - Pick an animation library (e.g. playerAnimator; check its 1.21.1 support at the time).
 - Full-body Blockbench animations: punches and kicks, the shield pose, the Lightning circle, the Firestorm spin.
 - Sync animations so other players see them too.

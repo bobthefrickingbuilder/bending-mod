@@ -49,6 +49,12 @@ public final class BendingUtil {
      * @return true if the damage was applied
      */
     public static boolean damage(ServerPlayer bender, LivingEntity target, float amount, int fireSeconds) {
+        return damage(bender, target, amount, fireSeconds, BendingDamage.FIREBENDING);
+    }
+
+    /** As above, with a specific damage type (for the death message). */
+    public static boolean damage(ServerPlayer bender, LivingEntity target, float amount, int fireSeconds,
+                                 net.minecraft.resources.ResourceKey<net.minecraft.world.damagesource.DamageType> type) {
         BendingData data = bender.getData(ModAttachments.BENDING);
         long now = bender.level().getGameTime();
         boolean dancing = FireTechniques.has(data, FireTechniques.DANCING_DRAGON);
@@ -63,10 +69,15 @@ public final class BendingUtil {
                     * (FireTechniques.has(data, FireTechniques.BLUE_FIRE) ? FireTechniques.BLUE_FIRE_BURN : 1f);
             fireSeconds = Math.round(fireSeconds * burn);
         }
+        if (target instanceof net.minecraft.world.entity.player.Player && target != bender
+                && !com.bending.BendingConfig.PVP.get()) {
+            return false;
+        }
+        amount *= com.bending.BendingConfig.DAMAGE_MULTIPLIER.get().floatValue();
         // Skip vanilla's half-second damage immunity: without cooldowns, follow-up hits land inside
         // that window and would otherwise lose most of their damage.
         target.invulnerableTime = 0;
-        boolean hurt = target.hurt(bender.damageSources().playerAttack(bender), amount);
+        boolean hurt = target.hurt(BendingDamage.source(bender, type), amount);
         if (hurt) {
             if (fireSeconds > 0) {
                 target.igniteForSeconds(fireSeconds);
@@ -123,7 +134,9 @@ public final class BendingUtil {
      * Plays the normal explosion sound and particles. Follows the mobGriefing game rule.
      */
     public static void terrainBlast(ServerLevel level, @Nullable Entity source, Vec3 pos, float power) {
-        level.explode(source, null, TERRAIN_ONLY, pos.x, pos.y, pos.z, power, false, Level.ExplosionInteraction.MOB,
+        Level.ExplosionInteraction interaction = com.bending.BendingConfig.EXPLOSIONS_BREAK_BLOCKS.get()
+                ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE;
+        level.explode(source, null, TERRAIN_ONLY, pos.x, pos.y, pos.z, power, false, interaction,
                 ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, ModSounds.FIRE_EXPLOSION);
     }
 
@@ -137,6 +150,11 @@ public final class BendingUtil {
     public static void fireBurst(ServerPlayer bender, Vec3 center, double radius, float damage, double knockback,
                                  int fireSeconds, @Nullable Entity exclude, float terrainPower) {
         ServerLevel level = bender.serverLevel();
+        // Big bursts shake the camera and flash the screen; a plain Fire Blast splash doesn't.
+        float impact = Math.min(1f, (float) Math.max(0, radius - 2) / 6f + terrainPower * 0.12f);
+        if (impact > 0.05f) {
+            ImpactFx.impact(level, center, impact, 12 + radius * 4, ImpactFx.fireColor(bender));
+        }
         if (terrainPower > 0f) {
             terrainBlast(level, bender, center, terrainPower);
         } else {
@@ -163,7 +181,7 @@ public final class BendingUtil {
      * The first try is the origin itself; the rest land on random nearby spots.
      */
     public static void scatterFire(Level level, BlockPos origin, int count) {
-        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || !com.bending.BendingConfig.PLACE_FIRE.get()) {
             return;
         }
         RandomSource random = level.getRandom();
@@ -183,7 +201,7 @@ public final class BendingUtil {
      * @return how many blocks melted
      */
     public static int meltSnowAndIce(ServerLevel level, BlockPos center, int radius) {
-        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || !com.bending.BendingConfig.MELT_SNOW_AND_ICE.get()) {
             return 0;
         }
         boolean evaporate = level.dimensionType().ultraWarm();

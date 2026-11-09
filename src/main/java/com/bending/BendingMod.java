@@ -11,6 +11,8 @@ import com.bending.sound.ModSounds;
 import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -22,7 +24,9 @@ public class BendingMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     // Runs first when the mod loads. NeoForge passes in the mod event bus.
-    public BendingMod(IEventBus modEventBus) {
+    public BendingMod(IEventBus modEventBus, ModContainer container) {
+        container.registerConfig(ModConfig.Type.COMMON, BendingConfig.COMMON_SPEC);
+        container.registerConfig(ModConfig.Type.CLIENT, BendingConfig.CLIENT_SPEC);
         ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);

@@ -102,7 +102,7 @@
   "screen.bending.innate_control.fire_blast": "Left click",
   "screen.bending.innate_control.fire_jet_dash": "Ctrl+Space, hold Ctrl",
   "screen.bending.innate_control.meteor_slam": "Shift in mid-air",
-  "ability.bending.fire_blast.desc": "A quick fire strike: punches and kicks in a combo. Two hits take down most mobs. It scorches, but never breaks blocks. Hold Ctrl on the ground to do a spinning leg sweep instead, throwing a ring of fire around you.",
+  "ability.bending.fire_blast.desc": "A quick fire strike: punches and kicks in a combo. Two hits take down most mobs. It scorches, but never breaks blocks. Hold Ctrl on the ground to do a spinning leg sweep instead, throwing a ring of fire around you; hold Ctrl in mid-air for a stamping kick that slams a crescent of fire into the ground ahead.",
   "ability.bending.fire_jet_dash.desc": "An explosive burst launches you the way you're pressing, tilted by your aim. Keep holding Ctrl to ride the jets and steer.",
   "ability.bending.meteor_slam.desc": "Dive like a meteor where you look and hit in a ring of fire. The higher you start, the harder it hits; from above dash height it explodes.",
   "ability.bending.fire_arc.desc": "A spinning kick sends out a crescent of fire 7 blocks wide that sweeps 18 blocks forward, burning everything it passes through.",
@@ -274,5 +274,12 @@
   "screen.bending.skill_tree.or": " or ",
   "screen.bending.skill_tree.click_rank": "Click to learn the next rank",
   "screen.bending.skill_tree.locked_out": "Locked: you chose %s instead",
-  "message.bending.learned_rank": "%s (rank %s/%s)"
+  "message.bending.learned_rank": "%s (rank %s/%s)",
+  "death.attack.bending.firebending": "%1$s was burned to a crisp by %2$s's firebending",
+  "death.attack.bending.firebending.item": "%1$s was burned to a crisp by %2$s's firebending",
+  "death.attack.bending.lightning": "%1$s was struck down by %2$s's lightning",
+  "death.attack.bending.lightning.item": "%1$s was struck down by %2$s's lightning",
+  "message.bending.respec": "Skills reset: %s skill points refunded",
+  "screen.bending.skill_tree.respec": "Reset Skills",
+  "screen.bending.skill_tree.respec_confirm": "Click to confirm"
 }

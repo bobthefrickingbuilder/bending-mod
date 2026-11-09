@@ -49,7 +49,11 @@ public final class BendingNetwork {
         registrar.playToServer(UnlockSkillPayload.TYPE, UnlockSkillPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
-                        BendingService.learnSkill(player, payload.nodeId());
+                        if (BendingService.RESPEC.equals(payload.nodeId())) {
+                            BendingService.respec(player);
+                        } else {
+                            BendingService.learnSkill(player, payload.nodeId());
+                        }
                     }
                 }));
 
@@ -65,7 +69,9 @@ public final class BendingNetwork {
         registrar.playToServer(DashReadyPayload.TYPE, DashReadyPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
-                        com.bending.ability.BendingAnimations.setDashReady(player, player.getData(ModAttachments.BENDING), payload.ready());
+                        BendingData d = player.getData(ModAttachments.BENDING);
+                        d.ctrlHeld = payload.ctrl();
+                        com.bending.ability.BendingAnimations.setDashReady(player, d, payload.ready());
                     }
                 }));
 
@@ -88,6 +94,9 @@ public final class BendingNetwork {
 
         registrar.playToClient(CombatStatePayload.TYPE, CombatStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> CombatStatePayload.clientInCombat = payload.inCombat()));
+
+        registrar.playToClient(ImpactPayload.TYPE, ImpactPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> ImpactPayload.clientHandler.accept(payload)));
 
         registrar.playToClient(PlayAnimationPayload.TYPE, PlayAnimationPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> PlayAnimationPayload.clientHandler.accept(payload)));

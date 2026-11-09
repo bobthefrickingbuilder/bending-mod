@@ -49,7 +49,7 @@ public class FlameParry extends Ability {
         Vec3 front = player.getEyePosition().add(look.scale(0.9)).add(0, -0.3, 0);
         level.sendParticles(FireFx.wisp(player), front.x, front.y, front.z, 8, 0.35, 0.35, 0.35, 0.02);
         level.sendParticles(FireFx.spark(player), front.x, front.y, front.z, 4, 0.3, 0.3, 0.3, 0.05);
-        player.swing(InteractionHand.MAIN_HAND, true);
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.FLAME_PARRY);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FLAME_PARRY_READY.get(), SoundSource.PLAYERS, 0.6f, 1.5f);
     }

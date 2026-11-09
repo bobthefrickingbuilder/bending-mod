@@ -103,6 +103,7 @@ public final class FireSweep {
             level.sendParticles(FireFx.core(player), x, c.y + 0.3, z, 8, 0.2, 0.15, 0.2, 0.06);
             level.sendParticles(FireFx.ember(player), x, c.y + 0.3, z, 6, 0.2, 0.1, 0.2, 0.15);
         } else if (waveT == 1) {
+            com.bending.ability.ImpactFx.impact(level, c, 0.3f, 14, com.bending.ability.ImpactFx.fireColor(player));
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), c.x, c.y + 0.2, c.z, 10, radius * 0.4, 0.1, radius * 0.4, 0.02);
             level.playSound(null, c.x, c.y, c.z, ModSounds.FIRE_EXPLOSION.get(), SoundSource.PLAYERS, 0.5f, 1.3f);
         }

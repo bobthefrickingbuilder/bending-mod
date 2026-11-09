@@ -47,6 +47,7 @@ public final class ClientInput {
     private static boolean dashing;
     /** Last dash-ready (Ctrl held on the ground) state sent to the server. */
     private static boolean sentDashReady;
+    private static boolean sentCtrl;
     private static int dashTicks;
     private static int airJumpsUsed;
     private static byte sentForward;
@@ -107,9 +108,10 @@ public final class ClientInput {
         boolean ctrl = data.bendingMode && mc.screen == null && physicallyDown(mc, mc.options.keySprint);
         // Holding Ctrl on the ground: crouch, ready to launch (everyone sees it).
         boolean ready = ctrl && !dashing && mc.player.onGround();
-        if (ready != sentDashReady) {
+        if (ready != sentDashReady || ctrl != sentCtrl) {
             sentDashReady = ready;
-            PacketDistributor.sendToServer(new com.bending.network.DashReadyPayload(ready));
+            sentCtrl = ctrl;
+            PacketDistributor.sendToServer(new com.bending.network.DashReadyPayload(ready, ctrl));
         }
         boolean started = false;
         if (!dashing && ctrl && jumpPressed) {

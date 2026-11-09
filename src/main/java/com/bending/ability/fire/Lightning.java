@@ -102,7 +102,7 @@ public class Lightning extends Ability {
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
         if (data.activeTicks == 1) {
-            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
+            com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.LIGHTNING_STANCE);
         }
         ServerLevel level = player.serverLevel();
         RandomSource random = level.getRandom();
@@ -253,6 +253,8 @@ public class Lightning extends Ability {
         Vec3 hand = start.add(look.scale(0.9)).add(0, -0.3, 0);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.LIGHTNING_STRIKE.get(), SoundSource.PLAYERS, 1.2f, 1.0f);
+        // A white flash and a jolt for you and anyone close by.
+        com.bending.ability.ImpactFx.impact(level, hand, 0.35f, 20, com.bending.ability.ImpactFx.LIGHTNING);
         // Recoil sparks off your hands.
         level.sendParticles(ModParticles.LIGHTNING_ARC.get(), hand.x, hand.y, hand.z, 40, 0.25, 0.25, 0.25, 0.25);
 
@@ -291,7 +293,7 @@ public class Lightning extends Ability {
                 && tryRedirect(catcher, catcher.getData(ModAttachments.BENDING), from)) {
             return;
         }
-        BendingUtil.damage(caster, target, damage, 0);
+        BendingUtil.damage(caster, target, damage, 0, com.bending.ability.BendingDamage.LIGHTNING);
     }
 
     /** Refund for catching lightning. */
@@ -328,6 +330,7 @@ public class Lightning extends Ability {
         spawnArc(level, stomach, hands[0], 0.5f, 4);
         level.sendParticles(ModParticles.LIGHTNING_ARC.get(), stomach.x, stomach.y, stomach.z, 40, 0.3, 0.5, 0.3, 0.12);
         player.displayClientMessage(Component.translatable("message.bending.redirected").withStyle(ChatFormatting.AQUA), true);
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.LIGHTNING_RELEASE);
         fireBolt(player, data, BendingRules.power(player, Element.FIRE));
         return true;
     }

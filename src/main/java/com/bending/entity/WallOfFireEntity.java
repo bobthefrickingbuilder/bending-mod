@@ -185,6 +185,12 @@ public class WallOfFireEntity extends Entity {
             Vec3 p = base.add(along.scale(u)).add(normal.scale(n)).add(0, v, 0);
             level().addParticle(FireFx.wisp(blue), p.x, p.y, p.z, 0, 0.01 + random.nextDouble() * 0.02, 0);
         }
+        // Heat shimmering off the top of the wall.
+        for (int i = 0; i < (int) (5 * s); i++) {
+            double u = (random.nextDouble() * 2 - 1) * HALF_WIDTH;
+            Vec3 p = base.add(along.scale(u)).add(0, HEIGHT * s * (0.7 + random.nextDouble() * 0.5), 0);
+            level().addParticle(com.bending.particle.ModParticles.HEAT_HAZE.get(), p.x, p.y, p.z, 0, 0.03, 0);
+        }
         // Billowing clouds of flame rolling up out of the wall.
         int clouds = (int) (7 * s);
         for (int i = 0; i < clouds; i++) {

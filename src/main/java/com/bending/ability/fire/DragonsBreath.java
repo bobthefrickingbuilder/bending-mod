@@ -141,6 +141,11 @@ public class DragonsBreath extends Ability {
             }
         }
 
+        // Heat haze hanging over the torrent.
+        for (int i = 0; i < 4; i++) {
+            Vec3 p = mouth.add(jitter(look, random, spread).scale(2 + random.nextDouble() * range * 0.6)).add(0, 0.6, 0);
+            level.sendParticles(com.bending.particle.ModParticles.HEAT_HAZE.get(), p.x, p.y, p.z, 1, 0.3, 0.2, 0.3, 0.01);
+        }
         if (ticks % 4 == 0) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.DRAGONS_BREATH_LOOP.get(),
                     SoundSource.PLAYERS, 1.4f, 0.5f + random.nextFloat() * 0.2f);

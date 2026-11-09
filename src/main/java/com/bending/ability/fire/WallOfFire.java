@@ -55,7 +55,7 @@ public class WallOfFire extends Ability {
         float yaw = (float) Math.toDegrees(Math.atan2(-flat.x, flat.z));
         level.addFreshEntity(new WallOfFireEntity(level, player, new Vec3(at.x, y, at.z), yaw, power,
                 Math.round(WallOfFireEntity.LIFE * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.DURATION))));
-        player.swing(InteractionHand.MAIN_HAND, true);
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.WALL_RISE);
         level.playSound(null, at.x, y, at.z, ModSounds.WALL_OF_FIRE_RISE.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
     }
 }

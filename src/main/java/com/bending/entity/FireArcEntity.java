@@ -64,6 +64,14 @@ public class FireArcEntity extends Entity {
         return this;
     }
 
+    /** Air Kick: when the crescent hits the ground it bursts into a splash of flame. */
+    private boolean groundBurst;
+
+    public FireArcEntity withGroundBurst() {
+        this.groundBurst = true;
+        return this;
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
@@ -83,6 +91,12 @@ public class FireArcEntity extends Entity {
         if (!level.getBlockState(blockAt).getCollisionShape(level, blockAt).isEmpty() || isInWater()) {
             level.sendParticles(FireFx.wisp(owner), getX(), getY(), getZ(), 12, 0.6, 0.3, 0.6, 0.05);
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), getX(), getY(), getZ(), 4, 0.5, 0.2, 0.5, 0.02);
+            if (groundBurst) {
+                Vec3 at = position().add(0, 0.3, 0);
+                com.bending.ability.BendingUtil.fireBurst(owner, at, 3.0, damage * 0.6f, 0.9, 3, null, 0f);
+                com.bending.ability.BendingUtil.ring(level, FireFx.wisp(owner), at, 2.2, 36);
+                com.bending.ability.BendingUtil.scatterFire(level, blockAt.above(), 2);
+            }
             discard();
             return;
         }

@@ -161,6 +161,58 @@ public final class BendingService {
                 .withColor(node.branch().color()), true);
     }
 
+    /** Special node id the skill screen sends to ask for a respec. */
+    public static final String RESPEC = "#respec";
+
+    /**
+     * Unlearns every skill-tree node you paid for and refunds the points. The starting kit (and
+     * the Inner Fire centre) stays. Not while in combat.
+     */
+    public static void respec(ServerPlayer player) {
+        BendingData data = player.getData(ModAttachments.BENDING);
+        if (data.getElement() == null) {
+            return;
+        }
+        if (inCombat(player)) {
+            player.displayClientMessage(Component.translatable("message.bending.loadout_combat").withStyle(ChatFormatting.RED), true);
+            return;
+        }
+        java.util.Set<String> starting = new java.util.HashSet<>();
+        Ability[] kit = Abilities.defaultLoadout(data.getElement());
+        if (kit != null) {
+            for (Ability a : kit) {
+                if (a != null) {
+                    starting.add(a.id());
+                }
+            }
+        }
+        int refund = 0;
+        for (SkillNode node : SkillTree.of(data.getElement())) {
+            if (node.kind() == SkillNode.Kind.CORE || node.id().equals(SkillTree.ROOT) || starting.contains(node.id())) {
+                continue;
+            }
+            int rank = SkillTree.rank(node, data);
+            for (int r = 1; r <= rank; r++) {
+                data.relock(node.rankId(r));
+            }
+            refund += node.cost() * rank;
+        }
+        CastHandler.cancel(data);
+        // Unequip abilities you no longer know.
+        for (int slot = 0; slot < BendingData.SLOTS; slot++) {
+            String id = data.getLoadout(slot);
+            if (!id.isEmpty() && !data.isUnlocked(id)) {
+                data.setLoadout(slot, "");
+            }
+        }
+        data.addSkillPoints(refund);
+        com.bending.skill.SkillStats.applyAttributes(player);
+        BendingNetwork.sync(player);
+        player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.7f, 1.2f);
+        player.displayClientMessage(Component.translatable("message.bending.respec", refund).withStyle(ChatFormatting.GOLD), true);
+    }
+
     /**
      * Clears loadout entries that no longer fit their slot (an ability that moved, like
      * Fire Blast becoming the innate attack, or one that was removed).

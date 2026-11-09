@@ -22,6 +22,17 @@ public final class BendingAnimations {
     public static final String FIRE_BLAST_ROUNDHOUSE = "fire_blast_roundhouse";
     public static final String FIRE_ARC_KICK = "fire_arc_kick";
     public static final String FIRE_SWEEP = "fire_sweep";
+    public static final String FIRE_ARC_WHIP = "fire_arc_whip";
+    public static final String AIR_KICK = "air_kick";
+    public static final String LIGHTNING_STANCE = "lightning_stance";
+    public static final String LIGHTNING_RELEASE = "lightning_release";
+    public static final String LIGHTNING_RELEASE_LEFT = "lightning_release_left";
+    public static final String SHIELD_GUARD = "shield_guard";
+    public static final String SHIELD_BURST = "shield_burst";
+    public static final String FLAME_PARRY = "flame_parry";
+    public static final String WALL_RISE = "wall_rise";
+    public static final String COMBUSTION_FOCUS = "combustion_focus";
+    public static final String COMBUSTION_RELEASE = "combustion_release";
     /** Looping: hands drawn in, gathering energy (Lightning, Combustion Beam, Fireball Charge). */
     public static final String CHARGE_STANCE = "charge_stance";
     /** Both palms driven forward: the release of a charged move. */
@@ -59,6 +70,13 @@ public final class BendingAnimations {
     public static void playForCast(ServerPlayer player, BendingData data, String name) {
         bind(data, player, CAST);
         send(player, name);
+    }
+
+    /** Like {@link #playForCast}, but only starts it if this cast isn't already showing a pose. */
+    public static void ensureForCast(ServerPlayer player, BendingData data, String name) {
+        if (data.animBinding != CAST) {
+            playForCast(player, data, name);
+        }
     }
 
     /** Plays an air pose that holds until you land (or hit water). */

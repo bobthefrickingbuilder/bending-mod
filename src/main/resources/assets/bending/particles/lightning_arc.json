@@ -1,5 +1,8 @@
 {
   "textures": [
-    "bending:fire_spark"
+    "bending:lightning_arc_0",
+    "bending:lightning_arc_1",
+    "bending:lightning_arc_2",
+    "bending:lightning_arc_3"
   ]
 }

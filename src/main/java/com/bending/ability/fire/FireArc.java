@@ -40,8 +40,9 @@ public class FireArc extends Ability {
 
         player.level().addFreshEntity(new FireArcEntity(player.level(), player, start, look, side, DAMAGE * power)
                 .withRange(FireArcEntity.RANGE * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.RANGE)));
-        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.FIRE_ARC_KICK);
-        player.swing(InteractionHand.MAIN_HAND, true);
+        // Alternate the spinning kick and the arm whip.
+        data.fireArcWhip = !data.fireArcWhip;
+        com.bending.ability.BendingAnimations.play(player, data.fireArcWhip ? com.bending.ability.BendingAnimations.FIRE_ARC_WHIP : com.bending.ability.BendingAnimations.FIRE_ARC_KICK);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_ARC_CAST.get(), SoundSource.PLAYERS, 0.8f, 0.8f + player.getRandom().nextFloat() * 0.2f);
     }

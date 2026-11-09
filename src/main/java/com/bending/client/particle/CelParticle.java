@@ -21,7 +21,7 @@ import net.minecraft.util.Mth;
  * behind it like a comet. Each {@link Kind} sets size, lifetime and motion.
  */
 public class CelParticle extends TextureSheetParticle {
-    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD, HAND_EMBER }
+    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD, HAND_EMBER, HEAT }
 
     /** Fire colour over a particle's life: age 0 = white-hot, age 1 = dying ember red. */
     private static final float[][] RAMP = {
@@ -119,8 +119,9 @@ public class CelParticle extends TextureSheetParticle {
                 // Mostly quick flashes, with a dirty tail of stray sparks that linger and drop.
                 boolean stray = random.nextFloat() < 0.3f;
                 lifetime = stray ? 8 + random.nextInt(10) : 3 + random.nextInt(4);
-                startSize = (stray ? 0.05f : 0.08f) + random.nextFloat() * 0.05f;
-                endSize = 0.02f;
+                // The texture is a whole jagged bolt, so the flashes are drawn large.
+                startSize = stray ? 0.07f + random.nextFloat() * 0.05f : 0.22f + random.nextFloat() * 0.16f;
+                endSize = stray ? 0.03f : 0.12f;
                 rampSpan = 0f;
                 friction = stray ? 0.88f : 0.7f;
                 gravity = stray ? 0.4f : 0f;
@@ -136,6 +137,17 @@ public class CelParticle extends TextureSheetParticle {
                 friction = 0.95f;
                 gravity = -0.06f;
                 spinRoll = (random.nextFloat() - 0.5f) * 0.12f;
+            }
+            case HEAT -> {
+                // Heat haze: a faint warm ripple drifting up off hot flames.
+                lifetime = 14 + random.nextInt(10);
+                startSize = 0.35f + random.nextFloat() * 0.2f;
+                endSize = 0.9f + random.nextFloat() * 0.3f;
+                rampSpan = 0f;
+                friction = 0.9f;
+                gravity = -0.12f;
+                spinRoll = (random.nextFloat() - 0.5f) * 0.05f;
+                setColor(1f, 0.86f, 0.72f);
             }
             case SMOKE -> {
                 lifetime = 20 + random.nextInt(16);
@@ -177,7 +189,7 @@ public class CelParticle extends TextureSheetParticle {
     }
 
     private boolean isFire() {
-        return kind != Kind.SMOKE && kind != Kind.STEAM;
+        return kind != Kind.SMOKE && kind != Kind.STEAM && kind != Kind.HEAT;
     }
 
     @Override
@@ -216,6 +228,8 @@ public class CelParticle extends TextureSheetParticle {
             float pulse = kind == Kind.EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;
             setColor(c[0] * pulse, c[1] * pulse, c[2] * pulse);
             alpha = 1f - smoothstep(0.7f, 1f, age);
+        } else if (kind == Kind.HEAT) {
+            alpha = 0.22f * smoothstep(0f, 0.2f, age) * (1f - smoothstep(0.5f, 1f, age));
         } else {
             alpha = (kind == Kind.SMOKE ? 0.85f : 0.7f) * (1f - smoothstep(0.4f, 1f, age));
         }

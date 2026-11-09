@@ -38,6 +38,9 @@ public class BendingModClient {
                 event.enqueueWork(com.bending.client.MoveAnimations::init));
         NeoForge.EVENT_BUS.addListener(ClientInput::onClientTick);
         NeoForge.EVENT_BUS.addListener(com.bending.client.HandEmbers::onClientTick);
+        NeoForge.EVENT_BUS.addListener(com.bending.client.ImpactEffects::onClientTick);
+        NeoForge.EVENT_BUS.addListener(com.bending.client.ImpactEffects::onCameraAngles);
+        com.bending.client.ImpactEffects.init();
         NeoForge.EVENT_BUS.addListener(ClientInput::onInteractionKey);
         BendingHands.register(NeoForge.EVENT_BUS);
         // Keep fireball trail fire out of the viewer's face (same distance the ball fades in from).
@@ -58,6 +61,8 @@ public class BendingModClient {
     }
 
     private static void registerHud(RegisterGuiLayersEvent event) {
+        event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "impact_flash"),
+                com.bending.client.ImpactEffects::renderFlash);
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "bending_hud"), BendingHud::render);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "shoulder_crosshair"),
                 ShoulderCamera::renderCrosshair);
@@ -82,6 +87,7 @@ public class BendingModClient {
         register(event, ModParticles.FIRE_SMOKE.get(), CelParticle.Kind.SMOKE);
         register(event, ModParticles.STEAM.get(), CelParticle.Kind.STEAM);
         register(event, ModParticles.LIGHTNING_ARC.get(), CelParticle.Kind.ARC);
+        register(event, ModParticles.HEAT_HAZE.get(), CelParticle.Kind.HEAT);
         register(event, ModParticles.FIRE_CLOUD.get(), CelParticle.Kind.CLOUD);
         register(event, ModParticles.BLUE_FIRE_CLOUD.get(), CelParticle.Kind.CLOUD, true);
         // Blue Fire: same shapes, blue colour ramp.

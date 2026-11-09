@@ -233,6 +233,11 @@ public final class BendingServerEvents {
                                             BoolArgumentType.getBool(ctx, "enabled"));
                                     return 1;
                                 })))
+                .then(Commands.literal("respec")
+                        .executes(ctx -> {
+                            BendingService.respec(ctx.getSource().getPlayerOrException());
+                            return 1;
+                        }))
                 .then(Commands.literal("reset")
                         .requires(source -> source.hasPermission(2))
                         .executes(ctx -> {

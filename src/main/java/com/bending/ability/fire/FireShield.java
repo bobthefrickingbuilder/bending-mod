@@ -76,6 +76,7 @@ public class FireShield extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        com.bending.ability.BendingAnimations.ensureForCast(player, data, com.bending.ability.BendingAnimations.SHIELD_GUARD);
         ServerLevel level = player.serverLevel();
         Vec3 look = player.getLookAngle();
         Vec3 center = player.getEyePosition().add(look.scale(SHIELD_DISTANCE));
@@ -93,6 +94,8 @@ public class FireShield extends Ability {
             level.sendParticles(FireFx.wisp(player), p.x, p.y, p.z, 1, 0, 0, 0, 0.01);
         }
 
+        level.sendParticles(com.bending.particle.ModParticles.HEAT_HAZE.get(), center.x, center.y + 0.6, center.z, 2,
+                SHIELD_RADIUS * 0.4, 0.3, SHIELD_RADIUS * 0.4, 0.01);
         if (BendingUtil.destroyProjectiles(level, player, center, SHIELD_RADIUS + 1.0) > 0) {
             level.playSound(null, center.x, center.y, center.z, ModSounds.FIRE_SHIELD_DEFLECT.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
         }
@@ -107,6 +110,7 @@ public class FireShield extends Ability {
 
     @Override
     public void onTap(ServerPlayer player, BendingData data, float power) {
+        com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.SHIELD_BURST);
         ServerLevel level = player.serverLevel();
         Vec3 pos = player.position();
         BendingUtil.terrainBlast(level, player, pos.add(0, 0.5, 0), BURST_TERRAIN_POWER);

@@ -77,6 +77,10 @@ public class BendingData {
     public long rootedUntil;
     /** Ctrl held on the ground in bending mode (the dash-ready crouch); turns Fire Blast into Fire Sweep. */
     public boolean crouchReady;
+    /** Ctrl held at all in bending mode (synced from the client). */
+    public boolean ctrlHeld;
+    /** Fire Arc alternates its animation: spinning kick, arm whip. */
+    public boolean fireArcWhip;
     /** Fire Sweep in progress: tick of the sweep, or -1. */
     public int sweepTick = -1;
     public net.minecraft.world.phys.Vec3 sweepCenter = net.minecraft.world.phys.Vec3.ZERO;
@@ -159,6 +163,17 @@ public class BendingData {
 
     public void unlock(String abilityId) {
         unlocked.add(abilityId);
+        dirty = true;
+    }
+
+    public void relock(String id) {
+        if (unlocked.remove(id)) {
+            dirty = true;
+        }
+    }
+
+    public void addSkillPoints(int amount) {
+        skillPoints += amount;
         dirty = true;
     }
 

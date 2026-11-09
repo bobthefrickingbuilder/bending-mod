@@ -251,7 +251,7 @@ public final class CastHandler {
     }
 
     private static boolean spend(ServerPlayer player, BendingData data, float cost) {
-        cost *= SkillStats.chiCostMultiplier(data);
+        cost *= SkillStats.chiCostMultiplier(data) * com.bending.BendingConfig.CHI_COST_MULTIPLIER.get().floatValue();
         if (cost <= 0f) {
             return true;
         }
