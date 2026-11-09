@@ -101,7 +101,7 @@ public class Lightning extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
-        if (ticks == 1) {
+        if (data.activeTicks == 1) {
             com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
         }
         ServerLevel level = player.serverLevel();
@@ -172,7 +172,7 @@ public class Lightning extends Ability {
     @Override
     public void onRelease(ServerPlayer player, BendingData data, int ticks, float power) {
         // The charge isn't thrown: it stays in you, crackling, until you spend it with Fire Blast.
-        data.lightningCharges = STORED_BOLTS;
+        data.lightningCharges = STORED_BOLTS + com.bending.skill.SkillStats.abilityFlat(player, id(), com.bending.skill.SkillStat.BOLTS);
         ServerLevel level = player.serverLevel();
         Vec3[] hands = hands(player);
         for (Vec3 hand : hands) {
@@ -184,7 +184,10 @@ public class Lightning extends Ability {
     }
 
     /** Fire Blast with lightning stored: one bolt instead of a fireball. */
-    public static void fireStored(ServerPlayer player, BendingData data, float power) {
+    public static void fireStored(ServerPlayer player, BendingData data) {
+        // Bolts hit with Lightning's own upgrades, not Fire Blast's.
+        float power = BendingRules.power(player, Element.FIRE)
+                * com.bending.skill.SkillStats.ability(player, com.bending.ability.Abilities.LIGHTNING.id(), com.bending.skill.SkillStat.DAMAGE);
         data.lightningCharges--;
         fireBolt(player, data, power, STORED_DAMAGE, STORED_CHAIN_DAMAGE);
         showStored(player, data);
@@ -205,7 +208,7 @@ public class Lightning extends Ability {
         }
         ServerLevel level = player.serverLevel();
         RandomSource random = level.getRandom();
-        float f = data.lightningCharges / (float) STORED_BOLTS;
+        float f = Math.min(1f, data.lightningCharges / (float) STORED_BOLTS);
         Vec3[] hands = hands(player);
         for (Vec3 hand : hands) {
             level.sendParticles(ModParticles.LIGHTNING_ARC.get(), hand.x, hand.y, hand.z, 1 + (int) (f * 4), 0.2, 0.2, 0.2, 0.06);
@@ -237,11 +240,13 @@ public class Lightning extends Ability {
         ServerLevel level = player.serverLevel();
         Vec3 look = player.getLookAngle();
         Vec3 start = player.getEyePosition();
-        Vec3 end = start.add(look.scale(RANGE));
+        String lightningId = com.bending.ability.Abilities.LIGHTNING.id();
+        double range = RANGE * com.bending.skill.SkillStats.ability(player, lightningId, com.bending.skill.SkillStat.RANGE);
+        Vec3 end = start.add(look.scale(range));
         BlockHitResult blockHit = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         Vec3 stop = blockHit.getType() == HitResult.Type.MISS ? end : blockHit.getLocation();
         EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, start, stop,
-                player.getBoundingBox().expandTowards(look.scale(RANGE)).inflate(1.0),
+                player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0),
                 e -> e instanceof LivingEntity && e != player && !e.isSpectator() && e.isPickable());
 
         // From the leading hand, slightly in front so it doesn't fill your screen.
@@ -269,7 +274,7 @@ public class Lightning extends Ability {
         List<LivingEntity> nearby = new ArrayList<>(BendingUtil.livingAround(player, firstAt, CHAIN_RANGE));
         nearby.remove(first);
         nearby.sort(Comparator.comparingDouble(e -> e.distanceToSqr(firstAt)));
-        List<LivingEntity> chained = wet ? nearby : nearby.subList(0, Math.min(CHAIN_TARGETS, nearby.size()));
+        List<LivingEntity> chained = wet ? nearby : nearby.subList(0, Math.min(CHAIN_TARGETS + com.bending.skill.SkillStats.abilityFlat(player, lightningId, com.bending.skill.SkillStat.CHAIN), nearby.size()));
         for (LivingEntity target : chained) {
             spawnArc(level, firstAt, centre(target), 0.7f, 5);
             strike(player, target, chainDamage * power, firstAt);

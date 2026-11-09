@@ -72,7 +72,7 @@ public class CombustionBeam extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
-        if (ticks == 1) {
+        if (data.activeTicks == 1) {
             com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
         }
         ServerLevel level = player.serverLevel();
@@ -120,13 +120,14 @@ public class CombustionBeam extends Ability {
         float charge = ticks / (float) FULL_CHARGE;
         Vec3 look = player.getLookAngle();
         Vec3 start = player.getEyePosition();
-        Vec3 end = start.add(look.scale(RANGE));
+        double range = RANGE * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.RANGE);
+        Vec3 end = start.add(look.scale(range));
 
         // First block in the way, then the first creature before that block.
         BlockHitResult blockHit = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         Vec3 stop = blockHit.getType() == HitResult.Type.MISS ? end : blockHit.getLocation();
         EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, player, start, stop,
-                player.getBoundingBox().expandTowards(look.scale(RANGE)).inflate(1.0),
+                player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0),
                 e -> e instanceof LivingEntity && e != player && !e.isSpectator() && e.isPickable());
         @Nullable Entity target = entityHit != null ? entityHit.getEntity() : null;
         Vec3 impact = entityHit != null ? entityHit.getLocation() : stop;

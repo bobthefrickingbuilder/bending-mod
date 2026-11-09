@@ -21,6 +21,7 @@ public final class BendingAnimations {
     public static final String FIRE_BLAST_FRONT_KICK = "fire_blast_front_kick";
     public static final String FIRE_BLAST_ROUNDHOUSE = "fire_blast_roundhouse";
     public static final String FIRE_ARC_KICK = "fire_arc_kick";
+    public static final String FIRE_SWEEP = "fire_sweep";
     /** Looping: hands drawn in, gathering energy (Lightning, Combustion Beam, Fireball Charge). */
     public static final String CHARGE_STANCE = "charge_stance";
     /** Both palms driven forward: the release of a charged move. */
@@ -68,6 +69,7 @@ public final class BendingAnimations {
 
     /** The client says Ctrl went down (ready to dash) or up. */
     public static void setDashReady(ServerPlayer player, BendingData data, boolean ready) {
+        data.crouchReady = ready;
         if (ready) {
             if (data.animBinding == NONE && data.activeSlot == -1 && player.onGround()) {
                 bind(data, player, PREP);

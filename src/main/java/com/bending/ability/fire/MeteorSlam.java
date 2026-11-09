@@ -165,6 +165,37 @@ public class MeteorSlam extends Ability {
         level.sendParticles(ModParticles.FIRE_SMOKE.get(), player.getX(), player.getY() + 1.6, player.getZ(), 1, 0.2, 0.2, 0.2, 0.02);
     }
 
+    /** After a ground-breaking landing you can't move for this long (a third of a second). */
+    private static final int ROOT_TICKS = 7;
+    private static final net.minecraft.resources.ResourceLocation ROOT_ID =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(com.bending.BendingMod.MODID, "slam_root");
+
+    /** Every tick: holds you in place while rooted by a landing, then lets go. */
+    public static void tickRooted(ServerPlayer player, BendingData data) {
+        boolean rooted = player.level().getGameTime() < data.rootedUntil;
+        var speed = player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+        var jump = player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH);
+        for (var attribute : new net.minecraft.world.entity.ai.attributes.AttributeInstance[] {speed, jump}) {
+            if (attribute == null) {
+                continue;
+            }
+            boolean has = attribute.hasModifier(ROOT_ID);
+            if (rooted && !has) {
+                attribute.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(ROOT_ID, -1.0,
+                        net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+            } else if (!rooted && has) {
+                attribute.removeModifier(ROOT_ID);
+            }
+        }
+        if (rooted) {
+            Vec3 v = player.getDeltaMovement();
+            if (v.x * v.x + v.z * v.z > 1e-4) {
+                player.setDeltaMovement(0, Math.min(0, v.y), 0);
+                player.hurtMarked = true;
+            }
+        }
+    }
+
     private static void impact(ServerPlayer player, BendingData data) {
         com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.METEOR_LAND);
         ServerLevel level = player.serverLevel();
@@ -186,6 +217,7 @@ public class MeteorSlam extends Ability {
             explosionPower = Math.min(MAX_EXPLOSION_POWER, BASE_EXPLOSION_POWER + (float) over * EXPLOSION_POWER_PER_BLOCK);
         }
         damage *= data.slamPower;
+        radius *= com.bending.skill.SkillStats.ability(player, com.bending.ability.Abilities.METEOR_SLAM.id(), com.bending.skill.SkillStat.SIZE);
         Vec3 at = player.position().add(0, 0.2, 0);
 
         // The blast is centred a little ahead of you, so a dive carries into what you aimed at.
@@ -194,7 +226,13 @@ public class MeteorSlam extends Ability {
         Vec3 forward = lean > 1e-3 ? flat.scale(1 / lean) : Vec3.ZERO;
         Vec3 centre = at.add(forward.scale(radius * 0.35 * lean));
         BendingUtil.fireBurst(player, centre, radius, damage, 1.3 + Math.min(1.0, over * 0.03), 3, null, explosionPower);
+        // Every landing kills your momentum: you stop dead where you hit.
+        player.setDeltaMovement(0, Math.min(0, player.getDeltaMovement().y), 0);
+        player.hurtMarked = true;
         if (explosionPower > 0f) {
+            // A crater-making landing also plants you for a beat before you can move.
+            data.rootedUntil = level.getGameTime() + ROOT_TICKS;
+            tickRooted(player, data);
             level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, at.x, at.y, at.z, 1, 0, 0, 0, 0);
             level.sendParticles(FireFx.wisp(player), at.x, at.y + 1, at.z, 60, radius * 0.3, 1.0, radius * 0.3, 0.25);
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), at.x, at.y + 1.5, at.z, 20, radius * 0.3, 1.0, radius * 0.3, 0.05);

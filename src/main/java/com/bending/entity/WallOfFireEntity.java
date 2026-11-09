@@ -48,6 +48,9 @@ public class WallOfFireEntity extends Entity {
             SynchedEntityData.defineId(WallOfFireEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> BLUE =
             SynchedEntityData.defineId(WallOfFireEntity.class, EntityDataSerializers.BOOLEAN);
+    /** How long this wall stands (Wall of Fire: Endurance). */
+    private static final EntityDataAccessor<Integer> LIFETIME =
+            SynchedEntityData.defineId(WallOfFireEntity.class, EntityDataSerializers.INT);
 
     @Nullable
     private ServerPlayer owner;
@@ -59,8 +62,9 @@ public class WallOfFireEntity extends Entity {
         setNoGravity(true);
     }
 
-    public WallOfFireEntity(Level level, ServerPlayer owner, Vec3 base, float yaw, float power) {
+    public WallOfFireEntity(Level level, ServerPlayer owner, Vec3 base, float yaw, float power, int lifetime) {
         this(ModEntities.WALL_OF_FIRE.get(), level);
+        entityData.set(LIFETIME, lifetime);
         this.owner = owner;
         this.power = power;
         entityData.set(YAW, yaw);
@@ -72,6 +76,7 @@ public class WallOfFireEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(YAW, 0f);
         builder.define(BLUE, false);
+        builder.define(LIFETIME, LIFE);
     }
 
     /** The direction the wall faces (away from its caster). */
@@ -90,7 +95,7 @@ public class WallOfFireEntity extends Entity {
     private float strength(float partial) {
         float t = tickCount + partial;
         float rise = Mth.clamp(t / RISE_TICKS, 0f, 1f);
-        float fade = Mth.clamp((LIFE - t) / 15f, 0f, 1f);
+        float fade = Mth.clamp((entityData.get(LIFETIME) - t) / 15f, 0f, 1f);
         return Math.min(rise, fade);
     }
 
@@ -102,7 +107,7 @@ public class WallOfFireEntity extends Entity {
             return;
         }
         ServerLevel level = (ServerLevel) level();
-        if (owner == null || owner.level() != level || tickCount > LIFE) {
+        if (owner == null || owner.level() != level || tickCount > entityData.get(LIFETIME)) {
             discard();
             return;
         }

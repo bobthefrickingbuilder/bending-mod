@@ -41,7 +41,7 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
   - Slot 2 (Defense, every option blocks): ✅ Wall of Fire, ✅ Flame Parry.
   - Slot 3: ✅ Jet Propulsion, ✅ Blazing Leap.
   - Slot 4: ✅ **Lightning** (with the calm-mind and rain rules), ✅ Dragon's Breath, ✅ Combustion Beam, ✅ Firestorm.
-- ✅ Stat nodes in the tree: Searing Heat, Wildfire (damage, burn), Deep Lungs, Steady Breath (max chi, regen), Focus, Inner Calm (chi costs, regen delay). Gems will plug into the same hooks later.
+- ✅ Radial skill tree: grows out from the Inner Fire centre. 62 nodes: abilities, master techniques, ranked upgrades per ability (damage, range, size, speed, charge time, chi cost, duration), body passives between the branches (health, resistance, max chi, regen, regen delay, move speed), and 4 exclusive style choices (Heavy/Rapid Shot, Wide Maw/Long Breath, Afterburner/Long Burn, Forked/Overcharge). Drag to pan, scroll to zoom. Gems will plug into the same stat sums later.
 
 ## Phase 4 — Polish pass: look, sound, feel
 - **Custom sounds:** fill the existing hooks with OGG files (several random variants each): fire whooshes, crackles, the lightning charge.

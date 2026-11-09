@@ -56,6 +56,14 @@ public class FireArcEntity extends Entity {
         setPos(start.x, start.y, start.z);
     }
 
+    /** How far the crescent sweeps (Fire Arc: Reach). */
+    private double range = RANGE;
+
+    public FireArcEntity withRange(double range) {
+        this.range = range;
+        return this;
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
@@ -65,7 +73,7 @@ public class FireArcEntity extends Entity {
         if (!(level() instanceof ServerLevel level)) {
             return;
         }
-        if (owner == null || owner.level() != level || tickCount * SPEED > RANGE) {
+        if (owner == null || owner.level() != level || tickCount * SPEED > range) {
             discard();
             return;
         }

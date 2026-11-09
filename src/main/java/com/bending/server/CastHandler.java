@@ -4,6 +4,7 @@ import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
 import com.bending.ability.CastType;
 import com.bending.ability.fire.FireTechniques;
+import com.bending.skill.SkillStat;
 import com.bending.skill.SkillStats;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
@@ -87,22 +88,22 @@ public final class CastHandler {
         }
 
         if (ability.castType() == CastType.TAP) {
-            float cost = ability.chiCost(0);
+            float cost = cost(player, ability, ability.chiCost(0));
             if (!spend(player, data, cost)) {
                 return;
             }
-            ability.onTap(player, data, BendingRules.power(player, element));
+            ability.onTap(player, data, power(player, element, ability));
             BendingNetwork.sync(player);
             return;
         }
 
         // HOLD, CHARGE and TAP_OR_HOLD stay active until the key is released.
-        float startCost = ability.startChiCost();
-        float needed = startCost + switch (ability.castType()) {
+        float startCost = cost(player, ability, ability.startChiCost());
+        float needed = startCost + cost(player, ability, switch (ability.castType()) {
             case CHARGE -> ability.chiCost(0);
             case TAP_OR_HOLD -> Math.min(ability.chiCost(0), ability.chiPerTick() * TAP_THRESHOLD);
             default -> ability.chiPerTick() * 5;
-        };
+        });
         if (!canAfford(player, data, needed)) {
             noChi(player);
             return;
@@ -110,7 +111,7 @@ public final class CastHandler {
         if (!spend(player, data, startCost)) {
             return;
         }
-        ability.onStart(player, data, BendingRules.power(player, element));
+        ability.onStart(player, data, power(player, element, ability));
         data.activeSlot = slot;
         data.activeTicks = 0;
         if (startCost > 0f) {
@@ -122,6 +123,8 @@ public final class CastHandler {
     public static void tick(ServerPlayer player, BendingData data) {
         com.bending.ability.BendingAnimations.tick(player, data);
         com.bending.ability.fire.Lightning.tickStored(player, data);
+        com.bending.ability.fire.MeteorSlam.tickRooted(player, data);
+        com.bending.ability.fire.FireSweep.tick(player, data);
         Ability casting = data.activeSlot == -1 ? null : abilityIn(data, data.activeSlot);
         updateCastSlow(player, casting == null ? 1f : casting.castMoveSpeed());
         if (data.activeSlot == -1) {
@@ -134,7 +137,7 @@ public final class CastHandler {
             return;
         }
         data.activeTicks++;
-        float power = BendingRules.power(player, element);
+        float power = power(player, element, ability);
 
         switch (ability.castType()) {
             case HOLD -> holdTick(player, data, ability, data.activeTicks, power);
@@ -144,8 +147,9 @@ public final class CastHandler {
                 }
             }
             case CHARGE -> {
-                ability.onHoldTick(player, data, Math.min(data.activeTicks, ability.maxChargeTicks()), power);
-                if (ability.autoReleaseAtMax() && data.activeTicks >= ability.maxChargeTicks()) {
+                int charge = chargeTicks(player, ability, data.activeTicks);
+                ability.onHoldTick(player, data, Math.min(charge, ability.maxChargeTicks()), power);
+                if (ability.autoReleaseAtMax() && charge >= ability.maxChargeTicks()) {
                     finish(player, data);
                     return;
                 }
@@ -159,7 +163,8 @@ public final class CastHandler {
     }
 
     private static void holdTick(ServerPlayer player, BendingData data, Ability ability, int ticks, float power) {
-        if (ticks > ability.maxHoldTicks() || !spend(player, data, ability.chiPerTick())) {
+        int maxHold = Math.round(ability.maxHoldTicks() * SkillStats.ability(player, ability.id(), SkillStat.DURATION));
+        if (ticks > maxHold || !spend(player, data, cost(player, ability, ability.chiPerTick()))) {
             finish(player, data);
             return;
         }
@@ -174,12 +179,12 @@ public final class CastHandler {
         if (ability == null || data.getElement() == null) {
             return;
         }
-        float power = BendingRules.power(player, data.getElement());
+        float power = power(player, data.getElement(), ability);
 
         switch (ability.castType()) {
             case TAP_OR_HOLD -> {
                 if (ticks < TAP_THRESHOLD) {
-                    if (spend(player, data, ability.chiCost(0))) {
+                    if (spend(player, data, cost(player, ability, ability.chiCost(0)))) {
                         ability.onTap(player, data, power);
                         BendingNetwork.sync(player);
                     }
@@ -193,12 +198,12 @@ public final class CastHandler {
                 BendingNetwork.sync(player);
             }
             case CHARGE -> {
-                int charge = Math.min(ticks, ability.maxChargeTicks());
+                int charge = Math.min(chargeTicks(player, ability, ticks), ability.maxChargeTicks());
                 if (charge < ability.minChargeTicks()) {
                     ability.onChargeCancelled(player, data);
                     return;
                 }
-                if (spend(player, data, ability.chiCost(charge))) {
+                if (spend(player, data, cost(player, ability, ability.chiCost(charge)))) {
                     ability.onRelease(player, data, charge, power);
                     BendingNetwork.sync(player);
                 }
@@ -223,6 +228,21 @@ public final class CastHandler {
         } else if (speed >= 1f && has) {
             attribute.removeModifier(CAST_SLOW);
         }
+    }
+
+    /** Bending power for a cast: your element's power times the ability's damage upgrades. */
+    private static float power(ServerPlayer player, Element element, Ability ability) {
+        return BendingRules.power(player, element) * SkillStats.ability(player, ability.id(), SkillStat.DAMAGE);
+    }
+
+    /** An ability's chi cost after its own upgrades (global discounts are applied when spending). */
+    private static float cost(ServerPlayer player, Ability ability, float raw) {
+        return raw * SkillStats.ability(player, ability.id(), SkillStat.CHI_COST);
+    }
+
+    /** How far along a charge is: charge-time upgrades make it fill faster. */
+    private static int chargeTicks(ServerPlayer player, Ability ability, int heldTicks) {
+        return (int) (heldTicks / SkillStats.ability(player, ability.id(), SkillStat.CHARGE_TIME));
     }
 
     public static void cancel(BendingData data) {

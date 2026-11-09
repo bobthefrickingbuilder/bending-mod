@@ -141,7 +141,9 @@ public final class BendingService {
         if (!free && !data.trySpendSkillPoints(node.cost())) {
             return;
         }
-        data.unlock(node.id());
+        int rank = SkillTree.rank(node, data) + 1;
+        data.unlock(node.rankId(rank));
+        com.bending.skill.SkillStats.applyAttributes(player);
         Ability ability = node.ability();
         if (ability != null && ability.slot() != AbilitySlot.INNATE && !inCombat(player)) {
             int slot = ability.slot().ordinal();
@@ -152,7 +154,10 @@ public final class BendingService {
         BendingNetwork.sync(player);
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.7f, 1.4f);
-        player.displayClientMessage(Component.translatable("message.bending.learned", node.name())
+        Component name = node.maxRank() > 1
+                ? Component.translatable("message.bending.learned_rank", node.name(), rank, node.maxRank())
+                : node.name();
+        player.displayClientMessage(Component.translatable("message.bending.learned", name)
                 .withColor(node.branch().color()), true);
     }
 

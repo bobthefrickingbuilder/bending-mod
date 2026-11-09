@@ -4,29 +4,55 @@
   "jet_glide": {
    "animation_length": 1.6,
    "bones": {
-    "body": {
+    "torso": {
      "rotation": {
       "0.0": {
        "vector": [
-        35,
         0,
-        3
+        0,
+        2
        ],
        "lerp_mode": "catmullrom"
       },
       "0.8": {
        "vector": [
-        32,
         0,
-        -3
+        0,
+        -2
        ],
        "lerp_mode": "catmullrom"
       },
       "1.6": {
        "vector": [
-        35,
         0,
-        3
+        0,
+        2
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     },
+     "bend": {
+      "0.0": {
+       "vector": [
+        18,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.8": {
+       "vector": [
+        16,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "1.6": {
+       "vector": [
+        18,
+        0,
+        0
        ],
        "lerp_mode": "catmullrom"
       }

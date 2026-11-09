@@ -54,10 +54,14 @@ public class FirestormEntity extends Entity {
         setNoGravity(true);
     }
 
-    public FirestormEntity(Level level, ServerPlayer owner, float power) {
+    /** Firestorm: Reach. Scales the ring and the vortex. */
+    private double size = 1.0;
+
+    public FirestormEntity(Level level, ServerPlayer owner, float power, double size) {
         this(ModEntities.FIRESTORM.get(), level);
         this.owner = owner;
         this.power = power;
+        this.size = size;
         setPos(owner.getX(), owner.getY(), owner.getZ());
     }
 
@@ -81,7 +85,7 @@ public class FirestormEntity extends Entity {
             BendingUtil.terrainBlast(level, owner, center, CENTER_TERRAIN_POWER);
         }
         if (tickCount <= RING_TICKS) {
-            double radius = tickCount * RING_RADIUS / RING_TICKS;
+            double radius = tickCount * (RING_RADIUS * size) / RING_TICKS;
             // The ring scorches the ground as it passes...
             for (int i = 0; i < (int) radius; i++) {
                 double angle = level.getRandom().nextDouble() * Math.PI * 2;
@@ -113,19 +117,19 @@ public class FirestormEntity extends Entity {
             double angle = tickCount * 0.45 + strand * (Math.PI * 2 / 5);
             for (int layer = 0; layer < 3; layer++) {
                 double height = ((tickCount + layer * 10) % 30) / 5.0;
-                double r = VORTEX_RADIUS * (0.6 + height / 15);
+                double r = (VORTEX_RADIUS * size) * (0.6 + height / 15);
                 level.sendParticles(FireFx.wisp(owner),
                         center.x + Math.cos(angle + layer) * r, center.y + height, center.z + Math.sin(angle + layer) * r,
                         3, 0.15, 0.15, 0.15, 0.02);
             }
         }
-        level.sendParticles(FireFx.cloud(owner), center.x, center.y + 0.5, center.z, 3, VORTEX_RADIUS * 0.4, 0.3, VORTEX_RADIUS * 0.4, 0.05);
+        level.sendParticles(FireFx.cloud(owner), center.x, center.y + 0.5, center.z, 3, (VORTEX_RADIUS * size) * 0.4, 0.3, (VORTEX_RADIUS * size) * 0.4, 0.05);
         if (tickCount % 2 == 0) {
-            level.sendParticles(FireFx.ember(owner), center.x, center.y + 1, center.z, 3, VORTEX_RADIUS * 0.5, 1.0, VORTEX_RADIUS * 0.5, 0.1);
+            level.sendParticles(FireFx.ember(owner), center.x, center.y + 1, center.z, 3, (VORTEX_RADIUS * size) * 0.5, 1.0, (VORTEX_RADIUS * size) * 0.5, 0.1);
         }
-        BendingUtil.destroyProjectiles(level, owner, center.add(0, 1, 0), VORTEX_RADIUS + 0.5);
+        BendingUtil.destroyProjectiles(level, owner, center.add(0, 1, 0), (VORTEX_RADIUS * size) + 0.5);
         if (tickCount % 20 == 0) {
-            for (LivingEntity target : BendingUtil.livingAround(owner, center.add(0, 1, 0), VORTEX_RADIUS)) {
+            for (LivingEntity target : BendingUtil.livingAround(owner, center.add(0, 1, 0), (VORTEX_RADIUS * size))) {
                 BendingUtil.damage(owner, target, 6f * power, 2); // vortex, once per second
             }
         }

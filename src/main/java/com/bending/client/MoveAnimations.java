@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /** Client side of the move animations: one animation layer on every player, driven by the server. */
 public final class MoveAnimations {
-    private static final ResourceLocation LAYER = ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "moves");
+    public static final ResourceLocation LAYER = ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "moves");
     /** Above vanilla-ish emote layers (1000) so a move always shows. */
     private static final int PRIORITY = 1600;
     /** Ticks to blend into a new animation. */

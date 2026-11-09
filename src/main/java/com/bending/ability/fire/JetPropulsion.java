@@ -64,7 +64,7 @@ public class JetPropulsion extends Ability {
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
         boolean hover = player.isShiftKeyDown();
         Vec3 look = player.getLookAngle();
-        Vec3 target = hover ? Vec3.ZERO : look.scale(SPEED);
+        Vec3 target = hover ? Vec3.ZERO : look.scale(SPEED * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SPEED));
         Vec3 velocity = player.getDeltaMovement().scale(1 - STEERING).add(target.scale(STEERING)).add(0, LIFT, 0);
         player.setDeltaMovement(velocity);
         player.hurtMarked = true;

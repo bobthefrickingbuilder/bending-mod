@@ -38,7 +38,8 @@ public class FireArc extends Ability {
         Vec3 side = new Vec3(-Mth.cos(yaw), 0, -Mth.sin(yaw));
         Vec3 start = player.position().add(0, 1.0, 0).add(look.scale(1.0));
 
-        player.level().addFreshEntity(new FireArcEntity(player.level(), player, start, look, side, DAMAGE * power));
+        player.level().addFreshEntity(new FireArcEntity(player.level(), player, start, look, side, DAMAGE * power)
+                .withRange(FireArcEntity.RANGE * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.RANGE)));
         com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.FIRE_ARC_KICK);
         player.swing(InteractionHand.MAIN_HAND, true);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),

@@ -4,10 +4,10 @@
   "fire_dash": {
    "animation_length": 1.0,
    "bones": {
-    "body": {
-     "rotation": {
+    "torso": {
+     "bend": {
       "vector": [
-       "math.clamp(12 + 58 * math.clamp(q.ground_speed / 1.2, 0, 1) - 40 * math.clamp(q.vertical_speed / 0.9, -1, 1), -5, 105)",
+       "math.clamp(6 + 16 * math.clamp(q.ground_speed / 1.2, 0, 1) - 8 * math.clamp(q.vertical_speed / 0.9, -1, 1) + 12 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1), 0, 36)",
        0,
        0
       ]
@@ -16,7 +16,7 @@
     "head": {
      "rotation": {
       "vector": [
-       "-0.75 * math.clamp(12 + 58 * math.clamp(q.ground_speed / 1.2, 0, 1) - 40 * math.clamp(q.vertical_speed / 0.9, -1, 1), -5, 105)",
+       "-0.6 * math.clamp(6 + 16 * math.clamp(q.ground_speed / 1.2, 0, 1) - 8 * math.clamp(q.vertical_speed / 0.9, -1, 1) + 12 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1), 0, 36)",
        0,
        0
       ]
@@ -25,14 +25,14 @@
     "right_arm": {
      "rotation": {
       "vector": [
-       "20 + 25 * math.clamp(q.ground_speed / 1.2, 0, 1) - 15 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
-       0,
-       "38 - 20 * math.clamp(q.ground_speed / 1.2, 0, 1)"
+       "(math.clamp(20 + 14 * math.clamp(q.ground_speed / 1.2, 0, 1) - 10 * math.clamp(q.vertical_speed / 0.9, -1, 1), 6, 40)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-62) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(0) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-12) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(14 - 4 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (38) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
       ]
      },
      "bend": {
       "vector": [
-       "-30 + 22 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       "-35 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
        0
       ]
@@ -41,14 +41,14 @@
     "left_arm": {
      "rotation": {
       "vector": [
-       "20 + 25 * math.clamp(q.ground_speed / 1.2, 0, 1) - 15 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
-       0,
-       "-38 + 20 * math.clamp(q.ground_speed / 1.2, 0, 1)"
+       "(math.clamp(20 + 14 * math.clamp(q.ground_speed / 1.2, 0, 1) - 10 * math.clamp(q.vertical_speed / 0.9, -1, 1), 6, 40)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-48) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(0) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (10) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(-14 + 4 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-44) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
       ]
      },
      "bend": {
       "vector": [
-       "-30 + 22 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       "-45 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
        0
       ]
@@ -57,14 +57,14 @@
     "right_leg": {
      "rotation": {
       "vector": [
-       "-35 + 50 * math.clamp(q.ground_speed / 1.2, 0, 1) + 10 * math.clamp(q.vertical_speed / 0.9, -1, 1)",
+       "(5 + 9 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-55) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
-       "3"
+       "(1.5) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-6) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
       ]
      },
      "bend": {
       "vector": [
-       "-70 + 65 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       "-80 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
        0
       ]
@@ -73,14 +73,14 @@
     "left_leg": {
      "rotation": {
       "vector": [
-       "-5 + 35 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       "(9 + 11 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-38) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
-       "-3"
+       "(-1.5) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (6) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
       ]
      },
      "bend": {
       "vector": [
-       "-35 + 10 * math.clamp(q.ground_speed / 1.2, 0, 1)",
+       "-90 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
        0,
        0
       ]

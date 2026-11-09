@@ -63,7 +63,7 @@ public class BlazingLeap extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
-        if (ticks == 1) {
+        if (data.activeTicks == 1) {
             com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.LAUNCH_CROUCH);
         }
         ServerLevel level = player.serverLevel();
@@ -89,8 +89,9 @@ public class BlazingLeap extends Ability {
         Vec3 look = player.getLookAngle();
         Vec3 flat = new Vec3(look.x, 0, look.z);
         flat = flat.lengthSqr() > 1e-4 ? flat.normalize() : Vec3.ZERO;
-        double forward = Mth.lerp(f, MIN_FORWARD, FULL_FORWARD);
-        double up = launchSpeed(Mth.lerp(f, MIN_HEIGHT, FULL_HEIGHT));
+        double reach = com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.RANGE);
+        double forward = Mth.lerp(f, MIN_FORWARD, FULL_FORWARD) * Math.sqrt(reach);
+        double up = launchSpeed(Mth.lerp(f, MIN_HEIGHT, FULL_HEIGHT) * reach);
         player.setDeltaMovement(flat.x * forward, up, flat.z * forward);
         player.hurtMarked = true;
         player.fallDistance = 0;

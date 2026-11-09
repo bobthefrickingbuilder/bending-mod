@@ -78,6 +78,10 @@ public class DragonsBreath extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
+        double range = RANGE * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.RANGE);
+        float width = com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SIZE);
+        double spread = SPREAD * width;
+        double cone = Math.cos(Math.acos(CONE) * width);
         ServerLevel level = player.serverLevel();
         RandomSource random = player.getRandom();
         Vec3 look = player.getLookAngle();
@@ -88,37 +92,37 @@ public class DragonsBreath extends Ability {
 
         // The torrent: swelling clouds that roll the full 50 blocks...
         for (int i = 0; i < 12; i++) {
-            Vec3 dir = jitter(look, random, SPREAD);
+            Vec3 dir = jitter(look, random, spread);
             level.sendParticles(FireFx.cloud(blue), billow.x, billow.y, billow.z, 0, dir.x, dir.y, dir.z, 2.1 + random.nextDouble() * 0.8);
         }
         // ...a dense core of flame tongues near the mouth...
         for (int i = 0; i < 14; i++) {
-            Vec3 dir = jitter(look, random, SPREAD * 0.8);
+            Vec3 dir = jitter(look, random, spread * 0.8);
             level.sendParticles(FireFx.wisp(blue), mouth.x, mouth.y, mouth.z, 0, dir.x, dir.y, dir.z, 1.4 + random.nextDouble() * 1.2);
         }
         // ...and sparks and embers thrown out through it.
         for (int i = 0; i < 4; i++) {
-            Vec3 dir = jitter(look, random, SPREAD * 1.2);
+            Vec3 dir = jitter(look, random, spread * 1.2);
             level.sendParticles(FireFx.spark(blue), mouth.x, mouth.y, mouth.z, 0, dir.x, dir.y, dir.z, 2.0);
             level.sendParticles(FireFx.ember(blue), mouth.x, mouth.y, mouth.z, 0, dir.x, dir.y + 0.1, dir.z, 1.6);
         }
         if (ticks % 3 == 0) {
-            Vec3 far = mouth.add(look.scale(RANGE * (0.4 + random.nextDouble() * 0.5)));
+            Vec3 far = mouth.add(look.scale(range * (0.4 + random.nextDouble() * 0.5)));
             level.sendParticles(ModParticles.FIRE_SMOKE.get(), far.x, far.y + 2, far.z, 6, 4, 2, 4, 0.03);
         }
 
         if (ticks % DAMAGE_EVERY == 0) {
-            for (LivingEntity target : BendingUtil.livingAround(player, mouth, RANGE)) {
+            for (LivingEntity target : BendingUtil.livingAround(player, mouth, range)) {
                 Vec3 at = target.position().add(0, target.getBbHeight() * 0.5, 0);
                 Vec3 to = at.subtract(mouth);
-                if (to.normalize().dot(look) < CONE || !canSee(level, player, mouth, at)) {
+                if (to.normalize().dot(look) < cone || !canSee(level, player, mouth, at)) {
                     continue;
                 }
                 BendingUtil.damage(player, target, DAMAGE * power, 4);
                 target.push(look.x * 0.25, 0.04, look.z * 0.25);
                 target.hurtMarked = true;
             }
-            for (double d = 3; d < RANGE; d += 6) {
+            for (double d = 3; d < range; d += 6) {
                 BendingUtil.destroyProjectiles(level, player, mouth.add(look.scale(d)), 1.5 + d * 0.35);
             }
         }
@@ -126,8 +130,8 @@ public class DragonsBreath extends Ability {
         // Wherever the torrent reaches the ground, it catches fire and snow melts.
         if (ticks % 3 == 0) {
             for (int i = 0; i < 4; i++) {
-                Vec3 dir = jitter(look, random, SPREAD * 1.4);
-                BlockHitResult hit = level.clip(new ClipContext(mouth, mouth.add(dir.scale(RANGE)),
+                Vec3 dir = jitter(look, random, spread * 1.4);
+                BlockHitResult hit = level.clip(new ClipContext(mouth, mouth.add(dir.scale(range)),
                         ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
                 if (hit.getType() != HitResult.Type.MISS) {
                     BlockPos pos = hit.getBlockPos().relative(hit.getDirection());

@@ -73,6 +73,16 @@ public class BendingData {
     /** Direction of the dive (unit vector, always pointing at least partly down). */
     public net.minecraft.world.phys.Vec3 slamDir = net.minecraft.world.phys.Vec3.ZERO;
     public int slamTicks;
+    /** Planted by a crater-making Meteor Slam landing until this game time. */
+    public long rootedUntil;
+    /** Ctrl held on the ground in bending mode (the dash-ready crouch); turns Fire Blast into Fire Sweep. */
+    public boolean crouchReady;
+    /** Fire Sweep in progress: tick of the sweep, or -1. */
+    public int sweepTick = -1;
+    public net.minecraft.world.phys.Vec3 sweepCenter = net.minecraft.world.phys.Vec3.ZERO;
+    public float sweepYaw;
+    public float sweepDamage;
+    public final Set<Integer> sweepHit = new HashSet<>();
     public float slamPower = 1f;
     /** In combat (dealt or took a hit) until this game time; the loadout is locked meanwhile. */
     public long combatUntil;

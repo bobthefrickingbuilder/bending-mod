@@ -75,7 +75,7 @@ public class FireJetDash extends Ability {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_JET_DASH_LAUNCH.get(), SoundSource.PLAYERS, 0.8f, 1.2f);
 
-        Vec3 velocity = direction(player, data).scale(LAUNCH_SPEED);
+        Vec3 velocity = direction(player, data).scale(LAUNCH_SPEED * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SPEED));
         if (player.onGround() && velocity.y < 0.25) {
             velocity = new Vec3(velocity.x, 0.25, velocity.z); // lift off the ground so friction doesn't eat the dash
         }
@@ -90,7 +90,7 @@ public class FireJetDash extends Ability {
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
         Vec3 look = direction(player, data);
         Vec3 velocity = player.getDeltaMovement().scale(1 - STEERING)
-                .add(look.scale(CRUISE_SPEED * STEERING))
+                .add(look.scale(CRUISE_SPEED * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SPEED) * STEERING))
                 .add(0, LIFT, 0);
         player.setDeltaMovement(velocity);
         player.hurtMarked = true;

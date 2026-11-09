@@ -71,6 +71,9 @@ public final class BendingServerEvents {
             return;
         }
         long now = player.level().getGameTime();
+        if (now % 20 == 0) {
+            com.bending.skill.SkillStats.applyAttributes(player); // health and move speed from the tree
+        }
 
         if (player.onGround() || player.isInWater() || player.onClimbable()) {
             data.airJumpsUsed = 0;
@@ -172,6 +175,10 @@ public final class BendingServerEvents {
             }
         }
         data.lastHurtTime = player.level().getGameTime();
+        float resist = com.bending.skill.SkillStats.resistance(data);
+        if (resist > 0f && !event.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            event.setAmount(event.getAmount() * (1f - resist)); // Iron Body
+        }
         if (data.getElement() != Element.FIRE) {
             return;
         }

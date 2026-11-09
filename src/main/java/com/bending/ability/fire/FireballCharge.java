@@ -63,7 +63,7 @@ public class FireballCharge extends Ability {
 
     @Override
     public void onHoldTick(ServerPlayer player, BendingData data, int ticks, float power) {
-        if (ticks == 1) {
+        if (data.activeTicks == 1) {
             com.bending.ability.BendingAnimations.playForCast(player, data, com.bending.ability.BendingAnimations.CHARGE_STANCE);
         }
         ServerLevel level = player.serverLevel();
@@ -103,9 +103,10 @@ public class FireballCharge extends Ability {
         com.bending.ability.BendingAnimations.play(player, com.bending.ability.BendingAnimations.CHARGE_RELEASE);
         removeOrb(data);
         float f = fraction(ticks);
+        float size = com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SIZE);
         Vec3 look = player.getLookAngle();
         FireBlastEntity ball = new FireBlastEntity(player.level(), player, Mth.lerp(f, MIN_DAMAGE, FULL_DAMAGE) * power)
-                .configure(Mth.lerp(f, MIN_SCALE, FULL_SCALE), Mth.lerp(f, MIN_SPLASH, FULL_SPLASH),
+                .configure(Mth.lerp(f, MIN_SCALE, FULL_SCALE) * size, Mth.lerp(f, MIN_SPLASH, FULL_SPLASH) * size,
                         Mth.lerp(f, MIN_TERRAIN, FULL_TERRAIN), 3 + Math.round(5 * f), LIFE);
         Vec3 start = ChargeOrbEntity.focus(player.getEyePosition(), look).add(look.scale(0.4));
         ball.setPos(start.x, start.y, start.z);

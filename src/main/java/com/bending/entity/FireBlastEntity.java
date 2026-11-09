@@ -52,8 +52,11 @@ public class FireBlastEntity extends Projectile {
     private static final float SPLASH_FRACTION = 0.5f;
     /** Attempts at placing fire blocks around the impact (needs the mobGriefing game rule). */
     private static final int LINGERING_FIRES = 3;
-    /** Explosion strength against terrain on impact (a creeper is 3, TNT is 4). */
-    private static final float TERRAIN_POWER = 1.6f;
+    /**
+     * Explosion strength against terrain on impact (a creeper is 3, TNT is 4). The innate Fire Blast
+     * leaves blocks alone; breaking terrain is what the slotted Fireball Charge is for.
+     */
+    private static final float TERRAIN_POWER = 0f;
 
     private float damage = 4f;
     private double splashRadius = SPLASH_RADIUS;
@@ -210,7 +213,7 @@ public class FireBlastEntity extends Projectile {
         }
         if (getOwner() instanceof ServerPlayer bender) {
             BendingUtil.fireBurst(bender, point, splashRadius, damage * SPLASH_FRACTION, 0.4 * getBallScale(), 2, directHit, terrainPower);
-        } else {
+        } else if (terrainPower > 0f) {
             BendingUtil.terrainBlast(level, this, point, terrainPower);
         }
         // Melt first, so fire can land where the snow was.

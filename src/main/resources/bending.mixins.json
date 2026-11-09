@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "client.CameraMixin"
+    "client.CameraMixin",
+    "client.ModelPartAccessor",
+    "client.PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

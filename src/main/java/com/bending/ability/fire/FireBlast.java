@@ -48,7 +48,18 @@ public class FireBlast extends Ability {
     private static final int COMBO_RESET_TICKS = 25;
 
     @Override
+    public boolean canStart(ServerPlayer player, BendingData data) {
+        return !FireSweep.sweeping(data);
+    }
+
+    @Override
     public void onTap(ServerPlayer player, BendingData data, float power) {
+        // Ctrl held on the ground: the low spinning leg sweep instead of a strike.
+        if (data.crouchReady && player.onGround() && data.lightningCharges <= 0 && data.trySpend(FireSweep.EXTRA_CHI)) {
+            FireSweep.start(player, data, power);
+            data.fireBlastStep = 0;
+            return;
+        }
         long now = player.level().getGameTime();
         if (now - data.fireBlastLastShot > COMBO_RESET_TICKS) {
             data.fireBlastStep = 0;
@@ -58,7 +69,7 @@ public class FireBlast extends Ability {
         data.fireBlastLastShot = now;
 
         if (data.lightningCharges > 0) {
-            Lightning.fireStored(player, data, power);
+            Lightning.fireStored(player, data);
             if (strike.punch()) {
                 player.swing(strike.hand(), true);
             }
@@ -71,7 +82,7 @@ public class FireBlast extends Ability {
         FireBlastEntity blast = new FireBlastEntity(player.level(), player, DAMAGE * power);
         Vec3 start = player.getEyePosition().add(look.scale(0.6)).add(right.scale(strike.right())).add(0, -strike.down(), 0);
         blast.setPos(start.x, start.y, start.z);
-        blast.shoot(look.x, look.y, look.z, SPEED, 0f);
+        blast.shoot(look.x, look.y, look.z, SPEED * com.bending.skill.SkillStats.ability(player, id(), com.bending.skill.SkillStat.SPEED), 0f);
         player.level().addFreshEntity(blast);
 
         if (strike.punch()) {
