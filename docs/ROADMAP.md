@@ -32,8 +32,9 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
   - **Aggression:** damage, burn time, explosion size. Capstone: **Blue Fire**.
   - **Breath:** max chi, chi regen, lower costs. Capstones: **Breath of Fire**, then **Dancing Dragon**.
   - **Discipline:** unlocks the alternative abilities, Lightning chaining. Capstone: **Lightning Redirection**.
-- **Loadout screen:** pick one unlocked ability per slot (only outside combat).
-- **Remaining abilities** (✅ = built; equip with `/bending equip <name>` until the loadout screen exists):
+- ✅ **Loadout screen** (B): pick one unlocked ability per slot, with tooltips (cast type, chi, description) and the innate abilities listed. Locked abilities can be equipped in creative for testing. Still to do: block changes during combat.
+- ✅ **Meteor Slam** (innate, Shift in mid-air): directional dive; explodes from above dash height.
+- **Remaining abilities** (✅ = built; equip from the loadout screen, or `/bending equip <name>`):
   - Slot 1: ✅ Fire Arc, Fireball Charge.
   - Slot 2 (Defense, every option blocks): Wall of Fire, ✅ Flame Parry.
   - Slot 3: ✅ Jet Propulsion, Blazing Leap.

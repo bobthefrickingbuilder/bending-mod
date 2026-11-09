@@ -48,6 +48,11 @@ public abstract class Ability {
         return Component.translatable("ability." + BendingMod.MODID + "." + path);
     }
 
+    /** One or two sentences on what it does, for the loadout screen. */
+    public Component description() {
+        return Component.translatable("ability." + BendingMod.MODID + "." + path + ".desc");
+    }
+
     /** Chi spent on a tap, or on release of a charge (scaled by how long it charged). */
     public abstract float chiCost(int chargeTicks);
 

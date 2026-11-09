@@ -39,6 +39,13 @@ public final class BendingNetwork {
                     }
                 }));
 
+        registrar.playToServer(EquipAbilityPayload.TYPE, EquipAbilityPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        BendingService.setSlot(player, payload.slot(), payload.abilityId());
+                    }
+                }));
+
         registrar.playToServer(MoveInputPayload.TYPE, MoveInputPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {

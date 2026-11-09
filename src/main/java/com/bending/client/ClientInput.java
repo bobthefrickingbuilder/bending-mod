@@ -172,8 +172,8 @@ public final class ClientInput {
         while (MENU_KEY.consumeClick()) {
             if (data.getElement() == null) {
                 mc.setScreen(new ElementSelectScreen());
-            } else {
-                mc.player.displayClientMessage(Component.translatable("message.bending.menu_soon"), true);
+            } else if (mc.screen == null) {
+                mc.setScreen(new LoadoutScreen());
             }
         }
 

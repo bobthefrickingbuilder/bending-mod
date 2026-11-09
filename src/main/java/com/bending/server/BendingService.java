@@ -74,6 +74,35 @@ public final class BendingService {
         return true;
     }
 
+    /** Abilities you can equip without unlocking them first: everything, in creative mode (for testing). */
+    public static boolean canUseLocked(net.minecraft.world.entity.player.Player player) {
+        return player.isCreative();
+    }
+
+    /**
+     * From the loadout screen: put an unlocked ability of your element into its own slot, or clear the
+     * slot ({@code abilityId} empty). Anything that doesn't check out is ignored silently.
+     */
+    public static void setSlot(ServerPlayer player, int slot, String abilityId) {
+        BendingData data = player.getData(ModAttachments.BENDING);
+        if (slot < 0 || slot >= BendingData.SLOTS || data.getElement() == null) {
+            return;
+        }
+        if (!abilityId.isEmpty()) {
+            Ability ability = Abilities.get(abilityId);
+            if (ability == null || ability.element() != data.getElement() || ability.slot().ordinal() != slot
+                    || (!data.isUnlocked(ability.id()) && !canUseLocked(player))) {
+                return;
+            }
+            data.unlock(ability.id());
+        }
+        if (data.activeSlot == slot) {
+            CastHandler.cancel(data); // swapping out what you're channelling ends it
+        }
+        data.setLoadout(slot, abilityId);
+        BendingNetwork.sync(player);
+    }
+
     /**
      * Clears loadout entries that no longer fit their slot (an ability that moved, like
      * Fire Blast becoming the innate attack, or one that was removed).
