@@ -6,6 +6,7 @@ import com.bending.BendingMod;
 import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
 import com.bending.ability.fire.FireJetDash;
+import com.bending.ability.fire.FlameParry;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
@@ -60,6 +61,11 @@ public final class BendingServerEvents {
         if (player.onGround() || player.isInWater() || player.onClimbable()) {
             data.airJumpsUsed = 0;
         }
+        if (data.pendingBacklash > 0f) {
+            float backlash = data.pendingBacklash;
+            data.pendingBacklash = 0f;
+            player.hurt(player.damageSources().lightningBolt(), backlash);
+        }
         CastHandler.tick(player, data);
         if (data.dashTrailTicks > 0) {
             FireJetDash.tickTrail(player, data);
@@ -109,6 +115,10 @@ public final class BendingServerEvents {
             return;
         }
         BendingData data = player.getData(ModAttachments.BENDING);
+        if (FlameParry.tryParry(player, data, event.getSource())) {
+            event.setCanceled(true);
+            return;
+        }
         if (data.activeSlot != -1) {
             Ability active = CastHandler.abilityIn(data, data.activeSlot);
             if (active != null) {
@@ -118,8 +128,13 @@ public final class BendingServerEvents {
                     return;
                 }
                 event.setAmount(amount);
+                if (active.cancelWhenHurt()) {
+                    CastHandler.cancel(data);
+                    active.onHurtWhileActive(player, data);
+                }
             }
         }
+        data.lastHurtTime = player.level().getGameTime();
         if (data.getElement() != Element.FIRE) {
             return;
         }

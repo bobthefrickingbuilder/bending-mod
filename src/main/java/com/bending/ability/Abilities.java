@@ -8,6 +8,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.bending.ability.fire.CombustionBeam;
+import com.bending.ability.fire.FireArc;
+import com.bending.ability.fire.FlameParry;
+import com.bending.ability.fire.JetPropulsion;
+import com.bending.ability.fire.Lightning;
 import com.bending.ability.fire.FireBlast;
 import com.bending.ability.fire.FireJetDash;
 import com.bending.ability.fire.FireShield;
@@ -24,6 +28,10 @@ public final class Abilities {
     public static final Ability FIRE_JET_DASH = register(new FireJetDash());
     public static final Ability FIRESTORM = register(new Firestorm());
     public static final Ability COMBUSTION_BEAM = register(new CombustionBeam());
+    public static final Ability FIRE_ARC = register(new FireArc());
+    public static final Ability FLAME_PARRY = register(new FlameParry());
+    public static final Ability JET_PROPULSION = register(new JetPropulsion());
+    public static final Ability LIGHTNING = register(new Lightning());
 
     private Abilities() {}
 

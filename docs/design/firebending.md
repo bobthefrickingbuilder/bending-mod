@@ -79,7 +79,7 @@ Not a loadout slot: every firebender always has it, so slot 1 is free for a seco
 
 Starts empty. Fire Blast is innate, so this slot is for a second, different projectile.
 
-**🌙 Fire Arc** *(unlock)*: **tap**
+**🌙 Fire Arc** *(unlock · built)*: **tap**
 - A spinning kick that sends out a wide horizontal crescent of fire. It passes through enemies.
 - 10 damage to everything it crosses, width 4 blocks, range 12 blocks, moves slower than Fire Blast.
 - Cost 12 chi.
@@ -101,7 +101,7 @@ Starts empty. Fire Blast is innate, so this slot is for a second, different proj
 - A wall of fire 5 wide and 3 high, 3 blocks in front of you. Lasts 6 s. **Burns up any projectile that passes through it.** Mobs try to path around it. Anything that walks through takes 6 damage and is set on fire for 4 s.
 - Cost 25 chi.
 
-**⚔️ Flame Parry** *(unlock)*: **tap**
+**⚔️ Flame Parry** *(unlock · built)*: **tap**
 - A split-second block with a fiery counter. For 0.4 s after you tap, **any** hit from the front is blocked completely.
 - If something hits you during that window, you counter with a burst of fire at the attacker (10 damage, knockback, sets them on fire) and get 15 chi back.
 - High skill, high reward: miss the timing and you get nothing.
@@ -123,8 +123,8 @@ Not a loadout slot: every firebender always has it, so slot 3 is free for anothe
 
 Starts empty. Fire Jet Dash is innate, so this slot is for a second, different way to move.
 
-**🚀 Jet Propulsion** *(unlock)*: **hold**
-- Sustained flight on fire jets. Slower than elytra, but you can hover and steer freely.
+**🚀 Jet Propulsion** *(unlock · built)*: **hold**
+- Sustained flight on fire jets. Fly where you look; **sneak to hover** in place. Slower than elytra, but you can stop and steer freely.
 - Cost 12 chi per second (drains fast). You can't use Slot 1 while flying.
 
 **🌋 Blazing Leap** *(unlock)*: **hold-and-release**
@@ -134,7 +134,7 @@ Starts empty. Fire Jet Dash is innate, so this slot is for a second, different w
 
 ### Slot 4 — Ultimate
 
-**⚡ Lightning** *(single target; unlock, or the starting ultimate; see section 6)*: **hold-and-release**
+**⚡ Lightning** *(single target; unlock · built)*: **hold-and-release**
 - Charge for 1.5 s (circular hand motion, crackling particles), then release a lightning bolt along your line of sight (range 30).
 - 32 damage to the first target, then **chains** to up to 2 more targets within 5 blocks for 16 damage each.
 - **In rain or water:** chains to *everything* nearby, **including you**.

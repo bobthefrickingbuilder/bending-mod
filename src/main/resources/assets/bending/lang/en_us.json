@@ -55,5 +55,21 @@
   "message.bending.mode_on": "Bending stance",
   "message.bending.mode_off": "Stance relaxed",
   "message.bending.no_element": "Choose an element first (press B)",
-  "message.bending.innate": "%s is innate: it's always ready in bending mode and doesn't need a slot."
+  "message.bending.innate": "%s is innate: it's always ready in bending mode and doesn't need a slot.",
+  "subtitles.bending.fire_arc.cast": "Fire Arc sweeps",
+  "subtitles.bending.flame_parry.ready": "Flame Parry",
+  "subtitles.bending.flame_parry.counter": "Flame Parry counters",
+  "subtitles.bending.jet_propulsion.thrust": "Fire jets roar",
+  "subtitles.bending.lightning.charge": "Lightning crackles",
+  "subtitles.bending.lightning.ready": "Lightning ready",
+  "subtitles.bending.lightning.strike": "Lightning strikes",
+  "ability.bending.fire_arc": "Fire Arc",
+  "ability.bending.flame_parry": "Flame Parry",
+  "ability.bending.jet_propulsion": "Jet Propulsion",
+  "ability.bending.lightning": "Lightning",
+  "entity.bending.fire_arc": "Fire Arc",
+  "entity.bending.charge_orb": "Charging Fire",
+  "message.bending.calm_mind": "Your mind isn't calm enough for lightning",
+  "message.bending.lightning_backlash": "The lightning lashes back!",
+  "entity.bending.lightning_arc": "Lightning"
 }

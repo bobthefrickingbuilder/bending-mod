@@ -60,6 +60,8 @@ public class BendingModClient {
         event.registerEntityRenderer(ModEntities.CHARGE_ORB.get(), ChargeOrbRenderer::new);
         // Drawn entirely with particles, so no model.
         event.registerEntityRenderer(ModEntities.FIRESTORM.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.FIRE_ARC.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.LIGHTNING_ARC.get(), com.bending.client.render.LightningArcRenderer::new);
     }
 
     private static void registerParticles(RegisterParticleProvidersEvent event) {
@@ -70,6 +72,7 @@ public class BendingModClient {
         register(event, ModParticles.EMBER.get(), CelParticle.Kind.EMBER);
         register(event, ModParticles.FIRE_SMOKE.get(), CelParticle.Kind.SMOKE);
         register(event, ModParticles.STEAM.get(), CelParticle.Kind.STEAM);
+        register(event, ModParticles.LIGHTNING_ARC.get(), CelParticle.Kind.ARC);
     }
 
     private static void register(RegisterParticleProvidersEvent event, SimpleParticleType type, CelParticle.Kind kind) {

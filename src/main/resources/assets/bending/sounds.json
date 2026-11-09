@@ -160,5 +160,68 @@
         "type": "event"
       }
     ]
+  },
+  "fire_arc.cast": {
+    "subtitle": "subtitles.bending.fire_arc.cast",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ]
+  },
+  "flame_parry.ready": {
+    "subtitle": "subtitles.bending.flame_parry.ready",
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ]
+  },
+  "flame_parry.counter": {
+    "subtitle": "subtitles.bending.flame_parry.counter",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "jet_propulsion.thrust": {
+    "subtitle": "subtitles.bending.jet_propulsion.thrust",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ]
+  },
+  "lightning.charge": {
+    "subtitle": "subtitles.bending.lightning.charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.charge",
+        "type": "event"
+      }
+    ]
+  },
+  "lightning.ready": {
+    "subtitle": "subtitles.bending.lightning.ready",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event"
+      }
+    ]
+  },
+  "lightning.strike": {
+    "subtitle": "subtitles.bending.lightning.strike",
+    "sounds": [
+      {
+        "name": "minecraft:entity.lightning_bolt.impact",
+        "type": "event"
+      }
+    ]
   }
 }

@@ -19,7 +19,7 @@ import net.minecraft.util.Mth;
  * behind it like a comet. Each {@link Kind} sets size, lifetime and motion.
  */
 public class CelParticle extends TextureSheetParticle {
-    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM }
+    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC }
 
     /** Fire colour over a particle's life: age 0 = white-hot, age 1 = dying ember red. */
     private static final float[][] RAMP = {
@@ -88,6 +88,17 @@ public class CelParticle extends TextureSheetParticle {
                 gravity = 0.4f; // embers fall
                 hasPhysics = true;
             }
+            case ARC -> {
+                // Mostly quick flashes, with a dirty tail of stray sparks that linger and drop.
+                boolean stray = random.nextFloat() < 0.3f;
+                lifetime = stray ? 8 + random.nextInt(10) : 3 + random.nextInt(4);
+                startSize = (stray ? 0.05f : 0.08f) + random.nextFloat() * 0.05f;
+                endSize = 0.02f;
+                rampSpan = 0f;
+                friction = stray ? 0.88f : 0.7f;
+                gravity = stray ? 0.4f : 0f;
+                spinRoll = (random.nextFloat() - 0.5f) * 1.2f;
+            }
             case SMOKE -> {
                 lifetime = 20 + random.nextInt(16);
                 startSize = 0.2f;
@@ -154,7 +165,11 @@ public class CelParticle extends TextureSheetParticle {
         } else if (this.age == 0) {
             pickSprite(sprites); // smoke and steam pick one of their puff shapes
         }
-        if (isFire()) {
+        if (kind == Kind.ARC) {
+            // White-hot flash fading to electric blue.
+            setColor(Mth.lerp(age, 1f, 0.55f), Mth.lerp(age, 1f, 0.78f), 1f);
+            alpha = 1f - smoothstep(0.6f, 1f, age);
+        } else if (isFire()) {
             float[] c = rampColor(age * rampSpan);
             float pulse = kind == Kind.EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;
             setColor(c[0] * pulse, c[1] * pulse, c[2] * pulse);

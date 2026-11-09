@@ -33,12 +33,11 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
   - **Breath:** max chi, chi regen, lower costs. Capstones: **Breath of Fire**, then **Dancing Dragon**.
   - **Discipline:** unlocks the alternative abilities, Lightning chaining. Capstone: **Lightning Redirection**.
 - **Loadout screen:** pick one unlocked ability per slot (only outside combat).
-- **Remaining 8 abilities:**
-  - Slot 1: Fire Arc, Fireball Charge.
-  - Slot 2 (Defense, every option blocks): Wall of Fire, Flame Parry.
-  - Slot 3: Jet Propulsion, Blazing Leap.
-  - Slot 4: **Lightning** (with the calm-mind and rain rules), Dragon's Breath.
-- Slot 4 now has 4 options: Firestorm, Lightning, Dragon's Breath, and **Combustion Beam** (already playable, via `/bending equip combustion_beam`).
+- **Remaining abilities** (✅ = built; equip with `/bending equip <name>` until the loadout screen exists):
+  - Slot 1: ✅ Fire Arc, Fireball Charge.
+  - Slot 2 (Defense, every option blocks): Wall of Fire, ✅ Flame Parry.
+  - Slot 3: ✅ Jet Propulsion, Blazing Leap.
+  - Slot 4: ✅ **Lightning** (with the calm-mind and rain rules), Dragon's Breath, ✅ Combustion Beam, ✅ Firestorm.
 - Stat bonuses from the tree feed max chi, regen and power. Gems will plug into the same hooks later.
 
 ## Phase 4 — Polish pass: look, sound, feel
@@ -91,5 +90,5 @@ Suggested order, simplest first:
 - **Training:** master NPCs who teach sub-skills.
 
 ## 🧰 Housekeeping
-- Put the project under **git** before Phase 3, so every step can be undone.
+- ✅ Project is on git and GitHub (bobthefrickingbuilder/bending-mod).
 - Gradle warns that some features it uses will break in Gradle 10. This comes from the template, so it's harmless for now.

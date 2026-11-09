@@ -99,6 +99,14 @@ public abstract class Ability {
     /** A CHARGE was let go before {@link #minChargeTicks()}. Nothing was spent. */
     public void onChargeCancelled(ServerPlayer player, BendingData data) {}
 
+    /** If true, taking damage while this ability is active cancels it (Lightning's calm mind). */
+    public boolean cancelWhenHurt() {
+        return false;
+    }
+
+    /** The bender took damage while this was active and {@link #cancelWhenHurt()} cancelled it. */
+    public void onHurtWhileActive(ServerPlayer player, BendingData data) {}
+
     /**
      * Called when the bender is about to take damage while this ability is active (being held or charged).
      * Return the new amount; 0 or less blocks the hit completely. Used by shields and blocks.

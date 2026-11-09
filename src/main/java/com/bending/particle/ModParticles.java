@@ -27,6 +27,8 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> EMBER = register("ember");
     /** Smoke from fire: trails, fizzles, burned projectiles. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIRE_SMOKE = register("fire_smoke");
+    /** Crackling blue-white sparks: lightning bolts and their charge-up. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LIGHTNING_ARC = register("lightning_arc");
     /** Steam from melting snow and ice. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STEAM = register("steam");
 

@@ -40,6 +40,15 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_BEAM_READY = register("combustion_beam.ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_BEAM_FIRE = register("combustion_beam.fire");
 
+    // ---- Phase 3 abilities ----
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_ARC_CAST = register("fire_arc.cast");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLAME_PARRY_READY = register("flame_parry.ready");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLAME_PARRY_COUNTER = register("flame_parry.counter");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JET_PROPULSION_THRUST = register("jet_propulsion.thrust");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_CHARGE = register("lightning.charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_READY = register("lightning.ready");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_STRIKE = register("lightning.strike");
+
     // ---- Bending mode ----
     public static final DeferredHolder<SoundEvent, SoundEvent> BENDING_MODE_ON = register("bending_mode.on");
     public static final DeferredHolder<SoundEvent, SoundEvent> BENDING_MODE_OFF = register("bending_mode.off");

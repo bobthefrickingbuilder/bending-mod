@@ -38,5 +38,22 @@ public final class ModEntities {
                     .fireImmune()
                     .build("charge_orb"));
 
+    public static final Supplier<EntityType<FireArcEntity>> FIRE_ARC = ENTITY_TYPES.register("fire_arc",
+            () -> EntityType.Builder.<FireArcEntity>of(FireArcEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .clientTrackingRange(4)
+                    .noSave()
+                    .fireImmune()
+                    .build("fire_arc"));
+
+    public static final Supplier<EntityType<LightningArcEntity>> LIGHTNING_ARC = ENTITY_TYPES.register("lightning_arc",
+            () -> EntityType.Builder.<LightningArcEntity>of(LightningArcEntity::new, MobCategory.MISC)
+                    .sized(0.2f, 0.2f)
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .noSave()
+                    .fireImmune()
+                    .build("lightning_arc"));
+
     private ModEntities() {}
 }

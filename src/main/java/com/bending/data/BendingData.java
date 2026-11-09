@@ -55,6 +55,13 @@ public class BendingData {
     /** The charge orb currently gathering in front of this bender, if any (server side). */
     @javax.annotation.Nullable
     public net.minecraft.world.entity.Entity chargeOrb;
+    /** Flame Parry: blocks hits from the front until this game time; only the first hit is countered. */
+    public long parryUntil;
+    public boolean parryCountered;
+    /** Last time this bender took damage (Lightning's calm-mind rule). */
+    public long lastHurtTime = -1000;
+    /** Damage to deal to the bender next tick (Lightning backlash), applied outside the damage event. */
+    public float pendingBacklash;
     /** Bending stance: abilities only work while this is on, and both hands show empty. */
     public boolean bendingMode;
     /** True once the client has received data from the server. */
