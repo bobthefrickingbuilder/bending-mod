@@ -48,6 +48,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_CHARGE = register("lightning.charge");
     public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_READY = register("lightning.ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_STRIKE = register("lightning.strike");
+    public static final DeferredHolder<SoundEvent, SoundEvent> METEOR_SLAM_DIVE = register("meteor_slam.dive");
+    public static final DeferredHolder<SoundEvent, SoundEvent> METEOR_SLAM_IMPACT = register("meteor_slam.impact");
 
     // ---- Bending mode ----
     public static final DeferredHolder<SoundEvent, SoundEvent> BENDING_MODE_ON = register("bending_mode.on");

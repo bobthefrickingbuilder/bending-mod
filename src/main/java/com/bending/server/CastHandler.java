@@ -21,6 +21,8 @@ public final class CastHandler {
     /** Input slots after the 4 loadout slots: the innate attack (left click) and movement (Ctrl+Space). */
     public static final int INNATE_ATTACK_SLOT = BendingData.SLOTS;
     public static final int INNATE_MOBILITY_SLOT = BendingData.SLOTS + 1;
+    /** Innate aerial slam (Shift while airborne). */
+    public static final int INNATE_SLAM_SLOT = BendingData.SLOTS + 2;
 
     /** The ability an input slot casts: a loadout slot, or one of the innate abilities. */
     @javax.annotation.Nullable
@@ -30,6 +32,9 @@ public final class CastHandler {
         }
         if (slot == INNATE_MOBILITY_SLOT) {
             return Abilities.innateMobility(data.getElement());
+        }
+        if (slot == INNATE_SLAM_SLOT) {
+            return Abilities.innateSlam(data.getElement());
         }
         return slot >= 0 && slot < BendingData.SLOTS ? Abilities.get(data.getLoadout(slot)) : null;
     }
@@ -41,7 +46,7 @@ public final class CastHandler {
     private CastHandler() {}
 
     public static void onInput(ServerPlayer player, int slot, boolean pressed) {
-        if (slot < 0 || slot > INNATE_MOBILITY_SLOT || player.isSpectator()) {
+        if (slot < 0 || slot > INNATE_SLAM_SLOT || player.isSpectator()) {
             return;
         }
         BendingData data = player.getData(ModAttachments.BENDING);
@@ -59,6 +64,9 @@ public final class CastHandler {
     }
 
     private static void start(ServerPlayer player, BendingData data, int slot) {
+        if (slot == INNATE_SLAM_SLOT && data.activeSlot == INNATE_MOBILITY_SLOT) {
+            finish(player, data); // slam straight out of a dash
+        }
         if (data.activeSlot != -1) {
             return;
         }

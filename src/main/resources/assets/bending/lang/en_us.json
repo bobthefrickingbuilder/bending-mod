@@ -71,5 +71,8 @@
   "entity.bending.charge_orb": "Charging Fire",
   "message.bending.calm_mind": "Your mind isn't calm enough for lightning",
   "message.bending.lightning_backlash": "The lightning lashes back!",
-  "entity.bending.lightning_arc": "Lightning"
+  "entity.bending.lightning_arc": "Lightning",
+  "subtitles.bending.meteor_slam.dive": "Meteor Slam dives",
+  "subtitles.bending.meteor_slam.impact": "Meteor Slam hits the ground",
+  "ability.bending.meteor_slam": "Meteor Slam"
 }

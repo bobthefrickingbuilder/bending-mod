@@ -7,6 +7,7 @@ import com.bending.ability.Abilities;
 import com.bending.ability.Ability;
 import com.bending.ability.fire.FireJetDash;
 import com.bending.ability.fire.FlameParry;
+import com.bending.ability.fire.MeteorSlam;
 import com.bending.data.BendingData;
 import com.bending.data.Element;
 import com.bending.data.ModAttachments;
@@ -70,6 +71,9 @@ public final class BendingServerEvents {
         if (data.dashTrailTicks > 0) {
             FireJetDash.tickTrail(player, data);
         }
+        if (data.slamming) {
+            MeteorSlam.tickSlam(player, data);
+        }
 
         if (data.activeSlot == -1 && now - data.lastCastTime >= REGEN_DELAY && data.getChi() < data.getMaxChi()) {
             data.addChi(REGEN_PER_TICK * BendingRules.regen(player, element));
@@ -90,6 +94,7 @@ public final class BendingServerEvents {
     private static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             CastHandler.cancel(player.getData(ModAttachments.BENDING));
+            player.getData(ModAttachments.BENDING).slamming = false;
             BendingNetwork.sync(player);
         }
     }

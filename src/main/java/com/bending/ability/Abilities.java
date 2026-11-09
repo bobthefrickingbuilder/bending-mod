@@ -12,6 +12,7 @@ import com.bending.ability.fire.FireArc;
 import com.bending.ability.fire.FlameParry;
 import com.bending.ability.fire.JetPropulsion;
 import com.bending.ability.fire.Lightning;
+import com.bending.ability.fire.MeteorSlam;
 import com.bending.ability.fire.FireBlast;
 import com.bending.ability.fire.FireJetDash;
 import com.bending.ability.fire.FireShield;
@@ -32,6 +33,7 @@ public final class Abilities {
     public static final Ability FLAME_PARRY = register(new FlameParry());
     public static final Ability JET_PROPULSION = register(new JetPropulsion());
     public static final Ability LIGHTNING = register(new Lightning());
+    public static final Ability METEOR_SLAM = register(new MeteorSlam());
 
     private Abilities() {}
 
@@ -77,5 +79,11 @@ public final class Abilities {
     @Nullable
     public static Ability innateMobility(@Nullable Element element) {
         return element == Element.FIRE ? FIRE_JET_DASH : null;
+    }
+
+    /** The element's aerial attack, cast by tapping Shift while airborne in bending mode. */
+    @Nullable
+    public static Ability innateSlam(@Nullable Element element) {
+        return element == Element.FIRE ? METEOR_SLAM : null;
     }
 }

@@ -62,6 +62,16 @@ public class BendingData {
     public long lastHurtTime = -1000;
     /** Damage to deal to the bender next tick (Lightning backlash), applied outside the damage event. */
     public float pendingBacklash;
+    /** Movement keys the client last reported (-1, 0 or 1): W/S and A/D. Used to aim the dash. */
+    public int moveForward;
+    public int moveLeft;
+    /** Meteor Slam: diving toward the ground; the impact happens when you land. */
+    public boolean slamming;
+    public double slamStartY;
+    /** Direction of the dive (unit vector, always pointing at least partly down). */
+    public net.minecraft.world.phys.Vec3 slamDir = net.minecraft.world.phys.Vec3.ZERO;
+    public int slamTicks;
+    public float slamPower = 1f;
     /** Bending stance: abilities only work while this is on, and both hands show empty. */
     public boolean bendingMode;
     /** True once the client has received data from the server. */

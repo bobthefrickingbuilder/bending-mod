@@ -8,6 +8,7 @@ import com.bending.data.BendingData;
 import com.bending.data.ModAttachments;
 import com.bending.network.AirJumpPayload;
 import com.bending.network.CastAbilityPayload;
+import com.bending.network.MoveInputPayload;
 import com.bending.network.ToggleBendingModePayload;
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -39,15 +40,27 @@ public final class ClientInput {
     private static boolean prompted;
     private static boolean jumpWasDown;
     private static boolean attackWasDown;
+    private static boolean sneakWasDown;
     /** True while the innate dash is being channelled (Ctrl held). */
     private static boolean dashing;
     private static int dashTicks;
     private static int airJumpsUsed;
+    private static byte sentForward;
+    private static byte sentLeft;
 
     private ClientInput() {}
 
     public static boolean isHeld(int slot) {
         return wasDown[slot];
+    }
+
+    private static boolean anySlotHeld() {
+        for (boolean down : wasDown) {
+            if (down) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** True if the local player is in bending mode. */
@@ -90,12 +103,14 @@ public final class ClientInput {
         boolean ctrl = data.bendingMode && mc.screen == null && physicallyDown(mc, mc.options.keySprint);
         boolean started = false;
         if (!dashing && ctrl && jumpPressed) {
+            sendMoveInput(mc, true); // before the press, so the launch already knows your keys
             PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_MOBILITY_SLOT, true));
             dashing = true;
             dashTicks = 0;
             started = true;
         } else if (dashing) {
             dashTicks++;
+            sendMoveInput(mc, false); // steer with the keys while channelling
             boolean landed = dashTicks > 5 && (mc.player.onGround() || mc.player.isInWater());
             if (!ctrl || landed) {
                 PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_MOBILITY_SLOT, false));
@@ -103,6 +118,17 @@ public final class ClientInput {
             }
         }
         return started;
+    }
+
+    /** Tells the server which movement keys are held, when they change (or always if {@code force}). */
+    private static void sendMoveInput(Minecraft mc, boolean force) {
+        byte forward = (byte) Math.signum(mc.player.input.forwardImpulse);
+        byte left = (byte) Math.signum(mc.player.input.leftImpulse);
+        if (force || forward != sentForward || left != sentLeft) {
+            sentForward = forward;
+            sentLeft = left;
+            PacketDistributor.sendToServer(new MoveInputPayload(forward, left));
+        }
     }
 
     /** Press jump in mid-air for a small hop; limited uses until you land. */
@@ -166,6 +192,16 @@ public final class ClientInput {
         if (data.bendingMode) {
             tickAirJump(mc, data, jumpPressed && !dashStarted && !dashing);
         }
+
+        // Tap Shift in mid-air: the innate slam. Not while holding an ability (Jet Propulsion uses Shift to hover).
+        boolean sneakDown = mc.options.keyShift.isDown() && mc.screen == null;
+        if (sneakDown && !sneakWasDown && data.bendingMode && !anySlotHeld()
+                && !mc.player.onGround() && !mc.player.isInWater() && !mc.player.onClimbable()
+                && !mc.player.getAbilities().flying && !mc.player.isFallFlying()) {
+            PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_SLAM_SLOT, true));
+            PacketDistributor.sendToServer(new CastAbilityPayload(CastHandler.INNATE_SLAM_SLOT, false));
+        }
+        sneakWasDown = sneakDown;
 
         // Left click in bending mode: the element's innate attack (Fire Blast), once per click.
         boolean attackDown = mc.options.keyAttack.isDown() && mc.screen == null;

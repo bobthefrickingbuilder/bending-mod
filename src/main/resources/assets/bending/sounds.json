@@ -223,5 +223,23 @@
         "type": "event"
       }
     ]
+  },
+  "meteor_slam.dive": {
+    "subtitle": "subtitles.bending.meteor_slam.dive",
+    "sounds": [
+      {
+        "name": "minecraft:item.trident.riptide_1",
+        "type": "event"
+      }
+    ]
+  },
+  "meteor_slam.impact": {
+    "subtitle": "subtitles.bending.meteor_slam.impact",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event"
+      }
+    ]
   }
 }

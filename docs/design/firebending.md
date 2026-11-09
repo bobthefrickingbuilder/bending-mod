@@ -34,7 +34,8 @@ Each element has a pool of abilities. Each ability belongs to one slot, and the 
 **Controls (rebindable)**
 - `R` = toggle **bending mode** (the bending stance). Abilities and Fire Hop only work in it. While it's on, both hands show empty (both bare arms in first person, no held items in third person, for everyone watching), the HUD appears, and left/right click don't attack, mine or use items. Leaving the stance drops anything you were channeling.
 - **Left click** (in bending mode) = **Fire Blast**, the innate attack every firebender always has.
-- **Ctrl+Space** (in bending mode) = **Fire Jet Dash**, the innate movement. Keep holding **Ctrl** in the air to channel it; let go of Ctrl (or land) to stop. In bending mode this replaces the vanilla sprint-jump.
+- **Ctrl+Space** (in bending mode) = **Fire Jet Dash**, the innate movement. It goes the way your movement keys point (W/A/S/D, diagonals too), tilted up or down by where you look; with no keys (or W) it goes exactly where you look. Keep holding **Ctrl** in the air to channel it and steer the same way; let go of Ctrl (or land) to stop. In bending mode this replaces the vanilla sprint-jump.
+- **Shift in mid-air** (in bending mode) = **Meteor Slam**, the innate aerial attack. Dive like a meteor where you are looking (always at least ~25 degrees downward) and hit the ground or a wall in a ring of fire that rolls out mostly ahead of you. Damage and radius ramp from 8 / 3 blocks up to 26 / 6 blocks over the height of a full straight-up dash (~44 blocks). Beyond that the impact explodes: +0.8 damage and +0.1 radius per extra block (caps +24 / +3) and a crater of power 1.5 + 0.08 per block (cap 4, TNT strength). 20 chi, no fall damage, needs 2.5+ blocks of air below you. Can be cast straight out of a dash.
 - `Z` `X` `C` `V` = cast slot 1–4. Each ability defines whether it uses a **tap**, a **hold** (channel), or a **hold-and-release** (charge).
 - `B` = open the loadout and skill screen.
 
@@ -211,7 +212,7 @@ These come from the very end of the skill tree (or from rare gems). They change 
 ## 6. Starting kit
 
 A new firebender starts with:
-- Innate: **Fire Blast** (left click) and **Fire Jet Dash** (Ctrl+Space)
+- Innate: **Fire Blast** (left click), **Fire Jet Dash** (Ctrl+Space) and **Meteor Slam** (Shift in mid-air)
 - Loadout: **(empty slot 1)** / **Fire Shield** / **(empty slot 3)** / **Firestorm**
 - Lightning is the first big unlock on the Discipline branch. It's the iconic firebender skill, so it's worth earning.
 

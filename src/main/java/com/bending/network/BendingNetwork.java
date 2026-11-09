@@ -39,6 +39,15 @@ public final class BendingNetwork {
                     }
                 }));
 
+        registrar.playToServer(MoveInputPayload.TYPE, MoveInputPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer player) {
+                        BendingData data = player.getData(ModAttachments.BENDING);
+                        data.moveForward = Math.max(-1, Math.min(1, payload.forward()));
+                        data.moveLeft = Math.max(-1, Math.min(1, payload.left()));
+                    }
+                }));
+
         registrar.playToServer(ToggleBendingModePayload.TYPE, ToggleBendingModePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
