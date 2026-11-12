@@ -36,7 +36,7 @@ public class FlameParry extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 10f;
+        return 8f;
     }
 
     @Override

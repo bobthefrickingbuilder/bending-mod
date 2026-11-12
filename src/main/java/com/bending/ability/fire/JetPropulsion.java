@@ -34,12 +34,12 @@ public class JetPropulsion extends Ability {
 
     @Override
     public float startChiCost() {
-        return 5f;
+        return 8f;
     }
 
     @Override
     public float chiPerTick() {
-        return 0.6f; // 12 chi per second
+        return 0.4f; // 8 chi per second
     }
 
     @Override

@@ -42,6 +42,7 @@ public final class Abilities {
     public static final Ability WALL_OF_FIRE = register(new WallOfFire());
     public static final Ability BLAZING_LEAP = register(new BlazingLeap());
     public static final Ability DRAGONS_BREATH = register(new DragonsBreath());
+    public static final Ability HEAT_SIPHON = register(new com.bending.ability.fire.HeatSiphon());
 
     private Abilities() {}
 

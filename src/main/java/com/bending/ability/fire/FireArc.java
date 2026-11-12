@@ -27,7 +27,7 @@ public class FireArc extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 12f;
+        return 9f;
     }
 
     @Override

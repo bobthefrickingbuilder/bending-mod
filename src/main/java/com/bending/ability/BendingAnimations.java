@@ -29,6 +29,8 @@ public final class BendingAnimations {
     public static final String LIGHTNING_RELEASE_LEFT = "lightning_release_left";
     public static final String SHIELD_GUARD = "shield_guard";
     public static final String SHIELD_BURST = "shield_burst";
+    public static final String SIPHON_DRAW = "siphon_draw";
+    public static final String SIPHON_RELEASE = "siphon_release";
     public static final String FLAME_PARRY = "flame_parry";
     public static final String WALL_RISE = "wall_rise";
     public static final String COMBUSTION_FOCUS = "combustion_focus";
@@ -79,8 +81,19 @@ public final class BendingAnimations {
         }
     }
 
+    /**
+     * Plays a one-shot move in mid-air; if an air pose (dash, glide, leap) was showing, it comes back
+     * after {@code ticks} as long as you're still airborne.
+     */
+    public static void playOverAirPose(ServerPlayer player, BendingData data, String name, int ticks) {
+        boolean airborne = data.animBinding == AIRBORNE && !data.animAirPose.isEmpty();
+        play(player, name);
+        data.airPoseResumeAt = airborne ? player.level().getGameTime() + ticks : 0;
+    }
+
     /** Plays an air pose that holds until you land (or hit water). */
     public static void playUntilLanded(ServerPlayer player, BendingData data, String name) {
+        data.animAirPose = name;
         bind(data, player, AIRBORNE);
         send(player, name);
     }
@@ -106,6 +119,12 @@ public final class BendingAnimations {
 
     /** Each tick: stops a bound animation once what it was bound to is over. */
     public static void tick(ServerPlayer player, BendingData data) {
+        if (data.airPoseResumeAt > 0 && player.level().getGameTime() >= data.airPoseResumeAt) {
+            data.airPoseResumeAt = 0;
+            if (!player.onGround() && !player.isInWater() && data.animBinding == NONE) {
+                playUntilLanded(player, data, data.animAirPose);
+            }
+        }
         boolean over = switch (data.animBinding) {
             case CAST -> data.activeSlot == -1;
             case AIRBORNE -> player.level().getGameTime() - data.animStart > AIRBORNE_GRACE

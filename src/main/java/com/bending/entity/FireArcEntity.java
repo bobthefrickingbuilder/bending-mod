@@ -54,6 +54,9 @@ public class FireArcEntity extends Entity {
         this.side = side.normalize();
         this.damage = damage;
         setPos(start.x, start.y, start.z);
+        entityData.set(DATA_DIR, this.dir.toVector3f());
+        entityData.set(DATA_SIDE, this.side.toVector3f());
+        entityData.set(DATA_BLUE, com.bending.ability.fire.FireTechniques.blue(owner));
     }
 
     /** How far the crescent sweeps (Fire Arc: Reach). */
@@ -61,6 +64,7 @@ public class FireArcEntity extends Entity {
 
     public FireArcEntity withRange(double range) {
         this.range = range;
+        entityData.set(DATA_RANGE, (float) range);
         return this;
     }
 
@@ -72,8 +76,45 @@ public class FireArcEntity extends Entity {
         return this;
     }
 
+    private static final net.minecraft.network.syncher.EntityDataAccessor<org.joml.Vector3f> DATA_DIR =
+            SynchedEntityData.defineId(FireArcEntity.class, net.minecraft.network.syncher.EntityDataSerializers.VECTOR3);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<org.joml.Vector3f> DATA_SIDE =
+            SynchedEntityData.defineId(FireArcEntity.class, net.minecraft.network.syncher.EntityDataSerializers.VECTOR3);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> DATA_BLUE =
+            SynchedEntityData.defineId(FireArcEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Float> DATA_RANGE =
+            SynchedEntityData.defineId(FireArcEntity.class, net.minecraft.network.syncher.EntityDataSerializers.FLOAT);
+
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(DATA_DIR, new org.joml.Vector3f());
+        builder.define(DATA_SIDE, new org.joml.Vector3f());
+        builder.define(DATA_BLUE, false);
+        builder.define(DATA_RANGE, (float) RANGE);
+    }
+
+    /** A point on the crescent, relative to its middle: u = -1 (one tip) .. 1 (the other). */
+    public static Vec3 crescentPoint(Vec3 dir, Vec3 side, double u) {
+        return side.scale(u * HALF_WIDTH).subtract(dir.scale(BEND * u * u));
+    }
+
+    public Vec3 syncedDir() {
+        return new Vec3(entityData.get(DATA_DIR));
+    }
+
+    public Vec3 syncedSide() {
+        return new Vec3(entityData.get(DATA_SIDE));
+    }
+
+    public boolean isBlue() {
+        return entityData.get(DATA_BLUE);
+    }
+
+    /** 1 while flying, fading to 0 over the last few blocks of its reach (client). */
+    public float fade(float partialTicks) {
+        double travelled = (tickCount + partialTicks) * SPEED;
+        return (float) net.minecraft.util.Mth.clamp((entityData.get(DATA_RANGE) - travelled) / 3.0, 0, 1);
+    }
 
     @Override
     public void tick() {

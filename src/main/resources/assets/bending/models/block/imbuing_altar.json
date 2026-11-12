@@ -1,0 +1,243 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "minecraft:block/polished_blackstone",
+    "base": "minecraft:block/polished_blackstone_bricks",
+    "pillar": "minecraft:block/chiseled_polished_blackstone",
+    "top": "minecraft:block/polished_blackstone",
+    "gold": "minecraft:block/gilded_blackstone",
+    "sigil": "bending:block/imbuing_altar_sigil"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        4,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#base",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#base",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#base",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#base",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#base",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        4,
+        3
+      ],
+      "to": [
+        13,
+        10,
+        13
+      ],
+      "faces": {
+        "down": {
+          "texture": "#top",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "north": {
+          "texture": "#pillar",
+          "uv": [
+            3,
+            6,
+            13,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#pillar",
+          "uv": [
+            3,
+            6,
+            13,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#pillar",
+          "uv": [
+            3,
+            6,
+            13,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#pillar",
+          "uv": [
+            3,
+            6,
+            13,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        10,
+        1
+      ],
+      "to": [
+        15,
+        13,
+        15
+      ],
+      "faces": {
+        "down": {
+          "texture": "#top",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        },
+        "north": {
+          "texture": "#gold",
+          "uv": [
+            1,
+            3,
+            15,
+            6
+          ]
+        },
+        "south": {
+          "texture": "#gold",
+          "uv": [
+            1,
+            3,
+            15,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#gold",
+          "uv": [
+            1,
+            3,
+            15,
+            6
+          ]
+        },
+        "east": {
+          "texture": "#gold",
+          "uv": [
+            1,
+            3,
+            15,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        13.02,
+        1
+      ],
+      "to": [
+        15,
+        13.02,
+        15
+      ],
+      "shade": false,
+      "faces": {
+        "up": {
+          "texture": "#sigil",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -30,7 +30,7 @@ public class WallOfFire extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 25f;
+        return 18f;
     }
 
     @Override

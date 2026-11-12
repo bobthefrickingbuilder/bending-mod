@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bending:sunstone",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bending:ember_garnet",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bending:comet_shard",
+          "weight": 1
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.45
+        }
+      ]
+    }
+  ]
+}

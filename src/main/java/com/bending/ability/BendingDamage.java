@@ -23,6 +23,11 @@ public final class BendingDamage {
         return ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, name));
     }
 
+    /** Mob benders (and anything else that is not a player). */
+    public static DamageSource source(net.minecraft.world.entity.Entity attacker, ResourceKey<DamageType> type) {
+        return new DamageSource(attacker.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), attacker);
+    }
+
     public static DamageSource source(ServerPlayer bender, ResourceKey<DamageType> type) {
         return new DamageSource(bender.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), bender);
     }

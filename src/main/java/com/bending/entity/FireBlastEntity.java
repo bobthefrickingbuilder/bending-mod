@@ -75,6 +75,21 @@ public class FireBlastEntity extends Projectile {
         entityData.set(BLUE, com.bending.ability.fire.FireTechniques.blue(owner));
     }
 
+    /** Blue flame regardless of the owner (mob benders). */
+    public FireBlastEntity blue(boolean blue) {
+        entityData.set(BLUE, blue);
+        return this;
+    }
+
+    @Override
+    protected boolean canHitEntity(Entity target) {
+        // Mob firebenders never hit each other.
+        if (getOwner() instanceof FirebenderEntity && target instanceof FirebenderEntity) {
+            return false;
+        }
+        return super.canHitEntity(target);
+    }
+
     /** A bigger blast (Fireball Charge). */
     public FireBlastEntity configure(float scale, double splashRadius, float terrainPower, int lingeringFires, int maxLife) {
         entityData.set(BALL_SCALE, scale);
@@ -190,6 +205,9 @@ public class FireBlastEntity extends Projectile {
         if (target instanceof LivingEntity living) {
             if (getOwner() instanceof ServerPlayer bender) {
                 BendingUtil.damage(bender, living, damage, 3);
+            } else if (getOwner() instanceof LivingEntity owner) {
+                living.hurt(com.bending.ability.BendingDamage.source(owner, com.bending.ability.BendingDamage.FIREBENDING), damage);
+                living.igniteForSeconds(3);
             } else {
                 living.hurt(damageSources().onFire(), damage);
                 living.igniteForSeconds(3);
@@ -213,12 +231,29 @@ public class FireBlastEntity extends Projectile {
         }
         if (getOwner() instanceof ServerPlayer bender) {
             BendingUtil.fireBurst(bender, point, splashRadius, damage * SPLASH_FRACTION, 0.4 * getBallScale(), 2, directHit, terrainPower);
-        } else if (terrainPower > 0f) {
-            BendingUtil.terrainBlast(level, this, point, terrainPower);
+        } else {
+            if (getOwner() instanceof LivingEntity owner) {
+                mobSplash(level, owner, point, directHit);
+            }
+            if (terrainPower > 0f) {
+                BendingUtil.terrainBlast(level, this, point, terrainPower);
+            }
         }
         // Melt first, so fire can land where the snow was.
         BendingUtil.meltSnowAndIce(level, BlockPos.containing(point), Math.round(MELT_RADIUS * getBallScale()));
         BendingUtil.scatterFire(level, firePos, lingeringFires);
+    }
+
+    /** Splash for mob-thrown blasts: hurts what's near the impact, never other firebender mobs. */
+    private void mobSplash(ServerLevel level, LivingEntity owner, Vec3 point, @Nullable Entity directHit) {
+        level.sendParticles(FireFx.cloud(isBlue()), point.x, point.y, point.z, 12, 0.3, 0.3, 0.3, 0.06);
+        level.sendParticles(FireFx.wisp(isBlue()), point.x, point.y, point.z, 30, 0.2, 0.2, 0.2, 0.15);
+        level.playSound(null, point.x, point.y, point.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 0.6f, 1.5f);
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(point, point).inflate(splashRadius),
+                e -> e != owner && e != directHit && !(e instanceof FirebenderEntity) && e.isAlive())) {
+            e.hurt(com.bending.ability.BendingDamage.source(owner, com.bending.ability.BendingDamage.FIREBENDING), damage * SPLASH_FRACTION);
+            e.igniteForSeconds(2);
+        }
     }
 
     @Override

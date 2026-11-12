@@ -48,7 +48,7 @@ public class FireballCharge extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 14f + 18f * fraction(chargeTicks); // 14 to 32
+        return 10f + 14f * fraction(chargeTicks); // 10 to 24
     }
 
     @Override

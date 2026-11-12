@@ -34,7 +34,7 @@ public class Firestorm extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 60f;
+        return 45f;
     }
 
     @Override

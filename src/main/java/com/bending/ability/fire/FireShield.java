@@ -66,12 +66,12 @@ public class FireShield extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 15f; // Flame Burst
+        return 12f; // Flame Burst
     }
 
     @Override
     public float chiPerTick() {
-        return 0.4f; // 8 chi per second while holding the shield
+        return 0.3f; // 6 chi per second while holding the shield
     }
 
     @Override

@@ -43,12 +43,12 @@ public class FireJetDash extends Ability {
 
     @Override
     public float startChiCost() {
-        return 15f;
+        return 22f;
     }
 
     @Override
     public float chiPerTick() {
-        return 0.6f; // 12 chi per second while holding
+        return 0.4f; // 8 chi per second while holding
     }
 
     @Override

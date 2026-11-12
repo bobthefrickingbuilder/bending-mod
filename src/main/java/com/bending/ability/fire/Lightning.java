@@ -69,7 +69,7 @@ public class Lightning extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 50f;
+        return 40f;
     }
 
     @Override

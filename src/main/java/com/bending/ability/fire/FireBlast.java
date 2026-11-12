@@ -28,7 +28,7 @@ public class FireBlast extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 6f;
+        return 5f;
     }
 
     /**
@@ -44,7 +44,7 @@ public class FireBlast extends Ability {
             new Strike(BendingAnimations.FIRE_BLAST_FRONT_KICK, 0.15, 0.85, false, InteractionHand.MAIN_HAND),
             new Strike(BendingAnimations.FIRE_BLAST_ROUNDHOUSE, -0.45, 0.6, false, InteractionHand.OFF_HAND),
     };
-    private static final float AIR_KICK_EXTRA_CHI = 6f;
+    private static final float AIR_KICK_EXTRA_CHI = 5f;
     private static final float AIR_KICK_DAMAGE = 11f;
 
     private static void airKick(ServerPlayer player, BendingData data, float power) {
@@ -64,7 +64,7 @@ public class FireBlast extends Ability {
         player.setDeltaMovement(v.x * 0.6, Math.max(v.y, 0.28), v.z * 0.6);
         player.hurtMarked = true;
         player.fallDistance = 0;
-        BendingAnimations.play(player, BendingAnimations.AIR_KICK);
+        BendingAnimations.playOverAirPose(player, data, BendingAnimations.AIR_KICK, 11);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 ModSounds.FIRE_ARC_CAST.get(), SoundSource.PLAYERS, 0.9f, 0.8f + player.getRandom().nextFloat() * 0.15f);
     }

@@ -68,7 +68,7 @@ public class MeteorSlam extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 20f;
+        return 12f;
     }
 
     @Override

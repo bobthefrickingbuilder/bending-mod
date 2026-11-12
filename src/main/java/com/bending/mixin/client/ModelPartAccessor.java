@@ -22,4 +22,7 @@ public interface ModelPartAccessor {
 
     @Accessor("children")
     Map<String, ModelPart> bending$getChildren();
+
+    @Accessor("cubes")
+    List<ModelPart.Cube> bending$getCubes();
 }

@@ -53,12 +53,14 @@ Detailed firebending design: [design/firebending.md](design/firebending.md)
 - **Custom sounds:** fill the existing hooks with OGG files (several random variants each): fire whooshes, crackles, the lightning charge.
 - **Custom particles:** new textures (and providers where the motion should change) for the existing hooks, plus new ones: blue fire, lightning arcs, heat shimmer.
 - Optional: let mouse buttons cast abilities while in bending mode.
-- Proper visuals for projectiles (glowing sprites or models instead of only particles).
-- A custom damage type, so death messages read like "burned by Steve's firebending".
-- A **config file** for damage multipliers, block griefing (fire placement, explosions), PvP rules and event frequency.
-- HUD polish: key labels and ability tooltips.
+- ✅ **Projectile visuals:** Fire Arc is a solid glowing crescent ribbon (blue with blue fire).
+- ✅ **HUD polish:** key labels on each slot, slots turn red when you can't afford them, charge/hold bars over held slots, and the ability name pops up when pressed.
+- ✅ **Balance for fast play:** every ability costs roughly half what it did; chi regen starts sooner and runs faster (14/s).
+- ✅ **Armor bends** with the knees and elbows; **first-person animations** (toggle in the client config).
+- ✅ Air Kick drops back into the dash/leap pose; respec no longer refunds nodes learned free in creative.
 
-## Phase 5 — Gems & the Imbuing Altar
+## ✅ Phase 5 — Gems & the Imbuing Altar (done, needs play-testing)
+- ✅ Six gems, sockets on armor, the altar (Imbue / Extract with a 25% shatter chance), Spirit Crystal Ore (overworld, deepslate) and Ember Ore (Nether), chest loot in dungeons/temples/portals/bastions, a Bending creative tab. Recipe: amethyst, 2 gold, blaze powder, 3 obsidian.
 - Gem items:
   - **Universal:** Chi Crystal (max chi), Flow Stone (regen), Focus Gem (chi costs).
   - **Fire:** Sunstone, Ember Garnet, Comet Shard.
@@ -96,7 +98,9 @@ Suggested order, simplest first:
 ## 💡 Idea backlog (unscheduled)
 - **Chi-blockers:** a non-bender class whose pressure-point strikes temporarily disable bending.
 - **The Avatar:** all four elements, the Avatar State, energybending. A very late, special unlock.
-- **NPC benders:** Fire Nation soldiers, Water Tribe warriors, and so on.
+- ✅ **Rogue Firebenders:** hostile mobs in the Nether and badlands/savanna/desert that strafe, throw blast combos, burst up close and jet-leap; drop fire gems.
+- ✅ **Fire Warlord boss:** 400 HP, three phases (fan volleys, meteor-leap craters; then blue fire, a rolling ring of fire and reinforcements; then marked lightning strikes). Summoned with the Warlord's Ember; drops gems and gives nearby benders 3 skill points.
+- **NPC benders** for the other elements: Water Tribe warriors, and so on.
 - **Themed structures:** fire temples and air temples, with bending scrolls as loot.
 - **Training:** master NPCs who teach sub-skills.
 

@@ -21,7 +21,10 @@ import net.minecraft.util.Mth;
  * behind it like a comet. Each {@link Kind} sets size, lifetime and motion.
  */
 public class CelParticle extends TextureSheetParticle {
-    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD, HAND_EMBER, HEAT }
+    public enum Kind { WISP, CORE, SPARK, EMBER, SMOKE, STEAM, ARC, CLOUD, HAND_EMBER, HEAT, SIPHON_EMBER }
+
+    /** Siphon embers live exactly this long and keep their speed, so a sender can aim them to land on a point. */
+    public static final int SIPHON_LIFE = com.bending.particle.ModParticles.SIPHON_LIFE;
 
     /** Fire colour over a particle's life: age 0 = white-hot, age 1 = dying ember red. */
     private static final float[][] RAMP = {
@@ -105,6 +108,15 @@ public class CelParticle extends TextureSheetParticle {
                 friction = 0.98f;
                 gravity = 0.4f; // embers fall
                 hasPhysics = true;
+            }
+            case SIPHON_EMBER -> {
+                // A glowing mote pulled in a straight line; arrives as it fades.
+                lifetime = SIPHON_LIFE;
+                startSize = 0.06f + random.nextFloat() * 0.03f;
+                endSize = 0.03f;
+                rampSpan = 0.35f;
+                friction = 1.0f;
+                gravity = 0f;
             }
             case HAND_EMBER -> {
                 // A pinprick of light that floats up and winks out.
@@ -225,7 +237,7 @@ public class CelParticle extends TextureSheetParticle {
             alpha = 0.85f * (1f - smoothstep(0.5f, 1f, age));
         } else if (isFire()) {
             float[] c = rampColor(blue ? BLUE_RAMP : RAMP, age * rampSpan);
-            float pulse = kind == Kind.EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;
+            float pulse = kind == Kind.EMBER || kind == Kind.SIPHON_EMBER ? 0.8f + 0.2f * Mth.sin(this.age * 1.3f) : 1f;
             setColor(c[0] * pulse, c[1] * pulse, c[2] * pulse);
             alpha = 1f - smoothstep(0.7f, 1f, age);
         } else if (kind == Kind.HEAT) {

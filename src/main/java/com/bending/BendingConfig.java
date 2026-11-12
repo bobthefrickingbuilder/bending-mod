@@ -19,6 +19,7 @@ public final class BendingConfig {
 
     public static final ModConfigSpec.DoubleValue SCREEN_SHAKE;
     public static final ModConfigSpec.BooleanValue IMPACT_FLASHES;
+    public static final ModConfigSpec.BooleanValue FIRST_PERSON_ANIMATIONS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -38,6 +39,7 @@ public final class BendingConfig {
         ModConfigSpec.Builder c = new ModConfigSpec.Builder();
         SCREEN_SHAKE = c.comment("Camera shake from big impacts (0 = off).").defineInRange("screenShake", 1.0, 0.0, 2.0);
         IMPACT_FLASHES = c.comment("Brief light flashes on explosions and lightning.").define("impactFlashes", true);
+        FIRST_PERSON_ANIMATIONS = c.comment("Experimental: in first person, draw the full animated body from the camera (shoulders can swing into view).").define("firstPersonAnimations", false);
         CLIENT_SPEC = c.build();
     }
 

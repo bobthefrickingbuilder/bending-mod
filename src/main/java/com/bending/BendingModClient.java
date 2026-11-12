@@ -34,6 +34,16 @@ public class BendingModClient {
         modEventBus.addListener(BendingModClient::registerHud);
         modEventBus.addListener(BendingModClient::registerRenderers);
         modEventBus.addListener(BendingModClient::registerParticles);
+        modEventBus.addListener((net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) ->
+                event.register(com.bending.menu.ModMenus.IMBUING_ALTAR.get(), com.bending.client.AltarScreen::new));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) ->
+                com.bending.item.Gems.appendTooltip(event.getItemStack(), event.getToolTip()));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientTickEvent.Post event) -> {
+            var mc = Minecraft.getInstance();
+            if (mc.player != null && mc.player.tickCount % 10 == 0) {
+                com.bending.item.Gems.update(mc.player);
+            }
+        });
         modEventBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) ->
                 event.enqueueWork(com.bending.client.MoveAnimations::init));
         NeoForge.EVENT_BUS.addListener(ClientInput::onClientTick);
@@ -73,9 +83,11 @@ public class BendingModClient {
         event.registerEntityRenderer(ModEntities.CHARGE_ORB.get(), ChargeOrbRenderer::new);
         // Drawn entirely with particles, so no model.
         event.registerEntityRenderer(ModEntities.FIRESTORM.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.FIRE_ARC.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.FIRE_ARC.get(), com.bending.client.render.FireArcRenderer::new);
         event.registerEntityRenderer(ModEntities.WALL_OF_FIRE.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.LIGHTNING_ARC.get(), com.bending.client.render.LightningArcRenderer::new);
+        event.registerEntityRenderer(ModEntities.FIREBENDER.get(), com.bending.client.render.FirebenderRenderer::soldier);
+        event.registerEntityRenderer(ModEntities.FIRE_WARLORD.get(), com.bending.client.render.FirebenderRenderer::warlord);
     }
 
     private static void registerParticles(RegisterParticleProvidersEvent event) {
@@ -97,6 +109,8 @@ public class BendingModClient {
         register(event, ModParticles.BLUE_EMBER.get(), CelParticle.Kind.EMBER, true);
         register(event, ModParticles.HAND_EMBER.get(), CelParticle.Kind.HAND_EMBER);
         register(event, ModParticles.BLUE_HAND_EMBER.get(), CelParticle.Kind.HAND_EMBER, true);
+        register(event, ModParticles.SIPHON_EMBER.get(), CelParticle.Kind.SIPHON_EMBER);
+        register(event, ModParticles.BLUE_SIPHON_EMBER.get(), CelParticle.Kind.SIPHON_EMBER, true);
     }
 
     private static void register(RegisterParticleProvidersEvent event, SimpleParticleType type, CelParticle.Kind kind) {

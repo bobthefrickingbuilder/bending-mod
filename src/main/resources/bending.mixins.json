@@ -7,7 +7,9 @@
   "client": [
     "client.CameraMixin",
     "client.ModelPartAccessor",
-    "client.PlayerModelMixin"
+    "client.PlayerModelMixin",
+    "client.HumanoidArmorLayerMixin",
+    "client.HumanoidModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

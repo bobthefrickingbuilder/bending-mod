@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SBG",
+    "RNR",
+    "ERE"
+  ],
+  "key": {
+    "S": {
+      "item": "bending:sunstone"
+    },
+    "B": {
+      "item": "bending:ember_garnet"
+    },
+    "G": {
+      "item": "bending:comet_shard"
+    },
+    "R": {
+      "item": "minecraft:blaze_rod"
+    },
+    "N": {
+      "item": "minecraft:magma_cream"
+    },
+    "E": {
+      "item": "minecraft:gold_block"
+    }
+  },
+  "result": {
+    "id": "bending:warlord_ember",
+    "count": 1
+  }
+}

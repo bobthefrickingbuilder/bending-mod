@@ -8,7 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -27,7 +32,7 @@ import net.neoforged.neoforge.client.event.RenderPlayerEvent;
  * Third person (you and other players): held items are hidden for that frame and the arms hang empty.
  * Items aren't touched for real; they're only hidden while the player is drawn.
  *
- * Hand animations (Phase 8) will plug in here: the arm transforms below are the place to pose them.
+ * During a move, {@link FirstPersonArms} poses the two first-person arms.
  */
 public final class BendingHands {
     private BendingHands() {}
@@ -59,8 +64,75 @@ public final class BendingHands {
         HumanoidArm side = event.getHand() == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
         PoseStack pose = event.getPoseStack();
         pose.pushPose();
-        renderArm(mc, player, pose, event.getMultiBufferSource(), event.getPackedLight(), event.getSwingProgress(), side);
+        float now = player.tickCount + event.getPartialTick();
+        float swing = event.getSwingProgress();
+        if (FirstPersonArms.active(now)) {
+            // A move is posing the arms: apply its pose around the shoulder, no vanilla punch swing.
+            float[][] arms = {new float[6], new float[6]};
+            FirstPersonArms.sample(now, arms);
+            applyMovePose(pose, arms[side == HumanoidArm.RIGHT ? 0 : 1], side == HumanoidArm.RIGHT ? 1f : -1f);
+            swing = 0f;
+        }
+        renderArm(mc, player, pose, event.getMultiBufferSource(), event.getPackedLight(), swing, side);
         pose.popPose();
+        // Kicks: the leg comes up into view (drawn once per frame, with the main hand).
+        float[] leg = new float[4];
+        if (event.getHand() == InteractionHand.MAIN_HAND && FirstPersonArms.sampleLeg(now, leg)) {
+            pose.pushPose();
+            renderLeg(mc, player, pose, event.getMultiBufferSource(), event.getPackedLight(), leg, FirstPersonArms.legRight);
+            pose.popPose();
+        }
+    }
+
+    /** Hip of the kicking leg in view space (right leg; x mirrored for the left). Higher than real
+     *  hips so the kick reads on screen. */
+    private static final float HIP_X = 0.24f, HIP_Y = -0.62f, HIP_Z = 0.05f, LEG_SCALE = 1.15f;
+
+    private static void renderLeg(Minecraft mc, AbstractClientPlayer player, PoseStack pose, MultiBufferSource buffer,
+                                  int light, float[] a, boolean right) {
+        float f = right ? 1f : -1f;
+        PlayerRenderer renderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(player);
+        PlayerModel<AbstractClientPlayer> model = renderer.getModel();
+        ModelPart leg = right ? model.rightLeg : model.leftLeg;
+        ModelPart pants = right ? model.rightPants : model.leftPants;
+        // Slide up from below the screen as it comes into view.
+        pose.translate(f * HIP_X, HIP_Y - (1 - a[FirstPersonArms.SHOW]) * 0.9f, HIP_Z);
+        pose.mulPose(Axis.YP.rotationDegrees(f * a[FirstPersonArms.LEG_YAW]));
+        pose.mulPose(Axis.XP.rotationDegrees(a[FirstPersonArms.LEG_PITCH]));
+        // Model space hangs the leg down +y with the front at -z; flip it into view space.
+        pose.scale(-LEG_SCALE, -LEG_SCALE, LEG_SCALE);
+        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(player.getSkin().texture()));
+        float knee = a[FirstPersonArms.KNEE] * Mth.DEG_TO_RAD;
+        for (ModelPart part : new ModelPart[] {leg, pants}) {
+            part.x = 0f;
+            part.y = 0f;
+            part.z = 0f;
+            part.xRot = 0f;
+            part.yRot = 0f;
+            part.zRot = 0f;
+            if (part.hasChild("bending_lower")) {
+                part.getChild("bending_lower").xRot = knee;
+            }
+        }
+        leg.visible = true;
+        pants.visible = player.isModelPartShown(right ? PlayerModelPart.RIGHT_PANTS_LEG : PlayerModelPart.LEFT_PANTS_LEG);
+        leg.render(pose, vc, light, OverlayTexture.NO_OVERLAY);
+        if (pants.visible) {
+            pants.render(pose, vc, light, OverlayTexture.NO_OVERLAY);
+        }
+    }
+
+    /** Shoulder the move poses rotate around, in view space (right arm; x is mirrored for the left). */
+    private static final float PIVOT_X = 0.5f, PIVOT_Y = -1.2f, PIVOT_Z = -0.2f;
+
+    /** A {@link FirstPersonArms} pose: x/y/z offset, then pitch/yaw/roll around the shoulder. */
+    private static void applyMovePose(PoseStack pose, float[] a, float f) {
+        pose.translate(f * a[FirstPersonArms.X], a[FirstPersonArms.Y], -a[FirstPersonArms.Z]);
+        pose.translate(f * PIVOT_X, PIVOT_Y, PIVOT_Z);
+        pose.mulPose(Axis.XP.rotationDegrees(a[FirstPersonArms.PITCH]));
+        pose.mulPose(Axis.YP.rotationDegrees(f * a[FirstPersonArms.YAW]));
+        pose.mulPose(Axis.ZP.rotationDegrees(f * a[FirstPersonArms.ROLL]));
+        pose.translate(-f * PIVOT_X, -PIVOT_Y, -PIVOT_Z);
     }
 
     /** Vanilla's empty-hand arm (from ItemInHandRenderer), held fully raised. */

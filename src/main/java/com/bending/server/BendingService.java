@@ -143,6 +143,9 @@ public final class BendingService {
         }
         int rank = SkillTree.rank(node, data) + 1;
         data.unlock(node.rankId(rank));
+        if (free) {
+            data.unlock(node.rankId(rank) + FREE_MARK); // learned without paying: a respec refunds nothing for it
+        }
         com.bending.skill.SkillStats.applyAttributes(player);
         Ability ability = node.ability();
         if (ability != null && ability.slot() != AbilitySlot.INNATE && !inCombat(player)) {
@@ -163,6 +166,8 @@ public final class BendingService {
 
     /** Special node id the skill screen sends to ask for a respec. */
     public static final String RESPEC = "#respec";
+    /** Stored next to a rank's unlock when it was learned for free (creative). */
+    private static final String FREE_MARK = "@free";
 
     /**
      * Unlearns every skill-tree node you paid for and refunds the points. The starting kit (and
@@ -193,9 +198,12 @@ public final class BendingService {
             }
             int rank = SkillTree.rank(node, data);
             for (int r = 1; r <= rank; r++) {
+                if (!data.isUnlocked(node.rankId(r) + FREE_MARK)) {
+                    refund += node.cost();
+                }
                 data.relock(node.rankId(r));
+                data.relock(node.rankId(r) + FREE_MARK);
             }
-            refund += node.cost() * rank;
         }
         CastHandler.cancel(data);
         // Unequip abilities you no longer know.

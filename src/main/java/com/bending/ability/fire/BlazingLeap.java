@@ -43,7 +43,7 @@ public class BlazingLeap extends Ability {
 
     @Override
     public float chiCost(int chargeTicks) {
-        return 10f + 15f * fraction(chargeTicks); // 10 to 25
+        return 8f + 10f * fraction(chargeTicks); // 8 to 18
     }
 
     @Override

@@ -31,8 +31,15 @@ public class BendingMod {
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
         ModParticles.PARTICLES.register(modEventBus);
+        com.bending.block.ModBlocks.BLOCKS.register(modEventBus);
+        com.bending.item.ModItems.ITEMS.register(modEventBus);
+        com.bending.item.ModItems.TABS.register(modEventBus);
+        com.bending.item.ModComponents.COMPONENTS.register(modEventBus);
+        com.bending.menu.ModMenus.MENUS.register(modEventBus);
 
         modEventBus.addListener(BendingNetwork::register);
+        modEventBus.addListener(ModEntities::registerAttributes);
+        modEventBus.addListener(ModEntities::registerSpawnPlacements);
         modEventBus.addListener(this::commonSetup);
 
         BendingServerEvents.register(NeoForge.EVENT_BUS);

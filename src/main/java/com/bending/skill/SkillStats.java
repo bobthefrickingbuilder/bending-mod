@@ -14,7 +14,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 /**
  * Adds up what your learned skill nodes give you. Each node's effects count once per rank. An
  * effect for a named ability only changes that ability; one with no ability is global (all your
- * bending, or your body). Gems will add to the same numbers later.
+ * bending, or your body). Gems in worn armor add to the global numbers (and to range and size).
  */
 public final class SkillStats {
     private static final ResourceLocation HEALTH_ID = ResourceLocation.fromNamespaceAndPath(BendingMod.MODID, "skill_health");
@@ -24,7 +24,7 @@ public final class SkillStats {
 
     /** Sum of an effect over your learned ranks: for one ability, or the global part when ability is null. */
     public static float sum(BendingData data, @Nullable String ability, SkillStat stat) {
-        float total = 0f;
+        float total = ability == null ? gem(data, stat) : 0f;
         for (SkillNode node : SkillTree.of(data.getElement())) {
             if (node.effects().isEmpty()) {
                 continue;
@@ -46,7 +46,15 @@ public final class SkillStats {
     /** Multiplier for one ability's stat (1 = unchanged). Costs and charge times can't drop below 25%. */
     public static float ability(BendingData data, String ability, SkillStat stat) {
         float m = 1f + sum(data, ability, stat);
+        if (stat == SkillStat.RANGE || stat == SkillStat.SIZE) {
+            m += gem(data, stat); // these are only read per ability, so gems add here
+        }
         return stat == SkillStat.CHI_COST || stat == SkillStat.CHARGE_TIME ? Math.max(0.25f, m) : Math.max(0.1f, m);
+    }
+
+    private static float gem(BendingData data, SkillStat stat) {
+        float[] gems = data.gemStats;
+        return gems == null || stat.ordinal() >= gems.length ? 0f : gems[stat.ordinal()];
     }
 
     public static float ability(ServerPlayer player, String ability, SkillStat stat) {

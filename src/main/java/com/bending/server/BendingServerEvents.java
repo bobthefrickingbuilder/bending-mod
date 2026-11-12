@@ -31,9 +31,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /** Game-bus listeners: ticking, syncing, passives and the /bending command. */
 public final class BendingServerEvents {
     /** Chi starts regenerating this many ticks after the last cast. */
-    private static final int REGEN_DELAY = 30;
-    /** Base chi regen: 5 per second. */
-    private static final float REGEN_PER_TICK = 0.25f;
+    private static final int REGEN_DELAY = 12;
+    /** Base chi regen: 14 per second (high-energy play: chi comes back fast). */
+    private static final float REGEN_PER_TICK = 0.7f;
 
     private BendingServerEvents() {}
 
@@ -71,6 +71,9 @@ public final class BendingServerEvents {
             return;
         }
         long now = player.level().getGameTime();
+        if (now % 10 == 0) {
+            com.bending.item.Gems.update(player); // socketed gems in worn armor
+        }
         if (now % 20 == 0) {
             com.bending.skill.SkillStats.applyAttributes(player); // health and move speed from the tree
         }

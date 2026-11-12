@@ -7,7 +7,7 @@
     "torso": {
      "bend": {
       "vector": [
-       "math.clamp(6 + 16 * math.clamp(q.ground_speed / 1.2, 0, 1) - 8 * math.clamp(q.vertical_speed / 0.9, -1, 1) + 12 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1), 0, 36)",
+       "((6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) < 0 ? 0 : ((6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) > 36 ? 36 : (6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45))))))",
        0,
        0
       ]
@@ -16,7 +16,7 @@
     "head": {
      "rotation": {
       "vector": [
-       "-0.6 * math.clamp(6 + 16 * math.clamp(q.ground_speed / 1.2, 0, 1) - 8 * math.clamp(q.vertical_speed / 0.9, -1, 1) + 12 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1), 0, 36)",
+       "-0.6 * ((6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) < 0 ? 0 : ((6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) > 36 ? 36 : (6 + 16 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 8 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))) + 12 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45))))))",
        0,
        0
       ]
@@ -25,14 +25,14 @@
     "right_arm": {
      "rotation": {
       "vector": [
-       "(math.clamp(20 + 14 * math.clamp(q.ground_speed / 1.2, 0, 1) - 10 * math.clamp(q.vertical_speed / 0.9, -1, 1), 6, 40)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-62) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
-       "(0) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-12) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
-       "(14 - 4 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (38) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
+       "(((20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9)))) < 6 ? 6 : ((20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9)))) > 40 ? 40 : (20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))))))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-62) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
+       "(0) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-12) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
+       "(14 - 4 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2)))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (38) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))"
       ]
      },
      "bend": {
       "vector": [
-       "-35 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "-35 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
        0
       ]
@@ -41,14 +41,14 @@
     "left_arm": {
      "rotation": {
       "vector": [
-       "(math.clamp(20 + 14 * math.clamp(q.ground_speed / 1.2, 0, 1) - 10 * math.clamp(q.vertical_speed / 0.9, -1, 1), 6, 40)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-48) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
-       "(0) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (10) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
-       "(-14 + 4 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-44) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
+       "(((20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9)))) < 6 ? 6 : ((20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9)))) > 40 ? 40 : (20 + 14 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2))) - 10 * ((q.vertical_speed / 0.9) < -1 ? -1 : ((q.vertical_speed / 0.9) > 1 ? 1 : (q.vertical_speed / 0.9))))))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-48) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
+       "(0) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (10) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
+       "(-14 + 4 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2)))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-44) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))"
       ]
      },
      "bend": {
       "vector": [
-       "-45 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "-45 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
        0
       ]
@@ -57,14 +57,14 @@
     "right_leg": {
      "rotation": {
       "vector": [
-       "(5 + 9 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-55) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(5 + 9 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2)))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-55) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
-       "(1.5) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-6) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
+       "(1.5) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-6) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))"
       ]
      },
      "bend": {
       "vector": [
-       "-80 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "-80 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
        0
       ]
@@ -73,14 +73,14 @@
     "left_leg": {
      "rotation": {
       "vector": [
-       "(9 + 11 * math.clamp(q.ground_speed / 1.2, 0, 1)) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (-38) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "(9 + 11 * ((q.ground_speed / 1.2) < 0 ? 0 : ((q.ground_speed / 1.2) > 1 ? 1 : (q.ground_speed / 1.2)))) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (-38) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
-       "(-1.5) * (1 - math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)) + (6) * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)"
+       "(-1.5) * (1 - (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))) + (6) * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))"
       ]
      },
      "bend": {
       "vector": [
-       "-90 * math.clamp((-q.vertical_speed - 0.05) / 0.45, 0, 1)",
+       "-90 * (((-q.vertical_speed - 0.05) / 0.45) < 0 ? 0 : (((-q.vertical_speed - 0.05) / 0.45) > 1 ? 1 : ((-q.vertical_speed - 0.05) / 0.45)))",
        0,
        0
       ]

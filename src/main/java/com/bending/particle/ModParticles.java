@@ -40,6 +40,11 @@ public final class ModParticles {
     /** Tiny glowing motes that drift up off a firebender's hands while in bending mode. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HAND_EMBER = register("hand_ember");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_HAND_EMBER = register("blue_hand_ember");
+    /** Siphon embers live exactly this many ticks and keep their speed, so the sender can aim them at a point. */
+    public static final int SIPHON_LIFE = 16;
+    /** Heat Siphon: embers pulled in a straight line into the bender. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SIPHON_EMBER = register("siphon_ember");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_SIPHON_EMBER = register("blue_siphon_ember");
     /** Steam from melting snow and ice. */
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STEAM = register("steam");
     /** Faint heat shimmer rising off strong flames. */

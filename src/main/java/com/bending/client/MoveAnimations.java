@@ -25,8 +25,17 @@ public final class MoveAnimations {
 
     /** Call from client setup (inside enqueueWork). */
     public static void init() {
-        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(LAYER, PRIORITY,
-                player -> new PlayerAnimationController(player, (controller, state, setter) -> PlayState.STOP));
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(LAYER, PRIORITY, player -> {
+            PlayerAnimationController controller =
+                    new PlayerAnimationController(player, (c, state, setter) -> PlayState.STOP);
+            // In first person you see your own arms doing the move (taken from the full-body pose).
+            controller.setFirstPersonModeHandler(c -> com.bending.BendingConfig.FIRST_PERSON_ANIMATIONS.get()
+                    ? com.zigythebird.playeranimcore.api.firstPerson.FirstPersonMode.THIRD_PERSON_MODEL
+                    : com.zigythebird.playeranimcore.api.firstPerson.FirstPersonMode.NONE);
+            controller.setFirstPersonConfiguration(
+                    new com.zigythebird.playeranimcore.api.firstPerson.FirstPersonConfiguration(true, true, false, false, true));
+            return controller;
+        });
         PlayAnimationPayload.clientHandler = MoveAnimations::handle;
     }
 
@@ -34,6 +43,10 @@ public final class MoveAnimations {
         var level = Minecraft.getInstance().level;
         if (level == null || !(level.getEntity(payload.entityId()) instanceof AbstractClientPlayer player)) {
             return;
+        }
+        if (player == Minecraft.getInstance().player) {
+            FirstPersonArms.start(payload.name(),
+                    player.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
         }
         if (!(PlayerAnimationAccess.getPlayerAnimationLayer(player, LAYER) instanceof PlayerAnimationController controller)) {
             return;

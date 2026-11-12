@@ -44,6 +44,12 @@ public class BendingData {
     // ---- Runtime state (never saved) ----
     /** Slot currently being held or charged, or -1. */
     public int activeSlot = -1;
+    /** Heat Siphon: fire absorbed during the current hold. */
+    public float siphonHeat;
+    /** Heat Siphon: how long each magma/lava block has been drawn on this hold (ticks). */
+    public final java.util.Map<net.minecraft.core.BlockPos, Integer> siphonDraw = new java.util.HashMap<>();
+    /** Totals from gems socketed into worn armor, indexed by SkillStat ordinal (both sides). */
+    public float[] gemStats = new float[com.bending.skill.SkillStat.values().length];
     public int activeTicks;
     public long lastCastTime;
     public long noFallUntil;
@@ -79,6 +85,9 @@ public class BendingData {
     public boolean crouchReady;
     /** Ctrl held at all in bending mode (synced from the client). */
     public boolean ctrlHeld;
+    /** The air pose last shown (dash, glide, leap), and when to bring it back after a mid-air move. */
+    public String animAirPose = "";
+    public long airPoseResumeAt;
     /** Fire Arc alternates its animation: spinning kick, arm whip. */
     public boolean fireArcWhip;
     /** Fire Sweep in progress: tick of the sweep, or -1. */
@@ -184,7 +193,7 @@ public class BendingData {
     }
 
     public float getMaxChi() {
-        // Skill tree bonuses (gems will add here too).
+        // Skill tree and gem bonuses.
         return BASE_MAX_CHI + com.bending.skill.SkillStats.maxChiBonus(this);
     }
 

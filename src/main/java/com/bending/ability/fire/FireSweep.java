@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class FireSweep {
     /** Chi on top of Fire Blast's own cost. */
-    public static final float EXTRA_CHI = 10f;
+    public static final float EXTRA_CHI = 8f;
     private static final float DAMAGE = 9f;
     /** Ticks the spin takes to draw the full ring (matches the animation's spin). */
     private static final int SPIN_START = 2, SPIN_TICKS = 8;

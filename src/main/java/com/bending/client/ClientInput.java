@@ -55,6 +55,19 @@ public final class ClientInput {
 
     private ClientInput() {}
 
+    /** Client ticks the slot key has been held (0 when up), for the HUD's charge bar. */
+    private static final int[] heldTicks = new int[4];
+    /** Game time of each slot's last press, for the HUD's name popup. */
+    private static final long[] lastPress = new long[4];
+
+    public static int heldTicks(int slot) {
+        return heldTicks[slot];
+    }
+
+    public static long lastPress(int slot) {
+        return lastPress[slot];
+    }
+
     public static boolean isHeld(int slot) {
         return wasDown[slot];
     }
@@ -236,7 +249,11 @@ public final class ClientInput {
             if (down != wasDown[slot]) {
                 wasDown[slot] = down;
                 PacketDistributor.sendToServer(new CastAbilityPayload(slot, down));
+                if (down && mc.level != null) {
+                    lastPress[slot] = mc.level.getGameTime();
+                }
             }
+            heldTicks[slot] = down ? heldTicks[slot] + 1 : 0;
         }
     }
 }

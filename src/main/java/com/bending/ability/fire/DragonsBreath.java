@@ -47,12 +47,12 @@ public class DragonsBreath extends Ability {
 
     @Override
     public float startChiCost() {
-        return 10f;
+        return 20f;
     }
 
     @Override
     public float chiPerTick() {
-        return 1.1f; // 22 chi per second
+        return 1.2f; // 24 chi per second
     }
 
     @Override
